@@ -202,7 +202,7 @@ Toolbar::Toolbar() : Element() {
 	_clipboard.push_back(_btn_lasso);
 	_separators.push_back(std::make_shared<Separator>());
 
-	_clipboard_text = std::make_unique<sf::Text>(basicFont, L"clipboard", 13);
+	_clipboard_text = std::make_unique<sf::Text>(basicFont, translation->get(TranslationKey::TOOLBAR_BOTTOM_TEXT_CLIPBOARD), 13);
 	_clipboard_text->setFillColor(tools_text_color);
 
 
@@ -261,7 +261,7 @@ Toolbar::Toolbar() : Element() {
 			tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	}
 
-	_tools_text = std::make_unique<sf::Text>(basicFont, L"tools", 13);
+	_tools_text = std::make_unique<sf::Text>(basicFont, translation->get(TranslationKey::TOOLBAR_BOTTOM_TEXT_TOOLS), 13);
 	_tools_text->setFillColor(tools_text_color);
 
 	_toolType = ToolType::Brush;
@@ -381,7 +381,7 @@ Toolbar::Toolbar() : Element() {
 			tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	}
 
-	_shapes_text = std::make_unique<sf::Text>(basicFont, L"shapes", 13);
+	_shapes_text = std::make_unique<sf::Text>(basicFont, translation->get(TranslationKey::TOOLBAR_BOTTOM_TEXT_SHAPES), 13);
 	_shapes_text->setFillColor(tools_text_color);
 
 	_separators.push_back(std::make_shared<Separator>());
@@ -409,7 +409,7 @@ Toolbar::Toolbar() : Element() {
 	_sizes.push_back(_size_decrease);
 	_sizes.push_back(_size_increase);
 
-	_sizes_text = std::make_unique<sf::Text>(basicFont, L"size", 13);
+	_sizes_text = std::make_unique<sf::Text>(basicFont, translation->get(TranslationKey::TOOLBAR_BOTTOM_TEXT_SIZES), 13);
 	_sizes_text->setFillColor(tools_text_color);
 
 	_separators.push_back(std::make_shared<Separator>());
@@ -436,12 +436,12 @@ Toolbar::Toolbar() : Element() {
 	_first_color->setTooltip(L"Primary Color", L"The primary color is used for drawing with the left mouse button");
 	_second_color->setTooltip(L"Secondary Color", L"The secondary color is used for drawing with the right mouse button");
 
-	_first_color_text_col = std::make_unique<sf::Text>(basicFont, L"color", 13);
+	_first_color_text_col = std::make_unique<sf::Text>(basicFont, translation->get(TranslationKey::TOOLBAR_BOTTOM_TEXT_COLOR1), 13);
 	_first_color_text_col->setFillColor(tools_text_color);
 	_first_color_text_val = std::make_unique<sf::Text>(basicFont, L"1", 13);
 	_first_color_text_val->setFillColor(tools_text_color);
 
-	_second_color_text_col = std::make_unique<sf::Text>(basicFont, L"color", 13);
+	_second_color_text_col = std::make_unique<sf::Text>(basicFont, translation->get(TranslationKey::TOOLBAR_BOTTOM_TEXT_COLOR2), 13);
 	_second_color_text_col->setFillColor(tools_text_color);
 	_second_color_text_val = std::make_unique<sf::Text>(basicFont, L"2", 13);
 	_second_color_text_val->setFillColor(tools_text_color);
@@ -517,7 +517,7 @@ Toolbar::Toolbar() : Element() {
 		
 	}
 
-	_colors_text = std::make_unique<sf::Text>(basicFont, L"colors", 13);
+	_colors_text = std::make_unique<sf::Text>(basicFont, translation->get(TranslationKey::TOOLBAR_BOTTOM_TEXT_COLORS), 13);
 	_colors_text->setFillColor(tools_text_color);
 
 	_btn_palette_colors = std::make_shared<PaletteButton>(L"palette", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\toolbar\\btn_palette_colors.png"), getTexture(L"tex\\toolbar\\btn_palette_colors_hover.png"));

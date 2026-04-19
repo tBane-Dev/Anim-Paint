@@ -184,6 +184,36 @@ void Translation::loadPhrases() {
 	_phrases.back().set(Language::ENG, L"Preview Animation");
 	_phrases.back().set(Language::PL, L"Podgląd Animacji");
 
+	// TOLBAR BOTTOM TEXTS ///////////////////////////////////////////////////////////////////////////
+	_phrases.emplace_back(TranslationKey::TOOLBAR_BOTTOM_TEXT_CLIPBOARD);
+	_phrases.back().set(Language::ENG, L"clipboard");
+	_phrases.back().set(Language::PL, L"schowek");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_BOTTOM_TEXT_TOOLS);
+	_phrases.back().set(Language::ENG, L"tools");
+	_phrases.back().set(Language::PL, L"narzędzia");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_BOTTOM_TEXT_SHAPES);
+	_phrases.back().set(Language::ENG, L"shapes");
+	_phrases.back().set(Language::PL, L"kształty");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_BOTTOM_TEXT_SIZES);
+	_phrases.back().set(Language::ENG, L"size");
+	_phrases.back().set(Language::PL, L"rozmiar");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_BOTTOM_TEXT_COLOR1);
+	_phrases.back().set(Language::ENG, L"color");
+	_phrases.back().set(Language::PL, L"kolor");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_BOTTOM_TEXT_COLOR2);
+	_phrases.back().set(Language::ENG, L"color");
+	_phrases.back().set(Language::PL, L"kolor");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_BOTTOM_TEXT_COLORS);
+	_phrases.back().set(Language::ENG, L"colors");
+	_phrases.back().set(Language::PL, L"kolory");
+	
+
 	// TOOLBAR CLIPBOARD ///////////////////////////////////////////////////////////////////////////
 
 	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_PASTE);

@@ -63,7 +63,8 @@ public:
 	virtual void pasteToCanvas();
 
 	virtual void drawRect();
-	void drawImage();
+	virtual void drawImage();
+	virtual void drawPreviewImage();
 	virtual void drawEdgePoints();
 
 	bool tooltypeIsShape();

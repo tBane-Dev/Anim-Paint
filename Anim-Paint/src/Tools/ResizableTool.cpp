@@ -234,19 +234,19 @@ void ResizableTool::generatePreviewImage() {
 	if (_rect.size.x < 1 || _rect.size.y < 1)
 		return;
 
-	if(_image == nullptr)
+	if (_image == nullptr)
 		return;
 
-	if(_image->getSize().x < 1 || _image->getSize().y < 1)
+	if (_image->getSize().x < 1 || _image->getSize().y < 1)
 		return;
 
-	_previewImage->resize(_image->getSize(), sf::Color::Transparent);
+	_previewImage->resize(sf::Vector2u(canvas->_size), sf::Color::Transparent);
 
 	for (int y = 0; y < _image->getSize().y; y++) {
 		for (int x = 0; x < _image->getSize().x; x++) {
 
-			sf::Vector2i globalPos = _rect.position + sf::Vector2i(x, y);
-
+			sf::Vector2i globalPos(_rect.position.x + x, _rect.position.y + y);
+			
 			bool insideAnyCanvas = false;
 
 			for (auto& canvas : canvases) {
@@ -259,6 +259,7 @@ void ResizableTool::generatePreviewImage() {
 
 				sf::Vector2i canvasPos(canvas->_coords.x * canvas->_size.x, canvas->_coords.y * canvas->_size.y);
 				sf::IntRect canvasRect(canvasPos, canvas->_size);
+
 				if (canvasRect.contains(globalPos)) {
 					insideAnyCanvas = true;
 					break;
@@ -266,12 +267,15 @@ void ResizableTool::generatePreviewImage() {
 			}
 
 			if (insideAnyCanvas) {
-				_previewImage->setPixel(sf::Vector2u(x, y), _image->getPixel(sf::Vector2u(x, y)));
+
+				globalPos.x = (globalPos.x % Canvas::_size.x + Canvas::_size.x) % Canvas::_size.x;
+				globalPos.y = (globalPos.y % Canvas::_size.y + Canvas::_size.y) % Canvas::_size.y;
+
+				_previewImage->setPixel(sf::Vector2u(globalPos.x, globalPos.y), _image->getPixel(sf::Vector2u(x, y)));
 			}
 		}
 	}
 }
-
 void ResizableTool::generateEdgePoints() {
 
 	float scale = canvas->_zoom * canvas->_zoom_delta;
@@ -627,7 +631,7 @@ void ResizableTool::pasteToCanvas() {
 	if (_previewImage == nullptr)
 		return;
 
-	pasteImageWithNewColorAndAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_previewImage, _rect.position.x, _rect.position.y, toolbar->_first_color->_color, sf::Color::Transparent);
+	pasteImageWithNewColorAndAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_previewImage, 0, 0, toolbar->_first_color->_color, sf::Color::Transparent);
 
 }
 
@@ -678,7 +682,8 @@ void ResizableTool::drawImage() {
 	if (_previewImage->getSize().x == 0 || _previewImage->getSize().y == 0)
 		return;
 
-	sf::Texture texture(*_previewImage);
+
+	sf::Texture texture(*_image);
 	sf::Sprite sprite(texture);
 	
 	float scale = canvas->_zoom * canvas->_zoom_delta;
@@ -692,6 +697,35 @@ void ResizableTool::drawImage() {
 	_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
 
 	window->draw(sprite, &_shader);
+}
+
+void ResizableTool::drawPreviewImage() {
+
+	if (!_previewImage)
+		return;
+
+	if (_previewImage->getSize().x < 1 || _previewImage->getSize().y < 1)
+		return;
+
+	sf::Texture texture(*_previewImage);
+	sf::Sprite sprite(texture);
+
+	for (auto& canvas : canvases) {
+
+		if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(canvas->_coords.x == 0 && canvas->_coords.y == 0))
+			continue;
+		if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(canvas->_coords.x == 0 || canvas->_coords.y == 0))
+			continue;
+
+		sprite.setScale(sf::Vector2f(canvas->_zoom * canvas->_zoom_delta, canvas->_zoom * canvas->_zoom_delta));
+		sprite.setPosition(sf::Vector2f(canvas->_position));
+
+		_shader.setUniform("alphaColor", sf::Glsl::Vec4(sf::Color::Transparent));
+		_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
+
+		window->draw(sprite, &_shader);
+	}
+	
 }
 
 void ResizableTool::drawEdgePoints() {
@@ -898,6 +932,7 @@ void ResizableTool::draw() {
 		return;
 	
 	drawImage();
+	drawPreviewImage();
 	drawRect();
 	drawEdgePoints();
 }

@@ -1252,7 +1252,6 @@ void Selection::handleEvent(const sf::Event& event) {
 			if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && clickOnSelection(tile)) {
 				_state = ResizableToolState::Moving;
 				_offset = tile - _resizedRect.position;
-				DebugLog(L"Start Selection");
 				
 			}
 			else if (toolbar->_toolType == ToolType::Lasso || toolbar->_toolType == ToolType::Selector) {

@@ -3,6 +3,7 @@
 #include "Time.hpp"
 #include "Cursor.hpp"
 #include "Window.hpp"
+#include "Translation.hpp"
 
 ButtonWithBottomText::ButtonWithBottomText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, sf::Vector2i position) : Button()
 {
@@ -28,8 +29,10 @@ ButtonWithBottomText::ButtonWithBottomText(std::wstring text, sf::Color rectColo
 	_hoverTexture = hoverTexture;
 	_pressTexture = pressTexture;
 
-	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(48, 64));
-
+	if(translation->_currentLanguage == Language::ENG)
+		_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(48, 64));
+	else
+		_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(52, 64));
 	setPosition(position);
 
 	_state = ButtonState::Idle;
@@ -46,7 +49,7 @@ ButtonWithBottomText::~ButtonWithBottomText() {
 
 void ButtonWithBottomText::setPosition(sf::Vector2i position) {
 	_rect.position = position;
-	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(48 / 2 - _text->getGlobalBounds().size.x / 2.0f, _rect.size.y - basicFont.getLineSpacing(13) - 4));
+	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(_rect.size.x / 2 - _text->getGlobalBounds().size.x / 2.0f, _rect.size.y - basicFont.getLineSpacing(13) - 4));
 
 }
 
@@ -126,7 +129,8 @@ void ButtonWithBottomText::draw() {
 	}
 
 	sf::Sprite sprite(*tex->_texture);
-	sprite.setPosition(sf::Vector2f(_rect.position));
+	sprite.setOrigin(sf::Vector2f(tex->_texture->getSize()) / 2.0f);
+	sprite.setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(_rect.size.x / 2.0f, (_rect.size.y-24+2*_rectBorderWidth) / 2.0f));
 	window->draw(sprite);
 
 	window->draw(*_text);

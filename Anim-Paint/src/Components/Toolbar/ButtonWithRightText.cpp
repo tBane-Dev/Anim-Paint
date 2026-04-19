@@ -3,6 +3,7 @@
 #include "Time.hpp"
 #include "Cursor.hpp"
 #include "Window.hpp"
+#include "Translation.hpp"
 
 ButtonWithRightText::ButtonWithRightText(std::wstring text, sf::Color textColor, sf::Color hoverTextColor, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, sf::Vector2i position) : Button()
 {
@@ -27,7 +28,10 @@ ButtonWithRightText::ButtonWithRightText(std::wstring text, sf::Color textColor,
 	_text = std::make_unique<sf::Text>(basicFont, text, 13);
 	_text->setFillColor(_textColor);
 
-	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(64, 32));
+	if(translation->_currentLanguage == Language::ENG)
+		_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(64, 32));
+	else
+		_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(74, 32));
 
 	setPosition(position);
 

@@ -56,6 +56,8 @@ std::wstring Translation::get(TranslationKey key) {
 void Translation::loadPhrases() {
 	_phrases.clear();
 
+	// MAIN MENU ///////////////////////////////////////////////////////////////////////////
+
 	_phrases.emplace_back(TranslationKey::MENU_FILE);
 	_phrases.back().set(Language::ENG, L"File");
 	_phrases.back().set(Language::PL, L"Plik");
@@ -76,7 +78,7 @@ void Translation::loadPhrases() {
 	_phrases.back().set(Language::ENG, L"Windows");
 	_phrases.back().set(Language::PL, L"Okna");
 
-	/////////////////////////////////////////////////////////////////////////////
+	// MAIN MENU FILE ///////////////////////////////////////////////////////////////////////////
 
 	_phrases.emplace_back(TranslationKey::MENU_FILE_NEW);
 	_phrases.back().set(Language::ENG, L"New File");
@@ -98,7 +100,7 @@ void Translation::loadPhrases() {
 	_phrases.back().set(Language::ENG, L"Import");
 	_phrases.back().set(Language::PL, L"Importuj");
 
-	/////////////////////////////////////////////////////////////////////////////
+	// MAIN MENU EDIT ///////////////////////////////////////////////////////////////////////////
 
 	_phrases.emplace_back(TranslationKey::MENU_EDIT_UNDO);
 	_phrases.back().set(Language::ENG, L"Undo");
@@ -108,7 +110,7 @@ void Translation::loadPhrases() {
 	_phrases.back().set(Language::ENG, L"Redo");
 	_phrases.back().set(Language::PL, L"Powtórz");
 
-	/////////////////////////////////////////////////////////////////////////////
+	// MAIN MENU TOOLS ///////////////////////////////////////////////////////////////////////////
 
 	_phrases.emplace_back(TranslationKey::MENU_TOOLS_RESIZE);
 	_phrases.back().set(Language::ENG, L"Resize");
@@ -146,7 +148,7 @@ void Translation::loadPhrases() {
 	_phrases.back().set(Language::ENG, L"Smoothing");
 	_phrases.back().set(Language::PL, L"Wygładzanie");
 
-	/////////////////////////////////////////////////////////////////////////////
+	// MAIN MENU SELECT ///////////////////////////////////////////////////////////////////////////
 
 	_phrases.emplace_back(TranslationKey::MENU_SELECT_SELECT_ALL);
 	_phrases.back().set(Language::ENG, L"Select All");
@@ -154,13 +156,13 @@ void Translation::loadPhrases() {
 
 	_phrases.emplace_back(TranslationKey::MENU_SELECT_SELECT_NONE);
 	_phrases.back().set(Language::ENG, L"Select None");
-	_phrases.back().set(Language::PL, L"Odznacz Wszystko");
+	_phrases.back().set(Language::PL, L"Odznacz");
 
 	_phrases.emplace_back(TranslationKey::MENU_SELECT_ALIGN_CENTER);
 	_phrases.back().set(Language::ENG, L"Align to Center");
 	_phrases.back().set(Language::PL, L"Wyrównaj do Centrum");
 
-	/////////////////////////////////////////////////////////////////////////////
+	// MAIN MENU WINDOWS ///////////////////////////////////////////////////////////////////////////
 
 	_phrases.emplace_back(TranslationKey::MENU_WINDOWS_CANVAS_REPEATING);
 	_phrases.back().set(Language::ENG, L"Canvas Repeating");
@@ -181,6 +183,93 @@ void Translation::loadPhrases() {
 	_phrases.emplace_back(TranslationKey::MENU_WINDOWS_PREVIEW_ANIMATION);
 	_phrases.back().set(Language::ENG, L"Preview Animation");
 	_phrases.back().set(Language::PL, L"Podgląd Animacji");
+
+	// TOOLBAR CLIPBOARD ///////////////////////////////////////////////////////////////////////////
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_PASTE);
+	_phrases.back().set(Language::ENG, L"Paste");
+	_phrases.back().set(Language::PL, L"Wklej");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_PASTE_FROM_FILE);
+	_phrases.back().set(Language::ENG, L"Paste From File");
+	_phrases.back().set(Language::PL, L"Wklej z Pliku");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_TRANSPARENCY);
+	_phrases.back().set(Language::ENG, L"Transparency");
+	_phrases.back().set(Language::PL, L"Przezroczystość");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_CUT);
+	_phrases.back().set(Language::ENG, L"Cut");
+	_phrases.back().set(Language::PL, L"Wytnij");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_COPY);
+	_phrases.back().set(Language::ENG, L"Copy");
+	_phrases.back().set(Language::PL, L"Kopiuj");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_SELECT);
+	_phrases.back().set(Language::ENG, L"Select");
+	_phrases.back().set(Language::PL, L"Zaznacz");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_LASSO);
+	_phrases.back().set(Language::ENG, L"Lasso");
+	_phrases.back().set(Language::PL, L"Lasso");
+
+	// TOOLBAR CLIPBOARD NAMES ///////////////////////////////////////////////////////////////////////////
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_PASTE_NAME);
+	_phrases.back().set(Language::ENG, L"Paste");
+	_phrases.back().set(Language::PL, L"Wklej");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_PASTE_FROM_FILE_NAME);
+	_phrases.back().set(Language::ENG, L"Paste From File");
+	_phrases.back().set(Language::PL, L"Wklej z Pliku");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_TRANSPARENCY_NAME);
+	_phrases.back().set(Language::ENG, L"Transparency");
+	_phrases.back().set(Language::PL, L"Przezroczystość");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_CUT_NAME);
+	_phrases.back().set(Language::ENG, L"Cut");
+	_phrases.back().set(Language::PL, L"Wytnij");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_COPY_NAME);
+	_phrases.back().set(Language::ENG, L"Copy");
+	_phrases.back().set(Language::PL, L"Kopiuj");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_SELECT_NAME);
+	_phrases.back().set(Language::ENG, L"Selection Tool");
+	_phrases.back().set(Language::PL, L"Zaznacz");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_LASSO_NAME);
+	_phrases.back().set(Language::ENG, L"Lasso Tool");
+	_phrases.back().set(Language::PL, L"Lasso");
+
+	// TOOLBAR CLIPBOARD DESCRIPTIONS ///////////////////////////////////////////////////////////////////////////
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_PASTE_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Paste the selection from the clipboard onto the canvas");
+	_phrases.back().set(Language::PL, L"Wklej zaznaczenie ze schowka na płótno");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_PASTE_FROM_FILE_DESCRIPTION);
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_TRANSPARENCY_DESCRIPTION);
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_CUT_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Cut the selection from the canvas and place it on the clipboard");
+	_phrases.back().set(Language::PL, L"Wytnij zaznaczenie z płótna do schowka");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_COPY_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Copy the selection from the canvas to the clipboard");
+	_phrases.back().set(Language::PL, L"Skopiuj zaznaczenie z płótna do schowka");
+	
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_SELECT_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Select an area of the canvas move, copy, or cut");
+	_phrases.back().set(Language::PL, L"Zaznacz obszar płótna do przeniesienia, skopiowania lub wycięcia");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_CLIPBOARD_LASSO_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Select an area of the canvas with a freehand selection to move, copy or cut");
+	_phrases.back().set(Language::PL, L"Zaznacz obszar płótna za pomocą swobodnego zaznaczenia, aby przenieść, skopiować lub wyciąć");
+
+
 
 
 

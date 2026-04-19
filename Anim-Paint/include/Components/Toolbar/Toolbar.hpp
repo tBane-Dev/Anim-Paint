@@ -9,6 +9,7 @@
 #include "Components/Toolbar/LargeColorButton.hpp"
 #include "Components/Toolbar/PaletteButton.hpp"
 
+
 enum class ToolType { Brush, Eraser, Selector, Lasso, Fill, Picker, Circle, Triangle, Rectangle, Diamond, Pentagon, HexagonFlatTop, HexagonPointTop, Octagon };
 
 class Toolbar : public Element {

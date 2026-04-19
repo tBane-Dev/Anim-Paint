@@ -115,6 +115,25 @@ void PreviewAnimationPanel::draw() {
 		scale.y = size.y / float(frame->getLayer(i)->_image.getSize().y);
 		spr.setScale(scale);
 		window->draw(spr);
+
+		if (resizable_tool != nullptr) {
+			if (animation->getCurrentFrameID() == _currentFrame && getCurrentAnimation()->_currentLayer == i) {
+				
+				if(resizable_tool->_previewImage == nullptr || resizable_tool->_previewImage->getSize().x < 1 || resizable_tool->_previewImage->getSize().y < 1)
+					continue;
+
+				sf::Texture previewTex;
+				if (!previewTex.loadFromImage(*resizable_tool->_previewImage)) {
+					DebugError(L"PreviewAnimationPanel::draw: Failed to load texture from image.");
+					exit(0);
+				}
+
+				sf::Sprite spr(previewTex);
+				spr.setPosition(rectBackground.getPosition());
+				spr.setScale(scale);
+				window->draw(spr);
+			}
+		}
 	}
 
 }

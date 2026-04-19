@@ -12,6 +12,7 @@
 #include "Window.hpp"
 #include "Textures.hpp"
 #include "Theme.hpp"
+#include "Translation.hpp"
 #include "Cursor.hpp"
 #include "Time.hpp"
 
@@ -90,6 +91,7 @@ int main() {
 	//window->setKeyRepeatEnabled(false);
 	loadTextures();
 	loadTheme();
+	translation = std::make_unique<Translation>();
 
 	//window->setFramerateLimit(120);
 	window->setView(mainView);

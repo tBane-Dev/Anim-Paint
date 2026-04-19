@@ -40,7 +40,7 @@
 MainMenu::MainMenu() : Element() {
 
 	// FILE
-	file = std::make_shared<MenuButton>(L"File");
+	file = std::make_shared<MenuButton>(translation->get(TranslationKey::MENU_FILE));
 	file->_onclick_func = [this]() {
 		hideMenu();
 		openMenuButton(file);
@@ -48,7 +48,7 @@ MainMenu::MainMenu() : Element() {
 	_menu_boxes.push_back(file);
 
 	file_new = std::make_shared<OptionWithIcon>(
-		L"New file", 
+		translation->get(TranslationKey::MENU_FILE_NEW),
 		getTexture(L"tex\\main_menu\\new_project.png"), 
 		getTexture(L"tex\\main_menu\\new_project.png"), 
 		L"Ctrl+N");
@@ -85,7 +85,7 @@ MainMenu::MainMenu() : Element() {
 	//std::shared_ptr<Option> file_save = std::make_shared<Option>(L"Save", L"Ctrl+S");
 
 	file_saveAs = std::make_shared<OptionWithIcon>(
-		L"Save as", 
+		translation->get(TranslationKey::MENU_FILE_SAVE_AS),
 		getTexture(L"tex\\main_menu\\save_project.png"),
 		getTexture(L"tex\\main_menu\\save_project.png"),
 		L"Ctrl+S");
@@ -96,7 +96,7 @@ MainMenu::MainMenu() : Element() {
 		};
 
 	file_load = std::make_shared<OptionWithIcon>(
-		L"Open", 
+		translation->get(TranslationKey::MENU_FILE_LOAD),
 		getTexture(L"tex\\main_menu\\open_project.png"),
 		getTexture(L"tex\\main_menu\\open_project.png"),
 		L"Ctrl+O");
@@ -107,7 +107,7 @@ MainMenu::MainMenu() : Element() {
 		};
 
 	file_export = std::make_shared<OptionWithIcon>(
-		L"Export", 
+		translation->get(TranslationKey::MENU_FILE_EXPORT),
 		getTexture(L"tex\\main_menu\\export.png"),
 		getTexture(L"tex\\main_menu\\export.png"),
 		L"Ctrl+E");
@@ -118,7 +118,7 @@ MainMenu::MainMenu() : Element() {
 		};
 
 	file_import = std::make_shared<OptionWithIcon>(
-		L"Import", 
+		translation->get(TranslationKey::MENU_FILE_IMPORT),
 		getTexture(L"tex\\main_menu\\import.png"),
 		getTexture(L"tex\\main_menu\\import.png"),
 		L"Ctrl+I");
@@ -135,7 +135,7 @@ MainMenu::MainMenu() : Element() {
 	file->addOption(file_import);
 
 	// EDIT
-	edit = std::make_shared<MenuButton>(L"Edit");
+	edit = std::make_shared<MenuButton>(translation->get(TranslationKey::MENU_EDIT));
 	edit->_onclick_func = [this]() {
 		hideMenu();
 		openMenuButton(edit);
@@ -143,7 +143,7 @@ MainMenu::MainMenu() : Element() {
 	_menu_boxes.push_back(edit);
 
 	edit_undo = std::make_shared<OptionWithIcon>(
-		L"Undo", 
+		translation->get(TranslationKey::MENU_EDIT_UNDO),
 		getTexture(L"tex\\main_menu\\undo.png"),
 		getTexture(L"tex\\main_menu\\undo.png"),
 		L"Ctrl+Z");
@@ -154,7 +154,7 @@ MainMenu::MainMenu() : Element() {
 	edit_undo->setActive(false);
 
 	edit_redo = std::make_shared<OptionWithIcon>(
-		L"Redo",
+		translation->get(TranslationKey::MENU_EDIT_REDO),
 		getTexture(L"tex\\main_menu\\redo.png"),
 		getTexture(L"tex\\main_menu\\redo.png"),
 		L"Ctrl+Y");
@@ -169,62 +169,62 @@ MainMenu::MainMenu() : Element() {
 	edit->addOption(edit_redo);
 
 	// TOOLS
-	tools = std::make_shared<MenuButton>(L"Tools");
+	tools = std::make_shared<MenuButton>(translation->get(TranslationKey::MENU_TOOLS));
 	tools->_onclick_func = [this]() {
 		hideMenu();
 		openMenuButton(tools);
 		};
 	_menu_boxes.push_back(tools);
 
-	tools_resize = std::make_shared<Option>(L"Resize");
+	tools_resize = std::make_shared<Option>(translation->get(TranslationKey::MENU_TOOLS_RESIZE));
 	tools_resize->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Resize>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	tools_rotation = std::make_shared<Option>(L"Rotation");
+	tools_rotation = std::make_shared<Option>(translation->get(TranslationKey::MENU_TOOLS_ROTATION));
 	tools_rotation->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Rotation>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	tools_brightness_contrast = std::make_shared<Option>(L"Brightness-Contrast");
+	tools_brightness_contrast = std::make_shared<Option>(translation->get(TranslationKey::MENU_TOOLS_BRIGHTNESS_CONTRAST));
 	tools_brightness_contrast->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Brightness_Contrast>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	tools_hue_saturation = std::make_shared<Option>(L"Hue-Saturation");
+	tools_hue_saturation = std::make_shared<Option>(translation->get(TranslationKey::MENU_TOOLS_HUE_SATURATION));
 	tools_hue_saturation->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Hue_Saturation>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	tools_sepia = std::make_shared<Option>(L"Sepia");
+	tools_sepia = std::make_shared<Option>(translation->get(TranslationKey::MENU_TOOLS_SEPIA));
 	tools_sepia->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Sepia>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	tools_outline = std::make_shared<Option>(L"Outline");
+	tools_outline = std::make_shared<Option>(translation->get(TranslationKey::MENU_TOOLS_OUTLINE));
 	tools_outline->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Outline>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	tools_invert = std::make_shared<Option>(L"Invert colors");
+	tools_invert = std::make_shared<Option>(translation->get(TranslationKey::MENU_TOOLS_INVERT));
 	tools_invert->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Invert_Colors>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	tools_chessboard = std::make_shared<Option>(L"Chessboard");
+	tools_chessboard = std::make_shared<Option>(translation->get(TranslationKey::MENU_TOOLS_CHESSBOARD));
 	tools_chessboard->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Chessboard>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	tools_smoothing = std::make_shared<Option>(L"Smoothing");
+	tools_smoothing = std::make_shared<Option>(translation->get(TranslationKey::MENU_TOOLS_SMOOTHING));
 	tools_smoothing->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Smoothing>(getCurrentAnimation()->getLayers()));
 		closeMenu();
@@ -241,14 +241,14 @@ MainMenu::MainMenu() : Element() {
 	tools->addOption(tools_smoothing);
 
 	// SELECT
-	select = std::make_shared<MenuButton>(L"Select");
+	select = std::make_shared<MenuButton>(translation->get(TranslationKey::MENU_SELECT));
 	select->_onclick_func = [this]() {
 		hideMenu();
 		openMenuButton(select);
 		};
 	_menu_boxes.push_back(select);
 
-	select_all = std::make_shared<Option>(L"Select all", L"Ctrl+A");
+	select_all = std::make_shared<Option>(translation->get(TranslationKey::MENU_SELECT_SELECT_ALL), L"Ctrl+A");
 	select_all->_onclick_func = [this]() {
 		toolbar->selectToolButton(toolbar->_btn_select);
 		toolbar->_toolType = ToolType::Selector;
@@ -257,7 +257,7 @@ MainMenu::MainMenu() : Element() {
 		closeMenu();
 		};
 
-	select_none = std::make_shared<Option>(L"Select none", L"Ctrl+D");
+	select_none = std::make_shared<Option>(translation->get(TranslationKey::MENU_SELECT_SELECT_NONE), L"Ctrl+D");
 	select_none->_onclick_func = [this]() {
 		if (selection->_state != ResizableToolState::None) {
 			selection->reset();
@@ -265,7 +265,7 @@ MainMenu::MainMenu() : Element() {
 		closeMenu();
 		};
 
-	select_align_center = std::make_shared<Option>(L"Align center");
+	select_align_center = std::make_shared<Option>(translation->get(TranslationKey::MENU_SELECT_ALIGN_CENTER));
 	select_align_center->_onclick_func = [this]() {
 		sf::Vector2i oldPos = selection->_rect.position;
 		selection->_rect.position = (canvas->_size - selection->_resizedRect.size) / 2;
@@ -280,14 +280,14 @@ MainMenu::MainMenu() : Element() {
 	select->addOption(select_align_center);
 
 	// WINDOWS
-	windows = std::make_shared<MenuButton>(L"Windows");
+	windows = std::make_shared<MenuButton>(translation->get(TranslationKey::MENU_WINDOWS));
 	windows->_onclick_func = [this]() {
 		hideMenu();
 		openMenuButton(windows);
 		};
 	_menu_boxes.push_back(windows);
 
-	canvas_repeating = std::make_shared<OptionWithCheckbox>(L"Canvas repeating", getTexture(L"tex\\main_menu\\canvas_single.png"), getTexture(L"tex\\main_menu\\canvas_single_hover.png"));
+	canvas_repeating = std::make_shared<OptionWithCheckbox>(translation->get(TranslationKey::MENU_WINDOWS_CANVAS_REPEATING), getTexture(L"tex\\main_menu\\canvas_single.png"), getTexture(L"tex\\main_menu\\canvas_single_hover.png"));
 	canvas_repeating->addValue(getTexture(L"tex\\main_menu\\canvas_cross.png"), getTexture(L"tex\\main_menu\\canvas_cross_hover.png"));
 	canvas_repeating->addValue(getTexture(L"tex\\main_menu\\canvas_multi.png"), getTexture(L"tex\\main_menu\\canvas_multi_hover.png"));
 	canvas_repeating->_checkbox->_onclick_func = [this]() {
@@ -298,7 +298,7 @@ MainMenu::MainMenu() : Element() {
 			resizable_tool->generateEdgePoints();
 		}
 		};
-	window_animations = std::make_shared<Option>(L"Animations");
+	window_animations = std::make_shared<Option>(translation->get(TranslationKey::MENU_WINDOWS_ANIMATIONS));
 	window_animations->_onclick_func = [this]() {
 		if (!isOpenStaticDialog(animations_panel)) {		
 			animations_panel->_state = DialogState::Idle;
@@ -308,7 +308,7 @@ MainMenu::MainMenu() : Element() {
 		closeMenu();
 		};
 
-	window_frames = std::make_shared<Option>(L"Frames");
+	window_frames = std::make_shared<Option>(translation->get(TranslationKey::MENU_WINDOWS_FRAMES));
 	window_frames->_onclick_func = [this]() {
 		if (!isOpenStaticDialog(frames_panel)) {
 			frames_panel->_state = DialogState::Idle;
@@ -318,7 +318,7 @@ MainMenu::MainMenu() : Element() {
 		closeMenu();
 		};
 
-	window_layers = std::make_shared<Option>(L"Layers");
+	window_layers = std::make_shared<Option>(translation->get(TranslationKey::MENU_WINDOWS_LAYERS));
 	window_layers->_onclick_func = [this]() {
 		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(layers_panel);
 		if (!isOpenStaticDialog(layers_panel)) {
@@ -329,7 +329,7 @@ MainMenu::MainMenu() : Element() {
 		closeMenu();
 		};
 
-	window_preview_animation = std::make_shared<Option>(L"Preview Animation");
+	window_preview_animation = std::make_shared<Option>(translation->get(TranslationKey::MENU_WINDOWS_PREVIEW_ANIMATION));
 	window_preview_animation->_onclick_func = [this]() {
 		if (!isOpenStaticDialog(preview_animation_panel)) {
 			preview_animation_panel->_state = DialogState::Idle;

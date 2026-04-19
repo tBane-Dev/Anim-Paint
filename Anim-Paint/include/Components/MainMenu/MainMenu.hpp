@@ -5,6 +5,7 @@
 #include "Animation/Animation.hpp"
 #include "Controls/OptionWithIcon.hpp"
 #include "Controls/OptionWithCheckbox.hpp"
+#include "Translation.hpp"
 
 enum class MainMenuStates { Opened, Closing, Closed };
 

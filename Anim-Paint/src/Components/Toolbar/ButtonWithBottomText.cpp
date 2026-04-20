@@ -32,7 +32,7 @@ ButtonWithBottomText::ButtonWithBottomText(std::wstring text, sf::Color rectColo
 	if(translation->_currentLanguage == Language::ENG)
 		_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(48, 64));
 	else
-		_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(52, 64));
+		_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(56, 64));
 	setPosition(position);
 
 	_state = ButtonState::Idle;
@@ -49,7 +49,7 @@ ButtonWithBottomText::~ButtonWithBottomText() {
 
 void ButtonWithBottomText::setPosition(sf::Vector2i position) {
 	_rect.position = position;
-	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(_rect.size.x / 2 - _text->getGlobalBounds().size.x / 2.0f, _rect.size.y - basicFont.getLineSpacing(13) - 4));
+	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(_rect.size.x / 2 - _text->getGlobalBounds().size.x / 2.0f - _rectBorderWidth, _rect.size.y - basicFont.getLineSpacing(13) - 4));
 
 }
 

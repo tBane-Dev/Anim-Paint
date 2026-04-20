@@ -931,7 +931,7 @@ void ResizableTool::draw() {
 	if (_state == ResizableToolState::None)
 		return;
 	
-	drawImage();
+	//drawImage(); // not needed because now we operate on previewImage
 	drawPreviewImage();
 	drawRect();
 	drawEdgePoints();

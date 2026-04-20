@@ -58,7 +58,8 @@ void PaletteButton::draw() {
 	window->draw(rect);
 	
 	sf::Sprite sprite((_state == ButtonState::Idle) ? *_texture->_texture : *_hoverTexture->_texture);
-	sprite.setPosition(sf::Vector2f(_rect.position));
+	sprite.setOrigin(sf::Vector2f(sprite.getTexture().getSize()) / 2.0f);
+	sprite.setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(_rect.size.x / 2.0f, (_rect.size.y - 15) / 2.0f));
 	sf::RenderStates rs;
 	
 	_shader.setUniform("iTime", float(currentTime.asSeconds()));

@@ -367,14 +367,14 @@ Toolbar::Toolbar() : Element() {
 	_shapes.push_back(_btn_hexagon_point_top);
 	_shapes.push_back(_btn_octagon);
 
-	_btn_circle->setTooltip(L"Circle Tool", L"Draw a circle filled with the secondary color using the primary color");
-	_btn_triangle->setTooltip(L"Triangle Tool", L"Draw a triangle filled with the secondary color using the primary color");
-	_btn_rectangle->setTooltip(L"Rectangle Tool", L"Draw a rectangle filled with the secondary color using the primary color");
-	_btn_diamond->setTooltip(L"Diamond Tool", L"Draw a diamond filled with the secondary color using the primary color");
-	_btn_pentagon->setTooltip(L"Pentagon Tool", L"Draw a pentagon filled with the secondary color using the primary color");
-	_btn_hexagon_flat_top->setTooltip(L"Hexagon (Flat Top) Tool", L"Draw a flat-top hexagon filled with the secondary color using the primary color");
-	_btn_hexagon_point_top->setTooltip(L"Hexagon (Point Top) Tool", L"Draw a point-top hexagon filled with the secondary color using the primary color");
-	_btn_octagon->setTooltip(L"Octagon Tool", L"Draw an octagon filled with the secondary color using the primary color");
+	_btn_circle->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_CIRCLE_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_CIRCLE_DESCRIPTION));
+	_btn_triangle->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_TRIANGLE_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_TRIANGLE_DESCRIPTION));
+	_btn_rectangle->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_RECTANGLE_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_RECTANGLE_DESCRIPTION));
+	_btn_diamond->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_DIAMOND_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_DIAMOND_DESCRIPTION));
+	_btn_pentagon->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_PENTAGON_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_PENTAGON_DESCRIPTION));
+	_btn_hexagon_flat_top->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_HEXAGON_FLAT_TOP_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_HEXAGON_FLAT_TOP_DESCRIPTION));
+	_btn_hexagon_point_top->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_HEXAGON_POINT_TOP_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_HEXAGON_POINT_TOP_DESCRIPTION));
+	_btn_octagon->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_OCTAGON_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_OCTAGON_DESCRIPTION));
 
 	for (auto& btn : _shapes) {
 		btn->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,

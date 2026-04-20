@@ -335,6 +335,72 @@ void Translation::loadPhrases() {
 	_phrases.back().set(Language::ENG, L"Fill an area of the canvas using the primary color with LMB or the secondary color with RMB");
 	_phrases.back().set(Language::PL, L"Wypełnij obszar płótna głównym kolorem poprzez LPM lub kolorem pomocniczym poprzez PPM");
 
+	// TOOLBAR SHAPES NAMES ///////////////////////////////////////////////////////////////////////////
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_CIRCLE_NAME);
+	_phrases.back().set(Language::ENG, L"Circle Shape Tool");
+	_phrases.back().set(Language::PL, L"Koło");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_TRIANGLE_NAME);
+	_phrases.back().set(Language::ENG, L"Triangle Shape Tool");
+	_phrases.back().set(Language::PL, L"Trójkąt");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_RECTANGLE_NAME);
+	_phrases.back().set(Language::ENG, L"Rectangle Shape Tool");
+	_phrases.back().set(Language::PL, L"Prostokąt");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_DIAMOND_NAME);
+	_phrases.back().set(Language::ENG, L"Diamond Shape Tool");
+	_phrases.back().set(Language::PL, L"Romb");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_PENTAGON_NAME);
+	_phrases.back().set(Language::ENG, L"Pentagon Shape Tool");
+	_phrases.back().set(Language::PL, L"Pięciokąt");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_HEXAGON_FLAT_TOP_NAME);
+	_phrases.back().set(Language::ENG, L"Hexagon (Flat Top) Shape Tool");
+	_phrases.back().set(Language::PL, L"Sześciokąt (Płaski Wierzch) ");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_HEXAGON_POINT_TOP_NAME);
+	_phrases.back().set(Language::ENG, L"Hexagon (Point Top) Shape Tool");
+	_phrases.back().set(Language::PL, L"Sześciokąt (Ostry Wierzch) ");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_OCTAGON_NAME);
+	_phrases.back().set(Language::ENG, L"Octagon Shape Tool");
+	_phrases.back().set(Language::PL, L"Ośmiokąt");
+
+	// TOOLBAR SHAPES DESCRIPTIONS ///////////////////////////////////////////////////////////////////////////
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_CIRCLE_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Draw a circle filled with the secondary color using the primary color");
+	_phrases.back().set(Language::PL, L"Rysuj koło wypełnione kolorem pomocniczym używając koloru głównego");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_TRIANGLE_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Draw a triangle filled with the secondary color using the primary color");
+	_phrases.back().set(Language::PL, L"Rysuj trójkąt wypełniony kolorem pomocniczym używając koloru głównego");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_RECTANGLE_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Draw a rectangle filled with the secondary color using the primary color");
+	_phrases.back().set(Language::PL, L"Rysuj prostokąt wypełniony kolorem pomocniczym używając koloru głównego");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_DIAMOND_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Draw a diamond filled with the secondary color using the primary color");
+	_phrases.back().set(Language::PL, L"Rysuj romb wypełniony kolorem pomocniczym używając koloru głównego");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_PENTAGON_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Draw a pentagon filled with the secondary color using the primary color");
+	_phrases.back().set(Language::PL, L"Rysuj pięciokąt wypełniony kolorem pomocniczym używając koloru głównego");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_HEXAGON_FLAT_TOP_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Draw a flat-top hexagon filled with the secondary color using the primary color");
+	_phrases.back().set(Language::PL, L"Rysuj sześciokąt z płaskim wierzchem wypełniony kolorem pomocniczym używając koloru głównego");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_HEXAGON_POINT_TOP_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Draw a point-top hexagon filled with the secondary color using the primary color");
+	_phrases.back().set(Language::PL, L"Rysuj sześciokąt z ostrym wierzchem wypełniony kolorem pomocniczym używając koloru głównego");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_OCTAGON_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Draw an octagon filled with the secondary color using the primary color");
+	_phrases.back().set(Language::PL, L"Rysuj ośmiokąt wypełniony kolorem pomocniczym używając koloru głównego");
 
 
 

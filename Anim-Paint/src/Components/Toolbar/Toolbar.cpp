@@ -394,7 +394,7 @@ Toolbar::Toolbar() : Element() {
 		if (_toolType == ToolType::Brush || _toolType == ToolType::Eraser)
 			brush->decrease();
 		};
-	_size_decrease->setTooltip(L"Decrease Brush Size", L"Decrease the size of the brush or eraser");
+	_size_decrease->setTooltip(translation->get(TranslationKey::TOOLBAR_SIZES_DECREASE_NAME), translation->get(TranslationKey::TOOLBAR_SIZES_DECREASE_DESCRIPTION));
 
 	_size_increase = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\toolbar\\btn_size_increase.png"), getTexture(L"tex\\toolbar\\btn_size_increase_hover.png"), getTexture(L"tex\\toolbar\\btn_size_increase_hover.png"));
 	_size_increase->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color, 
@@ -403,7 +403,7 @@ Toolbar::Toolbar() : Element() {
 		if (_toolType == ToolType::Brush || _toolType == ToolType::Eraser)
 			brush->increase();
 		};
-	_size_increase->setTooltip(L"Increase Brush Size", L"Increase the size of the brush or eraser");
+	_size_increase->setTooltip(translation->get(TranslationKey::TOOLBAR_SIZES_INCREASE_NAME), translation->get(TranslationKey::TOOLBAR_SIZES_INCREASE_DESCRIPTION));;
 
 	_sizes.clear();
 	_sizes.push_back(_size_decrease);
@@ -433,8 +433,8 @@ Toolbar::Toolbar() : Element() {
 		selectColorButton(_second_color);
 		};
 
-	_first_color->setTooltip(L"Primary Color", L"The primary color is used for drawing with the left mouse button");
-	_second_color->setTooltip(L"Secondary Color", L"The secondary color is used for drawing with the right mouse button");
+	_first_color->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR1_NAME), translation->get(TranslationKey::TOOLBAR_COLOR1_DESCRIPTION));;
+	_second_color->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR2_NAME), translation->get(TranslationKey::TOOLBAR_COLOR2_DESCRIPTION));
 
 	_first_color_text_col = std::make_unique<sf::Text>(basicFont, translation->get(TranslationKey::TOOLBAR_BOTTOM_TEXT_COLOR1), 13);
 	_first_color_text_col->setFillColor(tools_text_color);

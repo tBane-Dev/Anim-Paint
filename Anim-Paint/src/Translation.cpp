@@ -402,7 +402,45 @@ void Translation::loadPhrases() {
 	_phrases.back().set(Language::ENG, L"Draw an octagon filled with the secondary color using the primary color");
 	_phrases.back().set(Language::PL, L"Rysuj ośmiokąt wypełniony kolorem pomocniczym używając koloru głównego");
 
+	// TOOLBAR SIZES NAMES ///////////////////////////////////////////////////////////////////////////
 
+	_phrases.emplace_back(TranslationKey::TOOLBAR_SIZES_DECREASE_NAME);
+	_phrases.back().set(Language::ENG, L"Decrease Size");
+	_phrases.back().set(Language::PL, L"Zmniejsz Rozmiar");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_SIZES_INCREASE_NAME);
+	_phrases.back().set(Language::ENG, L"Increase Size");
+	_phrases.back().set(Language::PL, L"Zwiększ Rozmiar");
+
+	// TOOLBAR SIZES DESCRIPTIONS ///////////////////////////////////////////////////////////////////////////
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_SIZES_DECREASE_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Decrease the size of the brush, eraser or shape outline");
+	_phrases.back().set(Language::PL, L"Zmniejsz rozmiar pędzla, gumki lub obrysu kształtu");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_SIZES_INCREASE_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Increase the size of the brush, eraser or shape outline");
+	_phrases.back().set(Language::PL, L"Zwiększ rozmiar pędzla, gumki lub obrysu kształtu");
+
+	// TOOLBAR MAIN COLORS NAMES ///////////////////////////////////////////////////////////////////////////
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR1_NAME);
+	_phrases.back().set(Language::ENG, L"Primary Color");
+	_phrases.back().set(Language::PL, L"Kolor Główny");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR2_NAME);
+	_phrases.back().set(Language::ENG, L"Secondary Color");
+	_phrases.back().set(Language::PL, L"Kolor Pomocniczy");
+
+	// TOOLBAR MAIN COLORS DESCRIPTIONS ///////////////////////////////////////////////////////////////////////////
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR1_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Set the primary color used for drawing and filling");
+	_phrases.back().set(Language::PL, L"Ustaw kolor główny używany do rysowania i wypełniania");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR2_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Set the secondary color used for drawing and filling");
+	_phrases.back().set(Language::PL, L"Ustaw kolor pomocniczy używany do rysowania i wypełniania");
 
 
 }

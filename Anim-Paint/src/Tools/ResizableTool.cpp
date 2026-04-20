@@ -851,7 +851,7 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 			}
 			else if (tooltypeIsShape()) {
 
-				if (canvas->_rect.contains(cursor->_position)) {
+				if (canvasIsHovered()) {
 					if (_image != nullptr) {
 						pasteToCanvas();
 						_image = nullptr;

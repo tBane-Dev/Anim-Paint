@@ -772,6 +772,12 @@ void ResizableTool::cursorHover() {
 		Element_hovered = this->shared_from_this();
 	}
 
+	if (_clickedEdgePoint != nullptr) {
+		Element_hovered = _clickedEdgePoint;
+		_hoveredEdgePoint = _clickedEdgePoint;
+		return;
+	}
+
 	for (auto& edgePoint : _edgePoints) {
 		edgePoint->cursorHover();
 		if (Element_hovered == edgePoint) {

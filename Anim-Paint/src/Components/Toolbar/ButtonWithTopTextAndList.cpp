@@ -49,6 +49,14 @@ ButtonWithTopTextAndList::~ButtonWithTopTextAndList() {
 
 }
 
+void ButtonWithTopTextAndList::setText(std::wstring text) {
+	_text->setString(text);
+	sf::Vector2i rectSize;
+	rectSize.x = std::max(48, (int)(_text->getGlobalBounds().size.x + 8));
+	rectSize.y = 32;
+	_rect.size = rectSize;
+}
+
 void ButtonWithTopTextAndList::addOption(std::shared_ptr<Option> option) {
 
 	if (_options.size() == 0) {

@@ -306,7 +306,8 @@ MainMenu::MainMenu() : Element() {
 		if (select_language->_checkbox->_value == 1) translation->_currentLanguage = Language::PL;
 
 		main_menu->reloadTranslations();
-		main_menu->setPosition(main_menu->_rect.position);
+		toolbar->reloadTranslations();
+
 		// TO-DO: reload translations for all components
 		// 
 		// toolbar->reloadTranslations();
@@ -399,6 +400,7 @@ void MainMenu::setPosition(sf::Vector2i position) {
 }
 
 void MainMenu::reloadTranslations() {
+
 	file->setText(translation->get(TranslationKey::MENU_FILE));
 	edit->setText(translation->get(TranslationKey::MENU_EDIT));
 	tools->setText(translation->get(TranslationKey::MENU_TOOLS));

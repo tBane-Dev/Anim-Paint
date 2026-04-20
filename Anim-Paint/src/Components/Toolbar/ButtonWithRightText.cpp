@@ -44,6 +44,15 @@ ButtonWithRightText::~ButtonWithRightText() {
 
 }
 
+void ButtonWithRightText::setText(std::wstring text) {
+	_text->setString(text);
+	sf::Vector2i rectSize;
+	rectSize.x = std::max(64, (int)(_text->getGlobalBounds().size.x + 32 + 8 + 2 * _rectBorderWidth));
+	rectSize.y = 32;
+	_rect.size = rectSize;
+	setPosition(_rect.position);
+}
+
 void ButtonWithRightText::setPosition(sf::Vector2i position) {
 	_rect.position = position;
 	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(32, 24 - basicFont.getLineSpacing(13)));

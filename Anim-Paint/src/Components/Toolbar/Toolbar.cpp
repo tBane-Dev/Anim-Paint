@@ -549,6 +549,7 @@ sf::Vector2i Toolbar::getSize() {
 	return _rect.size;
 }
 
+
 void Toolbar::setPosition(sf::Vector2i position) {
 	_rect.position = position;
 
@@ -668,6 +669,81 @@ void Toolbar::setPosition(sf::Vector2i position) {
 
 	_btn_palette_colors->setPosition(position + sf::Vector2i(x, 0));
 
+}
+
+void Toolbar::reloadTranslations() {
+
+	// clipboard
+	_clipboard_text->setString(translation->get(TranslationKey::TOOLBAR_BOTTOM_TEXT_CLIPBOARD));
+	_option_paste->setText(translation->get(TranslationKey::TOOLBAR_CLIPBOARD_PASTE));
+	_option_from_file->setText(translation->get(TranslationKey::TOOLBAR_CLIPBOARD_PASTE_FROM_FILE));
+	_option_transparency->setText(translation->get(TranslationKey::TOOLBAR_CLIPBOARD_TRANSPARENCY));
+
+	_btn_paste_menu->setText(translation->get(TranslationKey::TOOLBAR_CLIPBOARD_PASTE));
+	_btn_cut->setText(translation->get(TranslationKey::TOOLBAR_CLIPBOARD_CUT));
+	_btn_copy->setText(translation->get(TranslationKey::TOOLBAR_CLIPBOARD_COPY));
+	_btn_select->setText(translation->get(TranslationKey::TOOLBAR_CLIPBOARD_SELECT));
+	_btn_lasso->setText(translation->get(TranslationKey::TOOLBAR_CLIPBOARD_LASSO));
+
+	_btn_cut->setTooltip(translation->get(TranslationKey::TOOLBAR_CLIPBOARD_CUT_NAME), translation->get(TranslationKey::TOOLBAR_CLIPBOARD_CUT_DESCRIPTION));
+	_btn_copy->setTooltip(translation->get(TranslationKey::TOOLBAR_CLIPBOARD_COPY_NAME), translation->get(TranslationKey::TOOLBAR_CLIPBOARD_COPY_DESCRIPTION));
+	_btn_select->setTooltip(translation->get(TranslationKey::TOOLBAR_CLIPBOARD_SELECT_NAME), translation->get(TranslationKey::TOOLBAR_CLIPBOARD_SELECT_DESCRIPTION));
+	_btn_lasso->setTooltip(translation->get(TranslationKey::TOOLBAR_CLIPBOARD_LASSO_NAME), translation->get(TranslationKey::TOOLBAR_CLIPBOARD_LASSO_DESCRIPTION));
+
+	// tools
+	_tools_text->setString(translation->get(TranslationKey::TOOLBAR_BOTTOM_TEXT_TOOLS));
+	_btn_brush->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_BRUSH_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_BRUSH_DESCRIPTION));
+	_btn_picker->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_PICKER_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_PICKER_DESCRIPTION));
+	_btn_fill->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_FILL_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_FILL_DESCRIPTION));
+	_btn_eraser->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_ERASER_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_ERASER_DESCRIPTION));
+
+	// shapes
+	_shapes_text->setString(translation->get(TranslationKey::TOOLBAR_BOTTOM_TEXT_SHAPES));
+	_btn_circle->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_CIRCLE_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_CIRCLE_DESCRIPTION));
+	_btn_triangle->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_TRIANGLE_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_TRIANGLE_DESCRIPTION));
+	_btn_rectangle->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_RECTANGLE_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_RECTANGLE_DESCRIPTION));
+	_btn_diamond->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_DIAMOND_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_DIAMOND_DESCRIPTION));
+	_btn_pentagon->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_PENTAGON_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_PENTAGON_DESCRIPTION));
+	_btn_hexagon_flat_top->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_HEXAGON_FLAT_TOP_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_HEXAGON_FLAT_TOP_DESCRIPTION));
+	_btn_hexagon_point_top->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_HEXAGON_POINT_TOP_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_HEXAGON_POINT_TOP_DESCRIPTION));
+	_btn_octagon->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_OCTAGON_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_OCTAGON_DESCRIPTION));
+
+	// sizes
+	_sizes_text->setString(translation->get(TranslationKey::TOOLBAR_BOTTOM_TEXT_SIZES));
+	_size_decrease->setTooltip(translation->get(TranslationKey::TOOLBAR_SIZES_DECREASE_NAME), translation->get(TranslationKey::TOOLBAR_SIZES_DECREASE_DESCRIPTION));
+	_size_increase->setTooltip(translation->get(TranslationKey::TOOLBAR_SIZES_INCREASE_NAME), translation->get(TranslationKey::TOOLBAR_SIZES_INCREASE_DESCRIPTION));
+
+	// main colors
+	_first_color->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR1_NAME), translation->get(TranslationKey::TOOLBAR_COLOR1_DESCRIPTION));
+	_second_color->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR2_NAME), translation->get(TranslationKey::TOOLBAR_COLOR2_DESCRIPTION));
+
+	_first_color_text_col->setString(translation->get(TranslationKey::TOOLBAR_BOTTOM_TEXT_COLOR1));
+	_second_color_text_col->setString(translation->get(TranslationKey::TOOLBAR_BOTTOM_TEXT_COLOR2));
+
+	// colors
+	_colors_text->setString(translation->get(TranslationKey::TOOLBAR_BOTTOM_TEXT_COLORS));
+	_colors[0]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_BLACK_NAME), L"");
+	_colors[1]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_WHITE_NAME), L"");
+	_colors[2]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_DARK_GREY_NAME), L"");
+	_colors[3]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_LIGHT_GREY_NAME), L"");
+	_colors[4]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_DARK_RED_NAME), L"");
+	_colors[5]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_LIGHT_RED_NAME), L"");
+	_colors[6]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_DARK_ORANGE_NAME), L"");
+	_colors[7]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_LIGHT_ORANGE_NAME), L"");
+	_colors[8]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_DARK_YELLOW_NAME), L"");
+	_colors[9]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_LIGHT_YELLOW_NAME), L"");
+	_colors[10]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_DARK_GREEN_NAME), L"");
+	_colors[11]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_LIGHT_GREEN_NAME), L"");
+	_colors[12]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_DARK_CYAN_NAME), L"");
+	_colors[13]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_LIGHT_CYAN_NAME), L"");
+	_colors[14]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_DARK_BLUE_NAME), L"");
+	_colors[15]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_LIGHT_BLUE_NAME), L"");
+	_colors[16]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_DARK_MAGENTA_NAME), L"");
+	_colors[17]->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_LIGHT_MAGENTA_NAME), L"");
+
+	//_btn_palette_colors->setTooltip(L"Color Palette", L"Open the color palette dialog to create and manage custom colors");
+
+	setPosition(sf::Vector2i(0, menu_height));
 }
 
 void Toolbar::selectToolButton(std::shared_ptr<Button> toolButton) {

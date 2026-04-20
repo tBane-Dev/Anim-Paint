@@ -75,6 +75,7 @@ public:
 
 	sf::Vector2i getSize();
 	void setPosition(sf::Vector2i position);
+	void reloadTranslations();
 	void selectToolButton(std::shared_ptr<Button> toolButton);
 	void selectColorButton(std::shared_ptr<LargeColorButton> colorButton);
 	

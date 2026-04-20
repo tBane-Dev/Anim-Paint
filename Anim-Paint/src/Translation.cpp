@@ -442,7 +442,79 @@ void Translation::loadPhrases() {
 	_phrases.back().set(Language::ENG, L"Set the secondary color used for drawing and filling");
 	_phrases.back().set(Language::PL, L"Ustaw kolor pomocniczy używany do rysowania i wypełniania");
 
+	// TOOLBAR COLORS NAMES ///////////////////////////////////////////////////////////////////////////
 
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_BLACK_NAME);
+	_phrases.back().set(Language::ENG, L"Black");
+	_phrases.back().set(Language::PL, L"Czarny");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_WHITE_NAME);
+	_phrases.back().set(Language::ENG, L"White");
+	_phrases.back().set(Language::PL, L"Biały");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_DARK_GREY_NAME);
+	_phrases.back().set(Language::ENG, L"Dark Grey");
+	_phrases.back().set(Language::PL, L"Ciemny Szary");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_LIGHT_GREY_NAME);
+	_phrases.back().set(Language::ENG, L"Light Grey");
+	_phrases.back().set(Language::PL, L"Jasny Szary");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_DARK_RED_NAME);
+	_phrases.back().set(Language::ENG, L"Dark Red");
+	_phrases.back().set(Language::PL, L"Ciemny Czerwony");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_LIGHT_RED_NAME);
+	_phrases.back().set(Language::ENG, L"Light Red");
+	_phrases.back().set(Language::PL, L"Jasny Czerwony");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_DARK_ORANGE_NAME);
+	_phrases.back().set(Language::ENG, L"Dark Orange");
+	_phrases.back().set(Language::PL, L"Ciemny Pomarańczowy");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_LIGHT_ORANGE_NAME);
+	_phrases.back().set(Language::ENG, L"Light Orange");
+	_phrases.back().set(Language::PL, L"Jasny Pomarańczowy");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_DARK_YELLOW_NAME);
+	_phrases.back().set(Language::ENG, L"Dark Yellow");
+	_phrases.back().set(Language::PL, L"Ciemny Żółty");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_LIGHT_YELLOW_NAME);
+	_phrases.back().set(Language::ENG, L"Light Yellow");
+	_phrases.back().set(Language::PL, L"Jasny Żółty");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_DARK_GREEN_NAME);
+	_phrases.back().set(Language::ENG, L"Dark Green");
+	_phrases.back().set(Language::PL, L"Ciemny Zielony");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_LIGHT_GREEN_NAME);
+	_phrases.back().set(Language::ENG, L"Light Green");
+	_phrases.back().set(Language::PL, L"Jasny Zielony");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_DARK_CYAN_NAME);
+	_phrases.back().set(Language::ENG, L"Dark Cyan");
+	_phrases.back().set(Language::PL, L"Ciemny Cyjan");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_LIGHT_CYAN_NAME);
+	_phrases.back().set(Language::ENG, L"Light Cyan");
+	_phrases.back().set(Language::PL, L"Jasny Cyjan");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_DARK_BLUE_NAME);
+	_phrases.back().set(Language::ENG, L"Dark Blue");
+	_phrases.back().set(Language::PL, L"Ciemny Niebieski");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_LIGHT_BLUE_NAME);
+	_phrases.back().set(Language::ENG, L"Light Blue");
+	_phrases.back().set(Language::PL, L"Jasny Niebieski");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_DARK_MAGENTA_NAME);
+	_phrases.back().set(Language::ENG, L"Dark Magenta");
+	_phrases.back().set(Language::PL, L"Ciemny Magenta");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_LIGHT_MAGENTA_NAME);
+	_phrases.back().set(Language::ENG, L"Light Magenta");
+	_phrases.back().set(Language::PL, L"Jasny Magenta");
 }
 
 std::unique_ptr<Translation> translation;

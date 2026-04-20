@@ -452,57 +452,57 @@ Toolbar::Toolbar() : Element() {
 	
 	// black - grey - white
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(0, 0, 0)));
-	_colors.back()->setTooltip(L"Black", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_BLACK_NAME), L"");
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(255, 255, 255)));
-	_colors.back()->setTooltip(L"White", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_WHITE_NAME), L"");
 
 	// greys
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(63, 63, 63)));
-	_colors.back()->setTooltip(L"Dark Grey", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_DARK_GREY_NAME), L"");
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(159, 159, 159)));
-	_colors.back()->setTooltip(L"Light Grey", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_LIGHT_GREY_NAME), L"");
 
 	// red
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(63, 0, 0)));
-	_colors.back()->setTooltip(L"Dark Red", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_DARK_RED_NAME), L"");
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(191, 0, 0)));
-	_colors.back()->setTooltip(L"Light Red", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_LIGHT_RED_NAME), L"");
 
 	// orange
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(127, 63, 0)));
-	_colors.back()->setTooltip(L"Dark Orange", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_DARK_ORANGE_NAME), L"");
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(255, 127, 0)));
-	_colors.back()->setTooltip(L"Light Orange", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_LIGHT_ORANGE_NAME), L"");
 
 	// yellow
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(63, 63, 0)));
-	_colors.back()->setTooltip(L"Dark Yellow", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_DARK_YELLOW_NAME), L"");
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(191, 191, 0)));
-	_colors.back()->setTooltip(L"Light Yellow", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_LIGHT_YELLOW_NAME), L"");
 
 	// green
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(0, 63, 0)));
-	_colors.back()->setTooltip(L"Dark Green", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_DARK_GREEN_NAME), L"");
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(0, 191, 0)));
-	_colors.back()->setTooltip(L"Light Green", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_LIGHT_GREEN_NAME), L"");
 
 	// cyan
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(0, 63, 63)));
-	_colors.back()->setTooltip(L"Dark Cyan", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_DARK_CYAN_NAME), L"");
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(0, 191, 191)));
-	_colors.back()->setTooltip(L"Light Cyan", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_LIGHT_CYAN_NAME), L"");
 
 	// blue
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(0, 0, 63)));
-	_colors.back()->setTooltip(L"Dark Blue", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_DARK_BLUE_NAME), L"");
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(0, 0, 191)));
-	_colors.back()->setTooltip(L"Light Blue", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_LIGHT_BLUE_NAME), L"");
 
 	// magenta
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(63, 0, 63)));
-	_colors.back()->setTooltip(L"Dark Magenta", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_DARK_MAGENTA_NAME), L"");
 	_colors.push_back(std::make_shared<ColorButton>(sf::Color(191, 0, 191)));
-	_colors.back()->setTooltip(L"Light Magenta", L"");
+	_colors.back()->setTooltip(translation->get(TranslationKey::TOOLBAR_COLOR_LIGHT_MAGENTA_NAME), L"");
 
 	for (auto& c : _colors) {
 		c->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,

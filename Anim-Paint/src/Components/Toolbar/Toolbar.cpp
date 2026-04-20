@@ -216,7 +216,7 @@ Toolbar::Toolbar() : Element() {
 		brush->setBrushType(BrushType::Circle);
 		selectToolButton(_btn_brush);
 		};
-	_btn_brush->setTooltip(L"Brush Tool", L"Draw on the canvas using the primary color with LMB or the secondary color with RMB");
+	_btn_brush->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_BRUSH_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_BRUSH_DESCRIPTION));
 
 	_btn_picker = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\toolbar\\btn_picker.png"), getTexture(L"tex\\toolbar\\btn_picker_hover.png"), getTexture(L"tex\\toolbar\\btn_picker_press.png"));
 	_btn_picker->_onclick_func = [this]() {
@@ -227,7 +227,7 @@ Toolbar::Toolbar() : Element() {
 		brush->setBrushType(BrushType::Circle);
 		selectToolButton(_btn_picker);
 		};
-	_btn_picker->setTooltip(L"Color Picker Tool", L"Pick a color from the canvas and set it as the active color");
+	_btn_picker->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_PICKER_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_PICKER_DESCRIPTION));
 
 	_btn_fill = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\toolbar\\btn_fill.png"), getTexture(L"tex\\toolbar\\btn_fill_hover.png"), getTexture(L"tex\\toolbar\\btn_fill_press.png"));
 	_btn_fill->_onclick_func = [this]() {
@@ -237,7 +237,7 @@ Toolbar::Toolbar() : Element() {
 		resizable_tool = nullptr;
 		selectToolButton(_btn_fill);
 		};
-	_btn_fill->setTooltip(L"Fill Tool", L"Fill an area of the canvas using the primary color with LMB or the secondary color with RMB");
+	_btn_fill->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_FILL_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_FILL_DESCRIPTION));
 
 	_btn_eraser = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\toolbar\\btn_eraser.png"), getTexture(L"tex\\toolbar\\btn_eraser_hover.png"), getTexture(L"tex\\toolbar\\btn_eraser_press.png"));
 	_btn_eraser->_onclick_func = [this]() {
@@ -248,7 +248,7 @@ Toolbar::Toolbar() : Element() {
 		brush->setBrushType(BrushType::Square);
 		selectToolButton(_btn_eraser);
 		};
-	_btn_eraser->setTooltip(L"Eraser Tool", L"Erase parts of the canvas using the secondary color with LMB or the primary color with RMB");
+	_btn_eraser->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_ERASER_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_ERASER_DESCRIPTION));
 
 	_tools.clear();
 	_tools.push_back(_btn_brush);

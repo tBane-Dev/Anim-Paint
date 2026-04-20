@@ -299,6 +299,41 @@ void Translation::loadPhrases() {
 	_phrases.back().set(Language::ENG, L"Select an area of the canvas with a freehand selection to move, copy or cut");
 	_phrases.back().set(Language::PL, L"Zaznacz obszar płótna za pomocą swobodnego zaznaczenia, aby przenieść, skopiować lub wyciąć");
 
+	// TOOLBAR TOOLS NAMES ///////////////////////////////////////////////////////////////////////////
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_BRUSH_NAME);
+	_phrases.back().set(Language::ENG, L"Brush Tool");
+	_phrases.back().set(Language::PL, L"Pędzel");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_ERASER_NAME);
+	_phrases.back().set(Language::ENG, L"Eraser Tool");
+	_phrases.back().set(Language::PL, L"Gumka");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_PICKER_NAME);
+	_phrases.back().set(Language::ENG, L"Color Picker Tool");
+	_phrases.back().set(Language::PL, L"Pobierz kolor");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_FILL_NAME);
+	_phrases.back().set(Language::ENG, L"Fill Tool");
+	_phrases.back().set(Language::PL, L"Wypełnij kolorem");
+
+	// TOOLBAR TOOLS DESCRIPTIONS ///////////////////////////////////////////////////////////////////////////
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_BRUSH_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Draw on the canvas using the primary color with LMB or the secondary color with RMB");
+	_phrases.back().set(Language::PL, L"Rysuj na płótnie używając głównego koloru poprzez LPM lub koloru pomocniczego poprzez PPM");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_ERASER_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Erase parts of the canvas using the secondary color with LMB or the primary color with RMB");
+	_phrases.back().set(Language::PL, L"Wymaż części płótna używając koloru pomocniczego poprzez LPM lub koloru głównego poprzez PPM");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_PICKER_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Pick a color from the canvas and set it as the active color");
+	_phrases.back().set(Language::PL, L"Pobierz kolor z płótna klikając LPM dla aktywnego koloru");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_FILL_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Fill an area of the canvas using the primary color with LMB or the secondary color with RMB");
+	_phrases.back().set(Language::PL, L"Wypełnij obszar płótna głównym kolorem poprzez LPM lub kolorem pomocniczym poprzez PPM");
 
 
 

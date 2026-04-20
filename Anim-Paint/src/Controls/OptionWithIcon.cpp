@@ -14,6 +14,10 @@ OptionWithIcon::~OptionWithIcon() {
 
 }
 
+void OptionWithIcon::setText(std::wstring text) {
+	Option::setText(text);
+}
+
 void OptionWithIcon::draw() {
 	Option::draw();
 	std::shared_ptr<Texture> texture;

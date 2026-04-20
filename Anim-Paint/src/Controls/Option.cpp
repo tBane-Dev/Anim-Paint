@@ -36,6 +36,17 @@ Option::Option(std::wstring text, std::wstring shortcut, sf::Vector2i position) 
 Option::~Option() {
 }
 
+void Option::setText(std::wstring text) {
+	_text->setString(text);
+	_text->setFillColor(menu_text_color);
+	sf::Vector2i size;
+	size.y = optionbox_height;
+	size.x = 32 + optionbox_left_margin + getTextWidth() + optionbox_right_margin;
+	if (getShortcutTextWidth() > 0)
+		size.x += optionbox_spacing + getShortcutTextWidth();
+	_rect.size = size;
+}
+
 void Option::setPosition(sf::Vector2i position, int shortcut_offset) {
 	_rect.position = position;
 	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(32, (_rect.size.y - basicFont.getLineSpacing(optionbox_font_size)) / 2 - 1));

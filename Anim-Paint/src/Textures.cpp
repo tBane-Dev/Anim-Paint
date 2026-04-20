@@ -79,6 +79,11 @@ void loadTextures() {
 	texturePaths.push_back(L"tex\\main_menu\\canvas_multi.png");
 	texturePaths.push_back(L"tex\\main_menu\\canvas_multi_hover.png");
 
+	texturePaths.push_back(L"tex\\main_menu\\language\\ENG.png");
+	texturePaths.push_back(L"tex\\main_menu\\language\\ENG_hover.png");
+	texturePaths.push_back(L"tex\\main_menu\\language\\PL.png");
+	texturePaths.push_back(L"tex\\main_menu\\language\\PL_hover.png");
+
 	// dialogs
 	texturePaths.push_back(L"tex\\dialog\\increase.png");
 	texturePaths.push_back(L"tex\\dialog\\increase_hover.png");

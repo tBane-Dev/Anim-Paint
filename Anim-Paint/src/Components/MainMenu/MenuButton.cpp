@@ -7,12 +7,8 @@
 
 MenuButton::MenuButton(std::wstring text) : Button() {
 
-	_text = std::make_unique<sf::Text>(basicFont, text, menu_font_size);
-	_text->setFillColor(menu_text_color);
-
-	sf::Vector2i rectSize;
-	_rect.size.x = (int)(_text->getGlobalBounds().size.x + (float)(2 * menu_horizontal_margin));
-	_rect.size.y = menu_height;
+	_text = std::make_unique<sf::Text>(basicFont, L"", menu_font_size);
+	setText(text);
 
 	_rectIdleColor = menubox_idle_color;
 	_rectHoverColor = menubox_hover_color;
@@ -28,9 +24,7 @@ MenuButton::~MenuButton() {
 
 }
 
-void MenuButton::addOption(std::shared_ptr<Option> option) {
-	_options.push_back(option);
-
+void MenuButton::resizeOptions() {
 	int max_wdt = 0;
 	int max_shortcut_wdt = 0;
 	for (auto& o : _options) {
@@ -52,7 +46,20 @@ void MenuButton::addOption(std::shared_ptr<Option> option) {
 	for (auto& o : _options) {
 		o->setSize(size);
 	}
+}
 
+void MenuButton::setText(std::wstring text) {
+	_text->setString(text);
+	_text->setFillColor(menu_text_color);
+
+	sf::Vector2i rectSize;
+	_rect.size.x = (int)(_text->getGlobalBounds().size.x + (float)(2 * menu_horizontal_margin));
+	_rect.size.y = menu_height;
+}
+
+void MenuButton::addOption(std::shared_ptr<Option> option) {
+	_options.push_back(option);
+	resizeOptions();
 }
 
 void MenuButton::setPosition(sf::Vector2i position) {

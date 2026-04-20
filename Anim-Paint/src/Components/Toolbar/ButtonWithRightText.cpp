@@ -28,10 +28,7 @@ ButtonWithRightText::ButtonWithRightText(std::wstring text, sf::Color textColor,
 	_text = std::make_unique<sf::Text>(basicFont, text, 13);
 	_text->setFillColor(_textColor);
 
-	if(translation->_currentLanguage == Language::ENG)
-		_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(64, 32));
-	else
-		_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(74, 32));
+	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(64, 32));
 
 	setPosition(position);
 

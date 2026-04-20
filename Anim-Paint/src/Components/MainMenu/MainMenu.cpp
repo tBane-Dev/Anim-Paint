@@ -298,6 +298,21 @@ MainMenu::MainMenu() : Element() {
 			resizable_tool->generateEdgePoints();
 		}
 		};
+
+	select_language = std::make_shared<OptionWithCheckbox>(L"select language", getTexture(L"tex\\main_menu\\language\\ENG.png"), getTexture(L"tex\\main_menu\\language\\ENG_hover.png"));
+	select_language->addValue(getTexture(L"tex\\main_menu\\language\\PL.png"), getTexture(L"tex\\main_menu\\language\\PL_hover.png"));
+	select_language->_checkbox->_onclick_func = [this]() {
+		if (select_language->_checkbox->_value == 0) translation->_currentLanguage = Language::ENG;
+		if (select_language->_checkbox->_value == 1) translation->_currentLanguage = Language::PL;
+
+		main_menu->reloadTranslations();
+		main_menu->setPosition(main_menu->_rect.position);
+		// TO-DO: reload translations for all components
+		// 
+		// toolbar->reloadTranslations();
+		// etc ... 
+		};
+
 	window_animations = std::make_shared<Option>(translation->get(TranslationKey::MENU_WINDOWS_ANIMATIONS));
 	window_animations->_onclick_func = [this]() {
 		if (!isOpenStaticDialog(animations_panel)) {		
@@ -342,6 +357,7 @@ MainMenu::MainMenu() : Element() {
 	setActiveForWindows();
 
 	windows->addOption(canvas_repeating);
+	windows->addOption(select_language);
 	windows->addOption(window_animations);
 	windows->addOption(window_frames);
 	windows->addOption(window_layers);
@@ -380,6 +396,52 @@ void MainMenu::setPosition(sf::Vector2i position) {
 		_menu_boxes[i]->setPosition(sf::Vector2i(position.x + x, y));
 		x = x + (int)(_menu_boxes[i]->getSize().x);
 	}
+}
+
+void MainMenu::reloadTranslations() {
+	file->setText(translation->get(TranslationKey::MENU_FILE));
+	edit->setText(translation->get(TranslationKey::MENU_EDIT));
+	tools->setText(translation->get(TranslationKey::MENU_TOOLS));
+	select->setText(translation->get(TranslationKey::MENU_SELECT));
+	windows->setText(translation->get(TranslationKey::MENU_WINDOWS));
+
+	file_new->setText(translation->get(TranslationKey::MENU_FILE_NEW));
+	file_saveAs->setText(translation->get(TranslationKey::MENU_FILE_SAVE_AS));
+	file_load->setText(translation->get(TranslationKey::MENU_FILE_LOAD));
+	file_export->setText(translation->get(TranslationKey::MENU_FILE_EXPORT));
+	file_import->setText(translation->get(TranslationKey::MENU_FILE_IMPORT));
+
+	edit_undo->setText(translation->get(TranslationKey::MENU_EDIT_UNDO));
+	edit_redo->setText(translation->get(TranslationKey::MENU_EDIT_REDO));
+
+	tools_resize->setText(translation->get(TranslationKey::MENU_TOOLS_RESIZE));
+	tools_rotation->setText(translation->get(TranslationKey::MENU_TOOLS_ROTATION));
+	tools_brightness_contrast->setText(translation->get(TranslationKey::MENU_TOOLS_BRIGHTNESS_CONTRAST));
+	tools_hue_saturation->setText(translation->get(TranslationKey::MENU_TOOLS_HUE_SATURATION));
+	tools_sepia->setText(translation->get(TranslationKey::MENU_TOOLS_SEPIA));
+	tools_outline->setText(translation->get(TranslationKey::MENU_TOOLS_OUTLINE));
+	tools_invert->setText(translation->get(TranslationKey::MENU_TOOLS_INVERT));
+	tools_chessboard->setText(translation->get(TranslationKey::MENU_TOOLS_CHESSBOARD));
+	tools_smoothing->setText(translation->get(TranslationKey::MENU_TOOLS_SMOOTHING));
+
+	select_all->setText(translation->get(TranslationKey::MENU_SELECT_SELECT_ALL));
+	select_none->setText(translation->get(TranslationKey::MENU_SELECT_SELECT_NONE));
+	select_align_center->setText(translation->get(TranslationKey::MENU_SELECT_ALIGN_CENTER));
+	
+	canvas_repeating->setText(translation->get(TranslationKey::MENU_WINDOWS_CANVAS_REPEATING));
+	window_animations->setText(translation->get(TranslationKey::MENU_WINDOWS_ANIMATIONS));
+	window_frames->setText(translation->get(TranslationKey::MENU_WINDOWS_FRAMES));
+	window_layers->setText(translation->get(TranslationKey::MENU_WINDOWS_LAYERS));
+	window_preview_animation->setText(translation->get(TranslationKey::MENU_WINDOWS_PREVIEW_ANIMATION));
+
+	file->resizeOptions();
+	edit->resizeOptions();
+	tools->resizeOptions();
+	select->resizeOptions();
+	windows->resizeOptions();
+
+	setPosition(_rect.position);
+
 }
 
 void MainMenu::setActiveForWindows() {

@@ -54,6 +54,7 @@ public:
 
 	// WINDOWS
 	std::shared_ptr<OptionWithCheckbox> canvas_repeating;
+	std::shared_ptr<OptionWithCheckbox> select_language;
 	std::shared_ptr<Option> window_animations;
 	std::shared_ptr<Option> window_frames;
 	std::shared_ptr<Option> window_layers;
@@ -66,6 +67,7 @@ public:
 	sf::Vector2i getSize();
 	void resize();
 	void setPosition(sf::Vector2i position);
+	void reloadTranslations();
 	void setActiveForWindows();
 	void hideMenu();	// hide menu - start closing animation - used when opening another menu
 	void closeMenu();	// immediately close menu - used when opening dialogs
@@ -75,6 +77,8 @@ public:
 	void exportAsFile(const std::filesystem::path& path);
 	void importAnimation(std::vector<std::shared_ptr<Animation>> newAnimations);
 	bool cursorOnAnyMenuButton();
+
+	
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

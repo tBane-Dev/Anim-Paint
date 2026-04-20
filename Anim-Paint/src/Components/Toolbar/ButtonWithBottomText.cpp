@@ -29,10 +29,7 @@ ButtonWithBottomText::ButtonWithBottomText(std::wstring text, sf::Color rectColo
 	_hoverTexture = hoverTexture;
 	_pressTexture = pressTexture;
 
-	if(translation->_currentLanguage == Language::ENG)
-		_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(48, 64));
-	else
-		_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(56, 64));
+	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(48, 64));
 	setPosition(position);
 
 	_state = ButtonState::Idle;

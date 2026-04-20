@@ -10,6 +10,7 @@ public:
 	Option(std::wstring text, std::wstring shortcut = L"", sf::Vector2i position = sf::Vector2i(0, 0));
 	~Option();
 
+	virtual void setText(std::wstring text);
 	virtual void setPosition(sf::Vector2i position, int shortcut_offset);
 	virtual int getTextWidth();
 	virtual int getShortcutTextWidth();

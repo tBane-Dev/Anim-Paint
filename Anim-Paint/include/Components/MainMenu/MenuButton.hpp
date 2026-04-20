@@ -10,6 +10,8 @@ public:
 	MenuButton(std::wstring text);
 	~MenuButton();
 
+	void setText(std::wstring text);
+	void resizeOptions();
 	void addOption(std::shared_ptr<Option> option);
 	void setPosition(sf::Vector2i position);
 

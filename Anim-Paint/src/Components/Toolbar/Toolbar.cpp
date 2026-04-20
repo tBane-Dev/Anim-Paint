@@ -559,6 +559,14 @@ void Toolbar::setPosition(sf::Vector2i position) {
 	_clipboard[1]->setPosition(position + sf::Vector2i(0, 32));
 	int x = _clipboard[1]->getSize().x;
 
+	if (translation->_currentLanguage == Language::ENG) {
+		_clipboard[2]->_rect.size.x = 64;
+		_clipboard[3]->_rect.size.x = 64;
+	}
+	else if (translation->_currentLanguage == Language::PL) {
+		_clipboard[2]->_rect.size.x = 74;
+		_clipboard[3]->_rect.size.x = 74;
+	}
 	_clipboard[2]->setPosition(position + sf::Vector2i(x, 0));
 	_clipboard[3]->setPosition(position + sf::Vector2i(x, 32));
 	x += _clipboard[3]->getSize().x;

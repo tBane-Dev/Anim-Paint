@@ -9,5 +9,6 @@ public:
 	OptionWithIcon(std::wstring text, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::wstring shortcut = L"", sf::Vector2i position = sf::Vector2i(0, 0));
 	~OptionWithIcon();
 
+	void setText(std::wstring text);
 	void draw();
 };

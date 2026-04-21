@@ -131,7 +131,7 @@ void PreviewAnimationPanel::draw() {
 				sf::Sprite spr(previewTex);
 				spr.setPosition(rectBackground.getPosition());
 				spr.setScale(scale);
-				window->draw(spr);
+				window->draw(spr, &resizable_tool->_shader);
 			}
 		}
 	}

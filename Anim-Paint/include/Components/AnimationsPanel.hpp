@@ -21,6 +21,7 @@ public:
 
 	void setPosition(sf::Vector2i position);
 	void updateText();
+	void reloadTranslations();
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

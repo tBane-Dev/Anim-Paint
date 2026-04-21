@@ -515,6 +515,84 @@ void Translation::loadPhrases() {
 	_phrases.emplace_back(TranslationKey::TOOLBAR_COLOR_LIGHT_MAGENTA_NAME);
 	_phrases.back().set(Language::ENG, L"Light Magenta");
 	_phrases.back().set(Language::PL, L"Jasny Magenta");
+
+	// COMPONENT ANIMATIONS PANEL NAMES ///////////////////////////////////////////////////////////////////////////
+
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_NAME);
+	_phrases.back().set(Language::ENG, L"Animations");
+	_phrases.back().set(Language::PL, L"Animacje");
+
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_FIRST_BTN_NAME);
+	_phrases.back().set(Language::ENG, L"First animation");
+	_phrases.back().set(Language::PL, L"Pierwsza animacja");
+
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_PREV_BTN_NAME);
+	_phrases.back().set(Language::ENG, L"Previous animation");
+	_phrases.back().set(Language::PL, L"Poprzednia animacja");
+
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_NEXT_BTN_NAME);
+	_phrases.back().set(Language::ENG, L"Next animation");
+	_phrases.back().set(Language::PL, L"Następna animacja");
+
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_LAST_BTN_NAME);
+	_phrases.back().set(Language::ENG, L"Last animation");
+	_phrases.back().set(Language::PL, L"Ostatnia animacja");
+
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_ADD_ANIM_BTN_NAME);
+	_phrases.back().set(Language::ENG, L"Add animation");
+	_phrases.back().set(Language::PL, L"Dodaj animację");
+
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_REMOVE_ANIM_BTN_NAME);
+	_phrases.back().set(Language::ENG, L"Remove animation");
+	_phrases.back().set(Language::PL, L"Usuń animację");
+
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_MOVE_BACK_BTN_NAME);
+	_phrases.back().set(Language::ENG, L"Move animation back");
+	_phrases.back().set(Language::PL, L"Przesuń animację wstecz");
+
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_MOVE_NEXT_BTN_NAME);
+	_phrases.back().set(Language::ENG, L"Move animation next");
+	_phrases.back().set(Language::PL, L"Przesuń Animację do przodu");
+
+	// COMPONENT ANIMATIONS PANEL DESCRIPTIONS ///////////////////////////////////////////////////////////////////////////
+
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_FIRST_BTN_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Go to the first animation");
+	_phrases.back().set(Language::PL, L"Przejdź do pierwszej animacji");
+
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_PREV_BTN_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Go to the previous animation");
+	_phrases.back().set(Language::PL, L"Przejdź do poprzedniej animacji");
+
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_NEXT_BTN_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Go to the next animation");
+	_phrases.back().set(Language::PL, L"Przejdź do następnej animacji");
+
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_LAST_BTN_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Go to the last animation");
+	_phrases.back().set(Language::PL, L"Przejdź do ostatniej animacji");
+
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_ADD_ANIM_BTN_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Add a new animation after the current one");
+	_phrases.back().set(Language::PL, L"Dodaj nową animację po aktualnej");
+
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_REMOVE_ANIM_BTN_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Remove the current animation");
+	_phrases.back().set(Language::PL, L"Usuń aktualną animację");
+
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_MOVE_BACK_BTN_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Move the current animation one position back");
+	_phrases.back().set(Language::PL, L"Przesuń aktualną animację o jedną pozycję wstecz");
+
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_MOVE_NEXT_BTN_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Move the current animation one position forward");
+	_phrases.back().set(Language::PL, L"Przesuń aktualną animację o jedną pozycję do przodu");
+
+
+
+
+
+
 }
 
 std::unique_ptr<Translation> translation;

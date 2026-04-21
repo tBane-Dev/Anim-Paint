@@ -12,7 +12,7 @@
 
 AnimationsPanel::AnimationsPanel() : 
 	Dialog(
-		L"Animations", 
+		translation->get(TranslationKey::ANIMATIONS_PANEL_NAME),
 		sf::Vector2i(192, dialog_title_rect_height + 32 + 32 + dialog_padding * 2), 
 		sf::Vector2i(int(mainView.getSize().x) - 192 - dialog_margin, int(main_menu->getSize().y) + toolbar->_rect.size.y + dialog_margin)
 	) {
@@ -29,28 +29,28 @@ AnimationsPanel::AnimationsPanel() :
 		updateText();
 		frames_panel->_first_btn->_onclick_func();
 		};
-	_first_btn->setTooltip(L"First animation", L"Go to the first animation");
+	_first_btn->setTooltip(translation->get(TranslationKey::ANIMATIONS_PANEL_FIRST_BTN_NAME), translation->get(TranslationKey::ANIMATIONS_PANEL_FIRST_BTN_DESCRIPTION));;
 
 	_prev_btn->_onclick_func = [this]() {
 		prevAnimation();
 		updateText();
 		frames_panel->_first_btn->_onclick_func();
 		};
-	_prev_btn->setTooltip(L"Previous animation", L"Go to the previous animation");
+	_prev_btn->setTooltip(translation->get(TranslationKey::ANIMATIONS_PANEL_PREV_BTN_NAME), translation->get(TranslationKey::ANIMATIONS_PANEL_PREV_BTN_DESCRIPTION));
 
 	_next_btn->_onclick_func = [this]() {
 		nextAnimation();
 		updateText();
 		frames_panel->_first_btn->_onclick_func();
 		};
-	_next_btn->setTooltip(L"Next animation", L"Go to the next animation");
+	_next_btn->setTooltip(translation->get(TranslationKey::ANIMATIONS_PANEL_NEXT_BTN_NAME), translation->get(TranslationKey::ANIMATIONS_PANEL_NEXT_BTN_DESCRIPTION));
 
 	_last_btn->_onclick_func = [this]() {
 		lastAnimation();
 		updateText();
 		frames_panel->_first_btn->_onclick_func();
 	};
-	_last_btn->setTooltip(L"Last animation", L"Go to the last animation");
+	_last_btn->setTooltip(translation->get(TranslationKey::ANIMATIONS_PANEL_LAST_BTN_NAME), translation->get(TranslationKey::ANIMATIONS_PANEL_LAST_BTN_DESCRIPTION));
 
 	_add_anim = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\add.png"), getTexture(L"tex\\btn32\\add_hover.png"), getTexture(L"tex\\btn32\\add_press.png"));
 	_remove_anim = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\remove.png"), getTexture(L"tex\\btn32\\remove_hover.png"), getTexture(L"tex\\btn32\\remove_press.png"));
@@ -66,7 +66,7 @@ AnimationsPanel::AnimationsPanel() :
 			history->saveStep();
 		}
 		};
-	_add_anim->setTooltip(L"Add animation", L"Add a new animation after the current one");
+	_add_anim->setTooltip(translation->get(TranslationKey::ANIMATIONS_PANEL_ADD_ANIM_BTN_NAME), translation->get(TranslationKey::ANIMATIONS_PANEL_ADD_ANIM_BTN_DESCRIPTION));
 
 	_remove_anim->_onclick_func = [this]() {
 		if (getAnimationsCount() > 1) {
@@ -77,7 +77,7 @@ AnimationsPanel::AnimationsPanel() :
 			history->saveStep();
 		}
 		};
-	_remove_anim->setTooltip(L"Remove animation", L"Remove the current animation");
+	_remove_anim->setTooltip(translation->get(TranslationKey::ANIMATIONS_PANEL_REMOVE_ANIM_BTN_NAME), translation->get(TranslationKey::ANIMATIONS_PANEL_REMOVE_ANIM_BTN_DESCRIPTION));
 
 	_move_back->_onclick_func = [this]() {
 		if (moveBackAnimation()) {
@@ -87,7 +87,7 @@ AnimationsPanel::AnimationsPanel() :
 			history->saveStep();
 		}
 		};
-	_move_back->setTooltip(L"Move animation back", L"Move the current animation one position back");
+	_move_back->setTooltip(translation->get(TranslationKey::ANIMATIONS_PANEL_MOVE_BACK_BTN_NAME), translation->get(TranslationKey::ANIMATIONS_PANEL_MOVE_BACK_BTN_DESCRIPTION));
 
 	_move_next->_onclick_func = [this]() {
 		if (moveNextAnimation()) {
@@ -97,7 +97,7 @@ AnimationsPanel::AnimationsPanel() :
 			history->saveStep();
 		}
 		};
-	_move_next->setTooltip(L"Move animation next", L"Move the current animation one position forward");
+	_move_next->setTooltip(translation->get(TranslationKey::ANIMATIONS_PANEL_MOVE_NEXT_BTN_NAME), translation->get(TranslationKey::ANIMATIONS_PANEL_MOVE_NEXT_BTN_DESCRIPTION));
 
 	setPosition(_position);
 }
@@ -136,6 +136,20 @@ void AnimationsPanel::updateText() {
 
 	_text->setPosition(sf::Vector2f(newX, _position.y + 48 + dialog_padding + (32 - basicFont.getLineSpacing(17)) / 2.f));
 
+}
+
+void AnimationsPanel::reloadTranslations() {
+	Dialog::_title = translation->get(TranslationKey::ANIMATIONS_PANEL_NAME);
+	Dialog::_titleText->setString(Dialog::_title);
+
+	_first_btn->setTooltip(translation->get(TranslationKey::ANIMATIONS_PANEL_FIRST_BTN_NAME), translation->get(TranslationKey::ANIMATIONS_PANEL_FIRST_BTN_DESCRIPTION));
+	_prev_btn->setTooltip(translation->get(TranslationKey::ANIMATIONS_PANEL_PREV_BTN_NAME), translation->get(TranslationKey::ANIMATIONS_PANEL_PREV_BTN_DESCRIPTION));
+	_next_btn->setTooltip(translation->get(TranslationKey::ANIMATIONS_PANEL_NEXT_BTN_NAME), translation->get(TranslationKey::ANIMATIONS_PANEL_NEXT_BTN_DESCRIPTION));
+	_last_btn->setTooltip(translation->get(TranslationKey::ANIMATIONS_PANEL_LAST_BTN_NAME), translation->get(TranslationKey::ANIMATIONS_PANEL_LAST_BTN_DESCRIPTION));
+	_add_anim->setTooltip(translation->get(TranslationKey::ANIMATIONS_PANEL_ADD_ANIM_BTN_NAME), translation->get(TranslationKey::ANIMATIONS_PANEL_ADD_ANIM_BTN_DESCRIPTION));
+	_remove_anim->setTooltip(translation->get(TranslationKey::ANIMATIONS_PANEL_REMOVE_ANIM_BTN_NAME), translation->get(TranslationKey::ANIMATIONS_PANEL_REMOVE_ANIM_BTN_DESCRIPTION));
+	_move_back->setTooltip(translation->get(TranslationKey::ANIMATIONS_PANEL_MOVE_BACK_BTN_NAME), translation->get(TranslationKey::ANIMATIONS_PANEL_MOVE_BACK_BTN_DESCRIPTION));
+	_move_next->setTooltip(translation->get(TranslationKey::ANIMATIONS_PANEL_MOVE_NEXT_BTN_NAME), translation->get(TranslationKey::ANIMATIONS_PANEL_MOVE_NEXT_BTN_DESCRIPTION));
 }
 
 void AnimationsPanel::cursorHover() {

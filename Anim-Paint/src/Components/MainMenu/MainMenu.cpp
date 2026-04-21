@@ -307,6 +307,7 @@ MainMenu::MainMenu() : Element() {
 
 		main_menu->reloadTranslations();
 		toolbar->reloadTranslations();
+		animations_panel->reloadTranslations();
 
 		// TO-DO: reload translations for all components
 		// 

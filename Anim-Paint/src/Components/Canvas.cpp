@@ -396,8 +396,11 @@ void Canvas::drawPixels(sf::Color color)
 					ty = std::clamp(ty, _coords.y * _size.y, _coords.y * _size.y + _size.y - 1);
 				}
 				
+				if(image.getPixel(sf::Vector2u(tx, ty)) == color)
+					continue;
 
 				image.setPixel(sf::Vector2u(tx, ty), color);
+				_isEdited = true;
 			}
 		}
 	}
@@ -461,6 +464,9 @@ void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelC
 		int gx = wrap(t.x, _size.x);
 		int gy = wrap(t.y, _size.y);
 
+		if (image.getPixel(sf::Vector2u(gx, gy)) == newColor)
+			continue;
+
 		if (image.getPixel(sf::Vector2u(gx, gy)) == colorToEdit)
 		{
 			image.setPixel(sf::Vector2u(gx, gy), newColor);
@@ -469,6 +475,8 @@ void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelC
 			pixels.push_back(sf::Vector2i(t.x + 1, t.y));
 			pixels.push_back(sf::Vector2i(t.x, t.y - 1));
 			pixels.push_back(sf::Vector2i(t.x, t.y + 1));
+
+			_isEdited = true;
 		}
 	}
 }
@@ -542,15 +550,12 @@ void Canvas::mouseLeftButtonPressedEvent() {
 
 		if (toolbar->_toolType == ToolType::Brush) {
 			drawPixels(toolbar->_first_color->_color);
-			_isEdited = true;
 		}
 		else if (toolbar->_toolType == ToolType::Eraser) {
 			drawPixels(toolbar->_second_color->_color);
-			_isEdited = true;
 		}
 		else if (toolbar->_toolType == ToolType::Fill) {
 			fillPixels(toolbar->_first_color->_color);
-			_isEdited = true;
 		}
 		else if (toolbar->_toolType == ToolType::Picker) {
 			pickPixel();
@@ -563,15 +568,12 @@ void Canvas::mouseRightButtonPressedEvent() {
 	if (Element_pressed.get() == this || Element_hovered.get() == this) {
 		if (toolbar->_toolType == ToolType::Brush) {
 			drawPixels(toolbar->_second_color->_color);
-			_isEdited = true;
 		}
 		else if (toolbar->_toolType == ToolType::Eraser) {
 			drawPixels(toolbar->_first_color->_color);
-			_isEdited = true;
 		}
 		else if (toolbar->_toolType == ToolType::Fill) {
 			fillPixels(toolbar->_second_color->_color);
-			_isEdited = true;
 		}
 
 	}

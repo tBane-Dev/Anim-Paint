@@ -30,28 +30,28 @@ FramesPanel::FramesPanel()
 		layers_panel->loadLayersFromCurrentFrame();
 		updateText();
 		};
-	_first_btn->setTooltip(L"First frame", L"Go to the first frame");
+	_first_btn->setTooltip(translation->get(TranslationKey::FRAMES_PANEL_FIRST_BTN_NAME), translation->get(TranslationKey::FRAMES_PANEL_FIRST_BTN_DESCRIPTION));
 
 	_prev_btn->_onclick_func = [this]() {
 		getCurrentAnimation()->prevFrame();
 		layers_panel->loadLayersFromCurrentFrame();
 		updateText();
 		};
-	_prev_btn->setTooltip(L"Previous frame", L"Go to the previous frame");
+	_prev_btn->setTooltip(translation->get(TranslationKey::FRAMES_PANEL_PREV_BTN_NAME), translation->get(TranslationKey::FRAMES_PANEL_PREV_BTN_DESCRIPTION));
 
 	_next_btn->_onclick_func = [this]() {
 		getCurrentAnimation()->nextFrame();
 		layers_panel->loadLayersFromCurrentFrame();
 		updateText();
 		};
-	_next_btn->setTooltip(L"Next frame", L"Go to the next frame");
+	_next_btn->setTooltip(translation->get(TranslationKey::FRAMES_PANEL_NEXT_BTN_NAME), translation->get(TranslationKey::FRAMES_PANEL_NEXT_BTN_DESCRIPTION));
 
 	_last_btn->_onclick_func = [this]() {
 		getCurrentAnimation()->lastFrame();
 		layers_panel->loadLayersFromCurrentFrame();
 		updateText();
 	};
-	_last_btn->setTooltip(L"Last frame", L"Go to the last frame");
+	_last_btn->setTooltip(translation->get(TranslationKey::FRAMES_PANEL_LAST_BTN_NAME), translation->get(TranslationKey::FRAMES_PANEL_LAST_BTN_DESCRIPTION));
 
 	_add_frame = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\add.png"), getTexture(L"tex\\btn32\\add_hover.png"), getTexture(L"tex\\btn32\\add_press.png"));
 	_remove_frame = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\remove.png"), getTexture(L"tex\\btn32\\remove_hover.png"), getTexture(L"tex\\btn32\\remove_press.png"));
@@ -67,7 +67,7 @@ FramesPanel::FramesPanel()
 			history->saveStep();
 		}
 		};
-	_add_frame->setTooltip(L"Add frame", L"Add a new frame after the current one");
+	_add_frame->setTooltip(translation->get(TranslationKey::FRAMES_PANEL_ADD_FRAME_BTN_NAME), translation->get(TranslationKey::FRAMES_PANEL_ADD_FRAME_BTN_DESCRIPTION));
 
 	_remove_frame->_onclick_func = [this]() {
 		if (getCurrentAnimation()->getFramesCount() > 0) {
@@ -78,7 +78,7 @@ FramesPanel::FramesPanel()
 			history->saveStep();
 		}
 		};
-	_remove_frame->setTooltip(L"Remove frame", L"Remove the current frame");
+	_remove_frame->setTooltip(translation->get(TranslationKey::FRAMES_PANEL_REMOVE_FRAME_BTN_NAME), translation->get(TranslationKey::FRAMES_PANEL_REMOVE_FRAME_BTN_DESCRIPTION));
 
 	_move_back->_onclick_func = [this]() {
 		if (getCurrentAnimation()->moveBackFrame()) {
@@ -89,7 +89,7 @@ FramesPanel::FramesPanel()
 		}
 		
 		};
-	_move_back->setTooltip(L"Move frame back", L"Move the current frame one position back");
+	_move_back->setTooltip(translation->get(TranslationKey::FRAMES_PANEL_MOVE_BACK_BTN_NAME), translation->get(TranslationKey::FRAMES_PANEL_MOVE_BACK_BTN_DESCRIPTION));
 
 	_move_next->_onclick_func = [this]() {
 		if (getCurrentAnimation()->moveNextFrame()) {
@@ -100,7 +100,7 @@ FramesPanel::FramesPanel()
 		}
 		
 		};
-	_move_next->setTooltip(L"Move frame next", L"Move the current frame one position forward");
+	_move_next->setTooltip(translation->get(TranslationKey::FRAMES_PANEL_MOVE_NEXT_BTN_NAME), translation->get(TranslationKey::FRAMES_PANEL_MOVE_NEXT_BTN_DESCRIPTION));
 
 	setPosition(_position);
 }
@@ -140,6 +140,19 @@ void FramesPanel::updateText() {
 
 	_text->setPosition(sf::Vector2f(newX, _position.y + 48 + dialog_padding + (32 - basicFont.getLineSpacing(17)) / 2.f));
 
+}
+void FramesPanel::reloadTranslations() {
+	Dialog::_title = translation->get(TranslationKey::FRAMES_PANEL_TITLE);
+	Dialog::_titleText->setString(Dialog::_title);
+
+	_first_btn->setTooltip(translation->get(TranslationKey::FRAMES_PANEL_FIRST_BTN_NAME), translation->get(TranslationKey::FRAMES_PANEL_FIRST_BTN_DESCRIPTION));
+	_prev_btn->setTooltip(translation->get(TranslationKey::FRAMES_PANEL_PREV_BTN_NAME), translation->get(TranslationKey::FRAMES_PANEL_PREV_BTN_DESCRIPTION));
+	_next_btn->setTooltip(translation->get(TranslationKey::FRAMES_PANEL_NEXT_BTN_NAME), translation->get(TranslationKey::FRAMES_PANEL_NEXT_BTN_DESCRIPTION));
+	_last_btn->setTooltip(translation->get(TranslationKey::FRAMES_PANEL_LAST_BTN_NAME), translation->get(TranslationKey::FRAMES_PANEL_LAST_BTN_DESCRIPTION));
+	_add_frame->setTooltip(translation->get(TranslationKey::FRAMES_PANEL_ADD_FRAME_BTN_NAME), translation->get(TranslationKey::FRAMES_PANEL_ADD_FRAME_BTN_DESCRIPTION));
+	_remove_frame->setTooltip(translation->get(TranslationKey::FRAMES_PANEL_REMOVE_FRAME_BTN_NAME), translation->get(TranslationKey::FRAMES_PANEL_REMOVE_FRAME_BTN_DESCRIPTION));
+	_move_back->setTooltip(translation->get(TranslationKey::FRAMES_PANEL_MOVE_BACK_BTN_NAME), translation->get(TranslationKey::FRAMES_PANEL_MOVE_BACK_BTN_DESCRIPTION));
+	_move_next->setTooltip(translation->get(TranslationKey::FRAMES_PANEL_MOVE_NEXT_BTN_NAME), translation->get(TranslationKey::FRAMES_PANEL_MOVE_NEXT_BTN_DESCRIPTION));
 }
 
 void FramesPanel::cursorHover() {

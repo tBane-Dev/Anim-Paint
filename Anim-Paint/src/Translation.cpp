@@ -518,7 +518,7 @@ void Translation::loadPhrases() {
 
 	// COMPONENT ANIMATIONS PANEL NAMES ///////////////////////////////////////////////////////////////////////////
 
-	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_NAME);
+	_phrases.emplace_back(TranslationKey::ANIMATIONS_PANEL_TITLE);
 	_phrases.back().set(Language::ENG, L"Animations");
 	_phrases.back().set(Language::PL, L"Animacje");
 
@@ -588,6 +588,77 @@ void Translation::loadPhrases() {
 	_phrases.back().set(Language::ENG, L"Move the current animation one position forward");
 	_phrases.back().set(Language::PL, L"Przesuń aktualną animację o jedną pozycję do przodu");
 
+	// COMPONENT FRAMES PANEL NAMES ///////////////////////////////////////////////////////////////////////////
+
+	_phrases.emplace_back(TranslationKey::FRAMES_PANEL_TITLE);
+	_phrases.back().set(Language::ENG, L"Frames");
+	_phrases.back().set(Language::PL, L"Klatki");
+
+	_phrases.emplace_back(TranslationKey::FRAMES_PANEL_FIRST_BTN_NAME);
+	_phrases.back().set(Language::ENG, L"First frame");
+	_phrases.back().set(Language::PL, L"Pierwsza klatka");
+
+	_phrases.emplace_back(TranslationKey::FRAMES_PANEL_PREV_BTN_NAME);
+	_phrases.back().set(Language::ENG, L"Previous frame");
+	_phrases.back().set(Language::PL, L"Poprzednia klatka");
+
+	_phrases.emplace_back(TranslationKey::FRAMES_PANEL_NEXT_BTN_NAME);
+	_phrases.back().set(Language::ENG, L"Next frame");
+	_phrases.back().set(Language::PL, L"Następna klatka");
+
+	_phrases.emplace_back(TranslationKey::FRAMES_PANEL_LAST_BTN_NAME);
+	_phrases.back().set(Language::ENG, L"Last frame");
+	_phrases.back().set(Language::PL, L"Ostatnia klatka");
+
+	_phrases.emplace_back(TranslationKey::FRAMES_PANEL_ADD_FRAME_BTN_NAME);
+	_phrases.back().set(Language::ENG, L"Add frame");
+	_phrases.back().set(Language::PL, L"Dodaj klatkę");
+
+	_phrases.emplace_back(TranslationKey::FRAMES_PANEL_REMOVE_FRAME_BTN_NAME);
+	_phrases.back().set(Language::ENG, L"Remove frame");
+	_phrases.back().set(Language::PL, L"Usuń klatkę");
+
+	_phrases.emplace_back(TranslationKey::FRAMES_PANEL_MOVE_BACK_BTN_NAME);
+	_phrases.back().set(Language::ENG, L"Move frame back");
+	_phrases.back().set(Language::PL, L"Przesuń klatkę wstecz");
+
+	_phrases.emplace_back(TranslationKey::FRAMES_PANEL_MOVE_NEXT_BTN_NAME);
+	_phrases.back().set(Language::ENG, L"Move frame next");
+	_phrases.back().set(Language::PL, L"Przesuń klatkę do przodu");
+
+	// COMPONENT FRAMES PANEL DESCRIPTIONS ///////////////////////////////////////////////////////////////////////////
+
+	_phrases.emplace_back(TranslationKey::FRAMES_PANEL_FIRST_BTN_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Go to the first frame");
+	_phrases.back().set(Language::PL, L"Przejdź do pierwszej klatki");
+
+	_phrases.emplace_back(TranslationKey::FRAMES_PANEL_PREV_BTN_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Go to the previous frame");
+	_phrases.back().set(Language::PL, L"Przejdź do poprzedniej klatki");
+
+	_phrases.emplace_back(TranslationKey::FRAMES_PANEL_NEXT_BTN_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Go to the next frame");
+	_phrases.back().set(Language::PL, L"Przejdź do następnej klatki");
+
+	_phrases.emplace_back(TranslationKey::FRAMES_PANEL_LAST_BTN_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Go to the last frame");
+	_phrases.back().set(Language::PL, L"Przejdź do ostatniej klatki");
+
+	_phrases.emplace_back(TranslationKey::FRAMES_PANEL_ADD_FRAME_BTN_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Add a new frame after the current one");
+	_phrases.back().set(Language::PL, L"Dodaj nową klatkę po aktualnej");
+
+	_phrases.emplace_back(TranslationKey::FRAMES_PANEL_REMOVE_FRAME_BTN_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Remove the current frame");
+	_phrases.back().set(Language::PL, L"Usuń aktualną klatkę");
+
+	_phrases.emplace_back(TranslationKey::FRAMES_PANEL_MOVE_BACK_BTN_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Move the current frame one position back");
+	_phrases.back().set(Language::PL, L"Przesuń aktualną klatkę o jedną pozycję wstecz");
+
+	_phrases.emplace_back(TranslationKey::FRAMES_PANEL_MOVE_NEXT_BTN_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Move the current frame one position forward");
+	_phrases.back().set(Language::PL, L"Przesuń aktualną klatkę o jedną pozycję do przodu");
 
 
 

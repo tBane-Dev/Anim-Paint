@@ -12,7 +12,7 @@
 
 AnimationsPanel::AnimationsPanel() : 
 	Dialog(
-		translation->get(TranslationKey::ANIMATIONS_PANEL_NAME),
+		translation->get(TranslationKey::ANIMATIONS_PANEL_TITLE),
 		sf::Vector2i(192, dialog_title_rect_height + 32 + 32 + dialog_padding * 2), 
 		sf::Vector2i(int(mainView.getSize().x) - 192 - dialog_margin, int(main_menu->getSize().y) + toolbar->_rect.size.y + dialog_margin)
 	) {
@@ -139,7 +139,7 @@ void AnimationsPanel::updateText() {
 }
 
 void AnimationsPanel::reloadTranslations() {
-	Dialog::_title = translation->get(TranslationKey::ANIMATIONS_PANEL_NAME);
+	Dialog::_title = translation->get(TranslationKey::ANIMATIONS_PANEL_TITLE);
 	Dialog::_titleText->setString(Dialog::_title);
 
 	_first_btn->setTooltip(translation->get(TranslationKey::ANIMATIONS_PANEL_FIRST_BTN_NAME), translation->get(TranslationKey::ANIMATIONS_PANEL_FIRST_BTN_DESCRIPTION));

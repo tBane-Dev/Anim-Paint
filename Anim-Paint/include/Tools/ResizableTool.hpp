@@ -27,6 +27,7 @@ public:
 	// others
 	sf::Vector2i _offset;	// to move
 	sf::Time _moveTime;		// to limit selection move
+	sf::Vector2i _lastTilePosition;
 
 	// edge points
 	std::vector<std::shared_ptr<EdgePoint>> _edgePoints;

@@ -271,7 +271,8 @@ void ResizableTool::generatePreviewImage() {
 				globalPos.x = (globalPos.x % Canvas::_size.x + Canvas::_size.x) % Canvas::_size.x;
 				globalPos.y = (globalPos.y % Canvas::_size.y + Canvas::_size.y) % Canvas::_size.y;
 
-				_previewImage->setPixel(sf::Vector2u(globalPos.x, globalPos.y), _image->getPixel(sf::Vector2u(x, y)));
+				if (_image->getPixel(sf::Vector2u(x, y)).a != 0)
+					_previewImage->setPixel(sf::Vector2u(globalPos.x, globalPos.y), _image->getPixel(sf::Vector2u(x, y)));
 			}
 		}
 	}
@@ -812,6 +813,7 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 			_clickedEdgePoint = _hoveredEdgePoint;
 			Element_pressed = _clickedEdgePoint;
 			_orginalEdgePointPosition = _point_left_top->getPosition();
+			_lastTilePosition = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 			_state = ResizableToolState::Resizing;
 			return;
 		}
@@ -859,6 +861,7 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 					}
 
 					_state = ResizableToolState::Selecting;
+					_lastTilePosition = tile;
 					Element_pressed = this->shared_from_this();
 					_rect.size = sf::Vector2i(0, 0);
 					_points.clear();
@@ -884,23 +887,29 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 	}
 	else if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv) {
 		if (_state == ResizableToolState::Moving) {
-			setPosition(getClampedPosition(cursor->_position));
-			generatePreviewImage();
+			sf::Vector2i pos = getClampedPosition(cursor->_position);
+			if (pos != _rect.position) {
+				setPosition(pos);
+				generatePreviewImage();
+			}
 		}
 		else if(_state == ResizableToolState::Selecting) {
 			_state = ResizableToolState::Selecting;
 			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-			_rect.size = tile - _rect.position;
-			sf::Vector2i oldPoint = (!_points.empty()) ? _points.front() : tile;
-			_points.clear();
-			_points.push_back(oldPoint);
-			_points.push_back(oldPoint + sf::Vector2i(tile.x - oldPoint.x, 0));
-			_points.push_back(oldPoint + sf::Vector2i(tile.x - oldPoint.x, tile.y - oldPoint.y));
-			_points.push_back(oldPoint + sf::Vector2i(0, tile.y - oldPoint.y));
-			generateRect();
-			generateImage();
-			generatePreviewImage();
-		}
+			if (tile != _lastTilePosition) {
+				_rect.size = tile - _rect.position;
+				sf::Vector2i oldPoint = (!_points.empty()) ? _points.front() : tile;
+				_points.clear();
+				_points.push_back(oldPoint);
+				_points.push_back(oldPoint + sf::Vector2i(tile.x - oldPoint.x, 0));
+				_points.push_back(oldPoint + sf::Vector2i(tile.x - oldPoint.x, tile.y - oldPoint.y));
+				_points.push_back(oldPoint + sf::Vector2i(0, tile.y - oldPoint.y));
+				generateRect();
+				generateImage();
+				generatePreviewImage();
+				_lastTilePosition = tile;
+			}
+		} 
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		if(_rect.size.x < 1 || _rect.size.y < 1) {
@@ -922,10 +931,15 @@ void ResizableTool::update() {
 		for (auto& point : _edgePoints) {
 			point->update();
 		}
-		resizeRect();
-		generateImage();
-		generatePreviewImage(); 
-		return;
+
+		sf::Vector2i currentTilePosition = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+		if (_lastTilePosition != currentTilePosition) {
+			_lastTilePosition = currentTilePosition;
+			resizeRect();
+			generateImage();
+			generatePreviewImage();
+			return;
+		}
 	}
 }
 

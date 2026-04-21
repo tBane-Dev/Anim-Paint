@@ -102,13 +102,7 @@ void PreviewAnimationPanel::draw() {
 
 	for (int i = 0; i < frame->getLayersCount(); i++) {
 
-		sf::Texture tex;
-		if (!tex.loadFromImage(frame->getLayer(i)->_image)) {
-			DebugError(L"PreviewAnimationPanel::draw: Failed to load texture from image.");
-			exit(0);
-		}
-
-		sf::Sprite spr(tex);
+		sf::Sprite spr(frame->getLayer(i)->_texture);
 		spr.setPosition(rectBackground.getPosition());
 		sf::Vector2f scale;
 		scale.x = size.x / float(frame->getLayer(i)->_image.getSize().x);

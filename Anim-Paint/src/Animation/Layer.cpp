@@ -6,12 +6,15 @@ Layer::Layer(std::wstring name, sf::Vector2i size, sf::Color color) {
 
 	_image = sf::Image();
 	_image.resize(sf::Vector2u(size), color);
+
+	generateTexture();
 }
 
 Layer::Layer(std::wstring name, sf::Image image) {
 	_name = name;
 	_image = image;
 
+	generateTexture();
 }
 
 Layer::Layer(std::shared_ptr<Layer> layer) {
@@ -24,9 +27,18 @@ Layer::Layer(std::shared_ptr<Layer> layer) {
 		DebugError(L"Failed to copy Image in Layer constructor.");
 		exit(0);
 	}
+
+	generateTexture();
 	
 }
 
 Layer::~Layer() {
 
+}
+
+void Layer::generateTexture() {
+	if (!_texture.loadFromImage(_image)) {
+		DebugError(L"Failed to load Texture from Image in Layer::generateTexture.");
+		exit(0);
+	}
 }

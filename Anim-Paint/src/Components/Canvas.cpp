@@ -401,6 +401,8 @@ void Canvas::drawPixels(sf::Color color)
 			}
 		}
 	}
+
+	layer->generateTexture();
 }
 void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelCoords)
 {
@@ -497,6 +499,7 @@ void Canvas::fillPixels(sf::Color color) {
 	tile.y += _coords.y * _size.y;
 
 	fill(colorToEdit, color, tile);
+	layer->generateTexture();
 }
 
 void Canvas::pickPixel() {
@@ -862,13 +865,8 @@ void Canvas::draw() {
 	for (int i = 0; i < getCurrentAnimation()->getLayersCount(); i++) {
 
 		if (layers_panel->layersBoxes[i]->_visibling->_value == 0) {	// 0 - visible, 1 - invisible
-			sf::Texture tex;
-			if (!tex.loadFromImage(getCurrentAnimation()->getLayer(i)->_image)) {
-				DebugError(L"Canvas::draw: Failed to load texture from image.");
-				exit(0);
-			}
 
-			sf::Sprite spr(tex);
+			sf::Sprite spr(getCurrentAnimation()->getLayer(i)->_texture);
 			spr.setPosition(sf::Vector2f(_rect.position));
 			spr.setScale(sf::Vector2f(_zoom * _zoom_delta, _zoom * _zoom_delta));
 			window->draw(spr);

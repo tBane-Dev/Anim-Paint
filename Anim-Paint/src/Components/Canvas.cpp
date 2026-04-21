@@ -543,9 +543,6 @@ void Canvas::pickPixel() {
 
 void Canvas::mouseLeftButtonPressedEvent() {
 
-	if(_isEdited)
-		_isEdited = false;
-
 	if (Element_pressed.get() == this || Element_hovered.get() == this) {
 
 		if (toolbar->_toolType == ToolType::Brush) {

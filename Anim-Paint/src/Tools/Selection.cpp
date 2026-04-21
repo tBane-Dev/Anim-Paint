@@ -438,7 +438,7 @@ void Selection::pasteToCanvas() {
 		return;
 
 	copyImageWithMask(&getCurrentAnimation()->getCurrentLayer()->_image, _resizedImage.get(), _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
-
+	getCurrentAnimation()->getCurrentLayer()->generateTexture();
 
 }
 
@@ -613,7 +613,7 @@ void Selection::resizeRect() {
 	}
 	else if (_clickedEdgePoint == _point_right_bottom) {
 		maxX = (float)_point_right->getPosition().x + dx;
-		maxY = (float)_point_bottom->getPosition().y + dy;
+		maxY = (float)_point_bottom->getPosition().y + dy;	
 	}
 	else if (_clickedEdgePoint == _point_left) {
 		minX = (float)_point_left->getPosition().x + dx;
@@ -1321,6 +1321,7 @@ void Selection::handleEvent(const sf::Event& event) {
 						if (getCurrentAnimation()->getCurrentLayer()) {
 							copyImageWithMask(&*_image, &getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, _rect.position.x, _rect.position.y, *_maskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
 							removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, _resizedRect, *_resizedMaskImage, sf::Color::Transparent);
+							getCurrentAnimation()->getCurrentLayer()->generateTexture();
 						}
 						*_resizedImage = *_image;
 					}

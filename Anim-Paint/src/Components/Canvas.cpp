@@ -306,6 +306,7 @@ void Canvas::resize(std::shared_ptr<EdgePoint> edgePoint, sf::Vector2i cursorPos
 			newImage.resize(sf::Vector2u(_size), sf::Color::Transparent);
 			pasteImageWithAlpha(newImage, srcLayer->_image, dst.x, dst.y);
 			orgLayer->_image = newImage;
+			orgLayer->generateTexture();
 		}
 
 	}

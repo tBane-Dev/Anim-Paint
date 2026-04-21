@@ -24,12 +24,16 @@ ButtonWithBottomText::ButtonWithBottomText(std::wstring text, sf::Color rectColo
 	_text = std::make_unique<sf::Text>(basicFont, text, 13);
 	_text->setFillColor(_textColor);
 
-
 	_texture = texture;
 	_hoverTexture = hoverTexture;
 	_pressTexture = pressTexture;
 
-	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(48, 64));
+	sf::Vector2i rectSize;
+	rectSize.x = std::max(48, (int)(_text->getGlobalBounds().size.x + 8 + 2 * _rectBorderWidth));
+	rectSize.y = 64;
+	_rect.size = rectSize;
+
+	_rect = sf::IntRect(sf::Vector2i(0, 0), rectSize);
 	setPosition(position);
 
 	_state = ButtonState::Idle;

@@ -165,6 +165,7 @@ void Dialog_Invert_Colors::setTheFilter() {
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
+		getCurrentAnimation()->getCurrentLayer()->generateTexture();
 	}
 
 }

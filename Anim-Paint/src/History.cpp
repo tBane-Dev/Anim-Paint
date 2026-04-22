@@ -90,6 +90,7 @@ void History::undo()
 
 	if (resizable_tool != nullptr && resizable_tool->_state != ResizableToolState::None) {
 		pasteImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *resizable_tool->_image, resizable_tool->_rect.position.x, resizable_tool->_rect.position.y, sf::Color::Transparent);
+		getCurrentAnimation()->getCurrentLayer()->generateTexture();
 		saveStep();
 		resizable_tool->reset();
 	}

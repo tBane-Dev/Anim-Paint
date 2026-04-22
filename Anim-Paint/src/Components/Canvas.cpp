@@ -464,10 +464,6 @@ void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelC
 
 		int gx = wrap(t.x, _size.x);
 		int gy = wrap(t.y, _size.y);
-
-		if (image.getPixel(sf::Vector2u(gx, gy)) == newColor)
-			continue;
-
 		if (image.getPixel(sf::Vector2u(gx, gy)) == colorToEdit)
 		{
 			image.setPixel(sf::Vector2u(gx, gy), newColor);
@@ -480,6 +476,8 @@ void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelC
 			_isEdited = true;
 		}
 	}
+
+	getCurrentAnimation()->getCurrentLayer()->generateTexture();
 }
 
 void Canvas::fillPixels(sf::Color color) {
@@ -508,7 +506,6 @@ void Canvas::fillPixels(sf::Color color) {
 	tile.y += _coords.y * _size.y;
 
 	fill(colorToEdit, color, tile);
-	layer->generateTexture();
 }
 
 void Canvas::pickPixel() {
@@ -559,6 +556,11 @@ void Canvas::mouseLeftButtonPressedEvent() {
 			pickPixel();
 			
 		}
+
+		if (_isEdited) {
+			history->saveStep();
+			_isEdited = false;
+		}
 	}
 }
 
@@ -574,18 +576,19 @@ void Canvas::mouseRightButtonPressedEvent() {
 			fillPixels(toolbar->_second_color->_color);
 		}
 
+		if (_isEdited) {
+			history->saveStep();
+			_isEdited = false;
+		}
 	}
 }
 
 void Canvas::mouseLeftButtonReleasedEvent() {
-	if (_isEdited) {
-		history->saveStep();
-		_isEdited = false;
-	}
+	
 }
 
 void Canvas::mouseRightButtonReleasedEvent() {
-
+	
 }
 
 

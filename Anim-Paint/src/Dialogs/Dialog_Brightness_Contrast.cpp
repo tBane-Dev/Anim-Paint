@@ -19,7 +19,7 @@ Dialog_Brightness_Contrast::Dialog_Brightness_Contrast(std::vector<std::shared_p
 
 	_brightness_slider = std::make_shared<SliderWithButtons>(L"brightness", -50, 50);
 	_brightness_slider->setValue(0);
-	_brightness_slider->_slider->_onEditFunction = [this]() {setTheFilter(); };
+	_brightness_slider->_slider->_onEditFunction = [this]() {setTheFilter();};
 
 	_contrast_slider = std::make_shared<SliderWithButtons>(L"contrast", -50, 50, L"%");
 	_contrast_slider->setValue(0);
@@ -129,6 +129,7 @@ void Dialog_Brightness_Contrast::setTheFilter() {
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
+		getCurrentAnimation()->getCurrentLayer()->generateTexture();
 	}
 
 }

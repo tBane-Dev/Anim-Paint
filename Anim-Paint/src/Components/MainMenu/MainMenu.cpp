@@ -301,6 +301,7 @@ MainMenu::MainMenu() : Element() {
 
 	select_language = std::make_shared<OptionWithCheckbox>(L"select language", getTexture(L"tex\\main_menu\\language\\ENG.png"), getTexture(L"tex\\main_menu\\language\\ENG_hover.png"));
 	select_language->addValue(getTexture(L"tex\\main_menu\\language\\PL.png"), getTexture(L"tex\\main_menu\\language\\PL_hover.png"));
+	select_language->_checkbox->setValue((int)translation->_currentLanguage);
 	select_language->_checkbox->_onclick_func = [this]() {
 		if (select_language->_checkbox->_value == 0) translation->_currentLanguage = Language::ENG;
 		if (select_language->_checkbox->_value == 1) translation->_currentLanguage = Language::PL;

@@ -12,7 +12,7 @@
 
 FramesPanel::FramesPanel() 
 	: Dialog(
-		L"Frames", 
+		translation->get(TranslationKey::FRAMES_PANEL_TITLE),
 		sf::Vector2i(192, dialog_title_rect_height + 32 + 32 + dialog_padding * 2),
 		sf::Vector2i(int(mainView.getSize().x) - 192 - dialog_margin, animations_panel->getPosition().y + animations_panel->getSize().y)
 	) {

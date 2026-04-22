@@ -11,6 +11,7 @@
 #include "Tools/Selection.hpp" // TO-DO - for the test using paste Image With Alpha
 #include "Components/MainMenu/MainMenu.hpp"
 #include "Dialogs/Palette.hpp"
+#include "Tools/ClipBoard.hpp"
 
 std::string replace_black_shader_source = R"(
     uniform sampler2D texture;
@@ -194,6 +195,112 @@ void ResizableTool::reset() {
 	generateEdgePoints();
 	generatePreviewImage();
 }
+void ResizableTool::cut()
+{
+	if (_state != ResizableToolState::Selected)
+		return;
+
+	if (_image == nullptr)
+		return;
+
+	sf::Image& canvas = getCurrentAnimation()->getCurrentLayer()->_image;
+	sf::Color alphaColor = (toolbar->_option_transparency->_checkbox->_value == 0)? sf::Color::Transparent : toolbar->_second_color->_color;
+
+	sf::IntRect r = _rect;
+	if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
+	if (r.size.y < 0) { r.position.y += r.size.y; r.size.y = -r.size.y; }
+
+	sf::IntRect canvasRect(sf::Vector2i(0, 0), sf::Vector2i(canvas.getSize()));
+	auto intersection = r.findIntersection(canvasRect);
+	if (!intersection.has_value())
+		return;
+
+	sf::IntRect s = intersection.value();
+	if (s.size.x <= 0 || s.size.y <= 0)
+		return;
+
+	sf::Texture tex(*_image);
+	sf::Sprite spr(tex);
+	sf::RenderTexture rtex;
+	rtex.resize(_image->getSize());
+	rtex.clear(sf::Color::Transparent);
+	_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
+	rtex.draw(spr, &_shader);
+	rtex.display();
+	sf::Image coloredImage = rtex.getTexture().copyToImage();
+
+	pasteImageWithMask(canvas, coloredImage, r.position.x, r.position.y, *_image, alphaColor);
+	copyImageWithAlpha(coloredImage, canvas, r, alphaColor);
+
+	sf::Image copiedImage;
+	copiedImage.resize(sf::Vector2u(s.size), sf::Color::Transparent);
+
+	for (int y = 0; y < s.size.y; ++y) {
+		for (int x = 0; x < s.size.x; ++x) {
+			copiedImage.setPixel(sf::Vector2u(x, y), canvas.getPixel(sf::Vector2u(s.position.x + x, s.position.y + y)));
+		}
+	}
+
+	copyImageToClipboard(copiedImage, sf::IntRect(sf::Vector2i(0, 0), s.size));
+
+	sf::Image mask;
+	mask.resize(sf::Vector2u(_image->getSize()), sf::Color::Black);
+	removeImageWithMask(canvas, _rect, mask, sf::Color::Transparent);
+	getCurrentAnimation()->getCurrentLayer()->generateTexture();
+
+	_image = nullptr;
+	_previewImage = nullptr;
+	_state = ResizableToolState::None;
+	_rect = sf::IntRect(sf::Vector2i(-1, -1), sf::Vector2i(-1, -1));
+
+	history->saveStep();
+}
+
+void ResizableTool::copy()
+{
+	if (_state != ResizableToolState::Selected)
+		return;
+
+	sf::Image& canvas = getCurrentAnimation()->getCurrentLayer()->_image;
+	sf::Color alphaColor = (toolbar->_option_transparency->_checkbox->_value == 0)? sf::Color::Transparent : toolbar->_second_color->_color;
+
+	sf::IntRect r = _rect;
+	if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
+	if (r.size.y < 0) { r.position.y += r.size.y; r.size.y = -r.size.y; }
+
+	sf::IntRect canvasRect(sf::Vector2i(0, 0), sf::Vector2i(canvas.getSize()));
+	auto intersection = r.findIntersection(canvasRect);
+	if (!intersection.has_value())
+		return;
+
+	sf::IntRect s = intersection.value();
+	if (s.size.x <= 0 || s.size.y <= 0)
+		return;
+
+	sf::Texture tex(*_image);
+	sf::Sprite spr(tex);
+	sf::RenderTexture rtex;
+	rtex.resize(_image->getSize());
+	rtex.clear(sf::Color::Transparent);
+	_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
+	rtex.draw(spr, &_shader);
+	rtex.display();
+	sf::Image coloredImage = rtex.getTexture().copyToImage();
+
+	pasteImageWithMask(canvas, coloredImage, r.position.x, r.position.y, *_image, alphaColor);
+	copyImageWithAlpha(coloredImage, canvas, r, alphaColor);
+
+	sf::Image copiedImage;
+	copiedImage.resize(sf::Vector2u(s.size), sf::Color::Transparent);
+
+	for (int y = 0; y < s.size.y; ++y) {
+		for (int x = 0; x < s.size.x; ++x) {
+			copiedImage.setPixel(sf::Vector2u(x, y), canvas.getPixel(sf::Vector2u(s.position.x + x, s.position.y + y)));
+		}
+	}
+
+	copyImageToClipboard(copiedImage, sf::IntRect(sf::Vector2i(0, 0), s.size));
+}
 
 void ResizableTool::generateRect() {
 
@@ -271,7 +378,7 @@ void ResizableTool::generatePreviewImage() {
 				globalPos.x = (globalPos.x % Canvas::_size.x + Canvas::_size.x) % Canvas::_size.x;
 				globalPos.y = (globalPos.y % Canvas::_size.y + Canvas::_size.y) % Canvas::_size.y;
 
-				if (_image->getPixel(sf::Vector2u(x, y)).a != 0)
+				if (_image->getPixel(sf::Vector2u(x, y))!= sf::Color::Transparent)
 					_previewImage->setPixel(sf::Vector2u(globalPos.x, globalPos.y), _image->getPixel(sf::Vector2u(x, y)));
 			}
 		}
@@ -634,6 +741,7 @@ void ResizableTool::pasteToCanvas() {
 
 	pasteImageWithNewColorAndAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_previewImage, 0, 0, toolbar->_first_color->_color, sf::Color::Transparent);
 	getCurrentAnimation()->getCurrentLayer()->generateTexture();
+	history->saveStep();
 }
 
 void ResizableTool::drawRect() {
@@ -857,7 +965,6 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 					if (_image != nullptr) {
 						pasteToCanvas();
 						_image = nullptr;
-						history->saveStep();
 					}
 
 					_state = ResizableToolState::Selecting;
@@ -867,16 +974,17 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 					_points.clear();
 					_points.push_back(tile);
 					generateRect();
+					generatePreviewImage();
 					setPosition(tile);
 				}
 				else {
 					if (_image != nullptr) {
 						pasteToCanvas();
 						_image = nullptr;
-						history->saveStep();
 						_state = ResizableToolState::None;
 						_points.clear();
 						generateRect();
+						generatePreviewImage();
 						setPosition(tile);
 					}
 				}

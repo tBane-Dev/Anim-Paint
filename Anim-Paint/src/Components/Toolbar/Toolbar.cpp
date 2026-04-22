@@ -54,7 +54,7 @@ Toolbar::Toolbar() : Element() {
 				_option_transparency->_checkbox->_value = 0;
 				_toolType = ToolType::Selector;
 				resizable_tool = selection;
-				selection->_state = ResizableToolState::Selected;
+				resizable_tool->_state = ResizableToolState::Selected;
 				selectToolButton(_btn_select);
 				confirm->_state = DialogState::ToClose;
 				};
@@ -62,14 +62,15 @@ Toolbar::Toolbar() : Element() {
 			return;
 		}
 
-		if (resizable_tool != nullptr)
+		if (resizable_tool != nullptr) {
 			resizable_tool->pasteToCanvas();
-		
+		}
+			
 		if (selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *img)) {
 			_option_transparency->_checkbox->_value = 0;
 			_toolType = ToolType::Selector;
 			resizable_tool = selection;
-			selection->_state = ResizableToolState::Selected;
+			resizable_tool->_state = ResizableToolState::Selected;
 			selectToolButton(_btn_select);
 		}
 		};
@@ -99,7 +100,7 @@ Toolbar::Toolbar() : Element() {
 				_option_transparency->_checkbox->_value = 0;
 				_toolType = ToolType::Selector;
 				resizable_tool = selection;
-				selection->_state = ResizableToolState::Selected;
+				resizable_tool->_state = ResizableToolState::Selected;
 				selectToolButton(_btn_select);
 				confirm->_state = DialogState::ToClose;
 				};
@@ -114,7 +115,7 @@ Toolbar::Toolbar() : Element() {
 			_option_transparency->_checkbox->_value = 0;
 			_toolType = ToolType::Selector;
 			resizable_tool = selection;
-			selection->_state = ResizableToolState::Selected;
+			resizable_tool->_state = ResizableToolState::Selected;
 			selectToolButton(_btn_select);
 		}
 		};
@@ -146,9 +147,8 @@ Toolbar::Toolbar() : Element() {
 	_btn_cut->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_cut->_onclick_func = [this]() {
-		//selection->cut(&animation->getCurrentLayer()->image, selection->img, second_color->color);
-		if (selection->_state == ResizableToolState::Selected) {
-			selection->cut(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent);
+		if (resizable_tool && resizable_tool->_state == ResizableToolState::Selected) {
+			resizable_tool->cut();
 		}
 		};
 	_btn_cut->setTooltip(translation->get(TranslationKey::TOOLBAR_CLIPBOARD_CUT_NAME), translation->get(TranslationKey::TOOLBAR_CLIPBOARD_CUT_DESCRIPTION));
@@ -157,9 +157,8 @@ Toolbar::Toolbar() : Element() {
 	_btn_copy->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_copy->_onclick_func = [this]() {
-		if (selection->_state == ResizableToolState::Selected) {
-			selection->copy(getCurrentAnimation()->getCurrentLayer()->_image, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent : _second_color->_color);
-			removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_resizedRect, *selection->_resizedMaskImage, sf::Color::Transparent);
+		if (resizable_tool && resizable_tool->_state == ResizableToolState::Selected) {
+			resizable_tool->copy();
 		}
 		};
 	_btn_copy->setTooltip(translation->get(TranslationKey::TOOLBAR_CLIPBOARD_COPY_NAME), translation->get(TranslationKey::TOOLBAR_CLIPBOARD_COPY_DESCRIPTION));

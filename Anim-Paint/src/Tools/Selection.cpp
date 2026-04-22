@@ -26,7 +26,7 @@ std::string mask_shader_source = R"(
     void main() {
         vec2 uv = gl_TexCoord[0].xy;
 		
-		if(texture2D(mask, uv) == vec4(1.0, 1.0, 1.0, 1.0)) {
+		if(texture2D(mask, uv) == vec4(0.0, 0.0, 0.0, 1.0)) {
 			vec4 c = texture2D(texture, uv);
 
 			if(c == alphaColor)
@@ -87,7 +87,7 @@ void removeImageWithMask(sf::Image& image, sf::IntRect rect, sf::Image& mask, sf
 	for (int y = 0; y < rect.size.y; ++y) {
 		for (int x = 0; x < rect.size.x; ++x) {
 
-			if (mask.getPixel(sf::Vector2u(x, y)) != sf::Color::White)
+			if (mask.getPixel(sf::Vector2u(x, y)) != sf::Color::Black)
 				continue;
 
 			int px = rect.position.x + x;
@@ -216,7 +216,7 @@ void copyImageWithMask(sf::Image* dst, sf::Image* src, int dstX, int dstY, int s
 			int mx = mx0 + x;
 
 			const sf::Color m = mask.getPixel(sf::Vector2u(mx, my));
-			if (m != sf::Color::White) continue; // tylko białe = kopiuj
+			if (m != sf::Color::Black) continue; // tylko czarne = kopiuj
 
 			const sf::Color c = src->getPixel(sf::Vector2u(sx, sy));
 			if (c.a == 0 || c == alphaColor) continue;
@@ -247,15 +247,13 @@ void pasteImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::
 
 	clip = place.findIntersection(canvas).value();
 
-	sf::Image m = sf::Image(sf::Vector2u(src.getSize()), sf::Color::White);
-
 	for (int y = clip.position.y; y < clip.position.y + clip.size.y; ++y) {
 		for (int x = clip.position.x; x < clip.position.x + clip.size.x; ++x) {
 
 			int sx = x - dstX;
 			int sy = y - dstY;
 
-			if (m.getPixel(sf::Vector2u(sx, sy)) != sf::Color::White)
+			if (mask.getPixel(sf::Vector2u(sx, sy)) != sf::Color::Black)
 				continue;
 
 			sf::Color c = src.getPixel(sf::Vector2u(sx, sy));
@@ -362,66 +360,7 @@ bool Selection::clickOnSelection(sf::Vector2i point) {
 	return _resizedRect.contains(point);
 }
 
-void Selection::copy(sf::Image& canvas, sf::Color alphaColor)
-{
 
-	if (_state != ResizableToolState::Selected)
-		return;
-
-
-	sf::IntRect r = _resizedRect;
-	if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
-	if (r.size.y < 0) { r.position.y += r.size.y; r.size.y = -r.size.y; }
-
-	pasteImageWithMask(canvas, *_resizedImage, r.position.x, r.position.y, *_resizedMaskImage, alphaColor);
-	copyImageWithAlpha(*_resizedImage, canvas, r, alphaColor);
-
-	sf::IntRect canvasRect(sf::Vector2i(0, 0), sf::Vector2i(canvas.getSize()));
-
-	if (!r.findIntersection(canvasRect).has_value())
-		return;
-
-	sf::IntRect s = r.findIntersection(canvasRect).value();
-
-	if (s.size.x <= 0 || s.size.y <= 0)
-		return;
-
-	generateMask();
-
-	sf::Image copiedImage = sf::Image();
-	copiedImage.resize(sf::Vector2u(s.size), sf::Color::Transparent);
-
-	for (int y = 0; y < s.size.y; ++y)
-		for (int x = 0; x < s.size.x; ++x) {
-
-			int ox = s.position.x - r.position.x;
-			int oy = s.position.y - r.position.y;
-
-			int sx = x + ox;
-			int sy = y + oy;
-
-			int xx = sx * _rect.size.x / r.size.x;
-			int yy = sy * _rect.size.y / r.size.y;
-
-			if (xx < 0) xx = 0;
-			if (yy < 0) yy = 0;
-			if (xx >= _rect.size.x) xx = _rect.size.x - 1;
-			if (yy >= _rect.size.y) yy = _rect.size.y - 1;
-
-			if (_maskImage->getPixel(sf::Vector2u(xx, yy)) != sf::Color::White)
-				copiedImage.setPixel(sf::Vector2u(x, y), sf::Color::Transparent);
-			else
-			{
-				if (_image->getPixel(sf::Vector2u(xx, yy)) == alphaColor)
-					copiedImage.setPixel(sf::Vector2u(x, y), sf::Color::Transparent);
-				else
-					copiedImage.setPixel(sf::Vector2u(x, y), _image->getPixel(sf::Vector2u(xx, yy)));
-			}
-		}
-
-	copyImageToClipboard(copiedImage, sf::IntRect(sf::Vector2i(0, 0), s.size));
-
-}
 
 void Selection::pasteToCanvas() {
 
@@ -439,7 +378,7 @@ void Selection::pasteToCanvas() {
 
 	copyImageWithMask(&getCurrentAnimation()->getCurrentLayer()->_image, _resizedImage.get(), _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
 	getCurrentAnimation()->getCurrentLayer()->generateTexture();
-
+	history->saveStep();
 }
 
 void Selection::paste(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Image& mask, sf::Color alphaColor)
@@ -464,7 +403,7 @@ void Selection::paste(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Im
 	clip = place.findIntersection(canvas).value();
 
 
-	sf::Image m = sf::Image(sf::Vector2u(src.getSize()), sf::Color::White);
+	sf::Image m = sf::Image(sf::Vector2u(src.getSize()), sf::Color::Black);
 
 
 	for (int y = clip.position.y; y < clip.position.y + clip.size.y; ++y) {
@@ -473,7 +412,7 @@ void Selection::paste(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Im
 			int sx = x - dstX;
 			int sy = y - dstY;
 
-			if (m.getPixel(sf::Vector2u(sx, sy)) != sf::Color::White)
+			if (m.getPixel(sf::Vector2u(sx, sy)) != sf::Color::Black)
 				continue;
 
 
@@ -516,32 +455,98 @@ bool Selection::paste(sf::Image& canvas, sf::Color emptyColor, sf::Image image)
 	return true;
 }
 
-void Selection::cut(sf::Image& canvas, sf::Color emptyColor) {
-	if (_state == ResizableToolState::Selected) {
+void Selection::cut() {
 
-		if (_image == nullptr) {
-			_image = std::make_shared<sf::Image>();
-			_image->resize(sf::Vector2u(_rect.size), sf::Color::Transparent);
+	if (_state != ResizableToolState::Selected)
+		return;
 
-			if (!_image->copy(canvas, sf::Vector2u(0, 0), _rect, false)) {
-				DebugError(L"Lasso::cut: Failed to copy image from canvas.");
-				exit(0);
-			}
+	sf::Image canvas = getCurrentAnimation()->getCurrentLayer()->_image;
 
-			copyImageToClipboard(*_image, sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(_image->getSize())));
-		}
-		else {
-			copyImageToClipboard(*_image, sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(_image->getSize())));
-			//copyImageToClipboard(image, sf::IntRect(0, 0, image->getSize().x, image->getSize().y), mask);
+	if (_image == nullptr) {
+		_image = std::make_shared<sf::Image>();
+		_image->resize(sf::Vector2u(_rect.size), sf::Color::Transparent);
+
+		if (!_image->copy(canvas, sf::Vector2u(0, 0), _rect, false)) {
+			DebugError(L"Lasso::cut: Failed to copy image from canvas.");
+			exit(0);
 		}
 
-		_image = nullptr;
-		_state = ResizableToolState::None;
-		_rect = sf::IntRect(sf::Vector2i(-1, -1), sf::Vector2i(-1, -1));
-		_resizedRect = _rect;
+		copyImageToClipboard(*_image, sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(_image->getSize())));
 	}
+	else {
+		copyImageToClipboard(*_image, sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(_image->getSize())));
+	}
+
+	_image = nullptr;
+	_state = ResizableToolState::None;
+	_rect = sf::IntRect(sf::Vector2i(-1, -1), sf::Vector2i(-1, -1));
+	_resizedRect = _rect;
+	
+	history->saveStep();
+
 }
 
+void Selection::copy()
+{
+	if (_state != ResizableToolState::Selected)
+		return;
+
+	sf::Image& canvas = getCurrentAnimation()->getCurrentLayer()->_image;
+	sf::Color alphaColor = (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color;
+
+	sf::IntRect r = _resizedRect;
+	if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
+	if (r.size.y < 0) { r.position.y += r.size.y; r.size.y = -r.size.y; }
+
+	pasteImageWithMask(canvas, *_resizedImage, r.position.x, r.position.y, *_resizedMaskImage, alphaColor);
+	copyImageWithAlpha(*_resizedImage, canvas, r, alphaColor);
+
+	sf::IntRect canvasRect(sf::Vector2i(0, 0), sf::Vector2i(canvas.getSize()));
+
+	if (!r.findIntersection(canvasRect).has_value())
+		return;
+
+	sf::IntRect s = r.findIntersection(canvasRect).value();
+
+	if (s.size.x <= 0 || s.size.y <= 0)
+		return;
+
+	generateMask();
+
+	sf::Image copiedImage = sf::Image();
+	copiedImage.resize(sf::Vector2u(s.size), sf::Color::Transparent);
+
+	for (int y = 0; y < s.size.y; ++y)
+		for (int x = 0; x < s.size.x; ++x) {
+
+			int ox = s.position.x - r.position.x;
+			int oy = s.position.y - r.position.y;
+
+			int sx = x + ox;
+			int sy = y + oy;
+
+			int xx = sx * _rect.size.x / r.size.x;
+			int yy = sy * _rect.size.y / r.size.y;
+
+			if (xx < 0) xx = 0;
+			if (yy < 0) yy = 0;
+			if (xx >= _rect.size.x) xx = _rect.size.x - 1;
+			if (yy >= _rect.size.y) yy = _rect.size.y - 1;
+
+			if (_maskImage->getPixel(sf::Vector2u(xx, yy)) != sf::Color::Black)
+				copiedImage.setPixel(sf::Vector2u(x, y), sf::Color::Transparent);
+			else
+			{
+				if (_image->getPixel(sf::Vector2u(xx, yy)) == alphaColor)
+					copiedImage.setPixel(sf::Vector2u(x, y), sf::Color::Transparent);
+				else
+					copiedImage.setPixel(sf::Vector2u(x, y), _image->getPixel(sf::Vector2u(xx, yy)));
+			}
+		}
+
+	copyImageToClipboard(copiedImage, sf::IntRect(sf::Vector2i(0, 0), s.size));
+
+}
 
 
 void Selection::generateMask()
@@ -558,7 +563,7 @@ void Selection::generateMask()
 			int ly = (_rect.position.y + y) - _outlineOffset.y;
 
 			if (isPointInPolygon(sf::Vector2i(lx, ly), _points)) {
-				_maskImage->setPixel(sf::Vector2u(x, y), sf::Color::White);
+				_maskImage->setPixel(sf::Vector2u(x, y), sf::Color::Black);
 			}
 		}
 	}
@@ -578,7 +583,7 @@ void Selection::generateResizedMask() {
 			int ly = (_rect.position.y + (y * _rect.size.y) / _resizedRect.size.y) - _outlineOffset.y;
 
 			if (isPointInPolygon(sf::Vector2i(lx, ly), _points)) {
-				_resizedMaskImage->setPixel(sf::Vector2u(x, y), sf::Color::White);
+				_resizedMaskImage->setPixel(sf::Vector2u(x, y), sf::Color::Black);
 			}
 		}
 	}
@@ -723,7 +728,7 @@ void Selection::drawImage(bool useMask) {
 	}
 	else {
 		maskImage = std::make_shared<sf::Image>();
-		maskImage->resize(sf::Vector2u(_rect.size), sf::Color::White);
+		maskImage->resize(sf::Vector2u(_rect.size), sf::Color::Black);
 	}
 
 	sf::Texture maskTexture;
@@ -798,7 +803,7 @@ void Selection::drawResizedImage(bool useMask) {
 	}
 	else {
 		maskImage = std::make_shared<sf::Image>();
-		maskImage->resize(sf::Vector2u(_resizedRect.size), sf::Color::White);
+		maskImage->resize(sf::Vector2u(_resizedRect.size), sf::Color::Black);
 	}
 
 	sf::Texture maskTexture;

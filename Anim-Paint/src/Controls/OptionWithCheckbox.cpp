@@ -34,15 +34,15 @@ void OptionWithCheckbox::click() {
 
 void OptionWithCheckbox::cursorHover() {
 	Option::cursorHover();
-	_checkbox->cursorHover();
+	
 }
 
 void OptionWithCheckbox::handleEvent(const sf::Event& event) {
 	Option::handleEvent(event);
-	_checkbox->handleEvent(event);
 }
 
 void OptionWithCheckbox::update() {
+	
 	Option::update();
 	_checkbox->update();
 }

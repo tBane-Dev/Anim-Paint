@@ -287,9 +287,9 @@ MainMenu::MainMenu() : Element() {
 		};
 	_menu_boxes.push_back(windows);
 
-	canvas_repeating = std::make_shared<OptionWithCheckbox>(translation->get(TranslationKey::MENU_WINDOWS_CANVAS_REPEATING), getTexture(L"tex\\main_menu\\canvas_single.png"), getTexture(L"tex\\main_menu\\canvas_single_hover.png"));
-	canvas_repeating->addValue(getTexture(L"tex\\main_menu\\canvas_cross.png"), getTexture(L"tex\\main_menu\\canvas_cross_hover.png"));
-	canvas_repeating->addValue(getTexture(L"tex\\main_menu\\canvas_multi.png"), getTexture(L"tex\\main_menu\\canvas_multi_hover.png"));
+	canvas_repeating = std::make_shared<OptionWithCheckbox>(translation->get(TranslationKey::MENU_WINDOWS_CANVAS_REPEATING), getTexture(L"tex\\main_menu\\canvas_single.png"), getTexture(L"tex\\main_menu\\canvas_single.png"));
+	canvas_repeating->addValue(getTexture(L"tex\\main_menu\\canvas_cross.png"), getTexture(L"tex\\main_menu\\canvas_cross.png"));
+	canvas_repeating->addValue(getTexture(L"tex\\main_menu\\canvas_multi.png"), getTexture(L"tex\\main_menu\\canvas_multi.png"));
 	canvas_repeating->_checkbox->_onclick_func = [this]() {
 		if (resizable_tool != nullptr) {
 			sf::Vector2i clampedPos = resizable_tool->getClampedTilePosition(resizable_tool->_rect.position);
@@ -299,8 +299,8 @@ MainMenu::MainMenu() : Element() {
 		}
 		};
 
-	select_language = std::make_shared<OptionWithCheckbox>(L"select language", getTexture(L"tex\\main_menu\\language\\ENG.png"), getTexture(L"tex\\main_menu\\language\\ENG_hover.png"));
-	select_language->addValue(getTexture(L"tex\\main_menu\\language\\PL.png"), getTexture(L"tex\\main_menu\\language\\PL_hover.png"));
+	select_language = std::make_shared<OptionWithCheckbox>(L"select language", getTexture(L"tex\\main_menu\\language\\ENG.png"), getTexture(L"tex\\main_menu\\language\\ENG.png"));
+	select_language->addValue(getTexture(L"tex\\main_menu\\language\\PL.png"), getTexture(L"tex\\main_menu\\language\\PL.png"));
 	select_language->_checkbox->setValue((int)translation->_currentLanguage);
 	select_language->_checkbox->_onclick_func = [this]() {
 		if (select_language->_checkbox->_value == 0) translation->_currentLanguage = Language::ENG;

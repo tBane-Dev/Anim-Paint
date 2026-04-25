@@ -378,8 +378,7 @@ void Selection::pasteToCanvas() {
 
 	copyImageWithMask(&getCurrentAnimation()->getCurrentLayer()->_image, _resizedImage.get(), _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
 	getCurrentAnimation()->getCurrentLayer()->generateTexture();
-	history->saveStep();
-}
+ }
 
 void Selection::paste(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Image& mask, sf::Color alphaColor)
 {

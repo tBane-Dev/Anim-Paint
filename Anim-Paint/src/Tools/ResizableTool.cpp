@@ -736,12 +736,11 @@ void ResizableTool::pasteToCanvas() {
 	if(_state == ResizableToolState::None)
 		return;
 
-	if (_previewImage == nullptr)
+	if (_previewImage == nullptr)  
 		return;
 
 	pasteImageWithNewColorAndAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_previewImage, 0, 0, toolbar->_first_color->_color, sf::Color::Transparent);
 	getCurrentAnimation()->getCurrentLayer()->generateTexture();
-	history->saveStep();
 }
 
 void ResizableTool::drawRect() {

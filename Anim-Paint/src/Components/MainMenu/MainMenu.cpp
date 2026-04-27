@@ -259,8 +259,8 @@ MainMenu::MainMenu() : Element() {
 
 	select_none = std::make_shared<Option>(translation->get(TranslationKey::MENU_SELECT_SELECT_NONE), L"Ctrl+D");
 	select_none->_onclick_func = [this]() {
-		if (selection->_state != ResizableToolState::None) {
-			selection->reset();
+		if (resizable_tool->_state != ResizableToolState::None) {
+			resizable_tool->reset();
 		}
 		closeMenu();
 		};

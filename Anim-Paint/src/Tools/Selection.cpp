@@ -300,8 +300,11 @@ Selection::~Selection() {
 }
 
 void Selection::reset() {
+	if (_state != ResizableToolState::None && _resizedImage != nullptr) {
+		pasteToCanvas();
+	}
+		
 
-	paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *_resizedImage);
 	_points.clear();
 	_outlineOffset = sf::Vector2i(0, 0);
 	generateRect();
@@ -319,6 +322,8 @@ void Selection::selectAll() {
 		copyImageWithMask(&getCurrentAnimation()->getCurrentLayer()->_image, _resizedImage.get(), _rect.position.x, _rect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
 	}
 
+	_state = ResizableToolState::Selected;
+
 	_points.clear();
 	_outlineOffset = sf::Vector2i(0, 0);
 
@@ -335,19 +340,19 @@ void Selection::selectAll() {
 
 	_image = std::make_shared<sf::Image>();
 	_image->resize(sf::Vector2u(_rect.size), sf::Color::Transparent);
+	_image->copy(anim->getCurrentLayer()->_image, sf::Vector2u(0, 0), _rect, false);
 
 	generateMask();
 
 	_resizedRect = _rect;
-	_resizedImage = _image;
-	_resizedMaskImage = _maskImage;
+	_resizedImage = std::make_shared<sf::Image>(*_image);
+	_resizedMaskImage = std::make_shared<sf::Image>(*_maskImage);
 
 	generateEdgePoints();
 
-	copyImageWithMask(&*_image, &anim->getCurrentLayer()->_image, 0, 0, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
 	removeImageWithMask(anim->getCurrentLayer()->_image, _resizedRect, *_resizedMaskImage, sf::Color::Transparent);
-
-	_state = ResizableToolState::Selected;
+	anim->getCurrentLayer()->generateTexture();
+	
 }
 
 
@@ -451,6 +456,7 @@ bool Selection::paste(sf::Image& canvas, sf::Color emptyColor, sf::Image image)
 	generateMask();
 	generateResizedMask();
 	_resizedImage = _image;
+
 	return true;
 }
 
@@ -550,9 +556,11 @@ void Selection::copy()
 
 void Selection::generateMask()
 {
-	if (_rect.size.x <= 1 || _rect.size.y <= 1) return;
 
 	_maskImage = std::make_shared<sf::Image>();
+
+	if (_rect.size.x <= 1 || _rect.size.y <= 1) return;
+
 	_maskImage->resize(sf::Vector2u(_rect.size), sf::Color::Transparent);
 
 	for (int y = 0; y < _rect.size.y; ++y) {

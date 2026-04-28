@@ -268,6 +268,29 @@ Toolbar::Toolbar() : Element() {
 	_separators.push_back(std::make_shared<Separator>());
 
 	// shapes 
+	
+	_btn_line = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\toolbar\\resizable_tools\\line.png"), getTexture(L"tex\\toolbar\\resizable_tools\\line_hover.png"), getTexture(L"tex\\toolbar\\resizable_tools\\line_press.png"));
+	_btn_line->_onclick_func = [this]() {
+		if (_toolType != ToolType::Circle) {
+			if (resizable_tool != nullptr)
+				resizable_tool->pasteToCanvas();
+			_toolType = ToolType::Line;
+			//resizable_tool = std::make_shared<Line>();
+		}
+		selectToolButton(_btn_line);
+		};
+
+	_btn_curve = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\toolbar\\resizable_tools\\line.png"), getTexture(L"tex\\toolbar\\resizable_tools\\line_hover.png"), getTexture(L"tex\\toolbar\\resizable_tools\\line_press.png"));
+	_btn_curve->_onclick_func = [this]() {
+		if (_toolType != ToolType::Circle) {
+			if (resizable_tool != nullptr)
+				resizable_tool->pasteToCanvas();
+			_toolType = ToolType::Curve;
+			//resizable_tool = std::make_shared<Line>();
+		}
+		selectToolButton(_btn_curve);
+		};
+
 	_btn_circle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\toolbar\\resizable_tools\\circle.png"), getTexture(L"tex\\toolbar\\resizable_tools\\circle_hover.png"), getTexture(L"tex\\toolbar\\resizable_tools\\circle_press.png"));
 	_btn_circle->_onclick_func = [this]() { 
 		if (_toolType != ToolType::Circle) {
@@ -357,6 +380,8 @@ Toolbar::Toolbar() : Element() {
 		};
 	
 	_shapes.clear();
+	_shapes.push_back(_btn_line);
+	_shapes.push_back(_btn_curve);
 	_shapes.push_back(_btn_circle);
 	_shapes.push_back(_btn_triangle);
 	_shapes.push_back(_btn_rectangle);
@@ -366,6 +391,8 @@ Toolbar::Toolbar() : Element() {
 	_shapes.push_back(_btn_hexagon_point_top);
 	_shapes.push_back(_btn_octagon);
 
+	_btn_line->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_LINE_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_LINE_DESCRIPTION));
+	_btn_curve->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_CURVE_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_CURVE_DESCRIPTION));
 	_btn_circle->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_CIRCLE_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_CIRCLE_DESCRIPTION));
 	_btn_triangle->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_TRIANGLE_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_TRIANGLE_DESCRIPTION));
 	_btn_rectangle->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_RECTANGLE_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_RECTANGLE_DESCRIPTION));
@@ -691,6 +718,8 @@ void Toolbar::reloadTranslations() {
 	// shapes
 	_shapes_text->setString(translation->get(TranslationKey::TOOLBAR_BOTTOM_TEXT_SHAPES));
 	_btn_circle->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_CIRCLE_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_CIRCLE_DESCRIPTION));
+	_btn_line->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_LINE_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_LINE_DESCRIPTION));
+	_btn_curve->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_CURVE_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_CURVE_DESCRIPTION));
 	_btn_triangle->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_TRIANGLE_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_TRIANGLE_DESCRIPTION));
 	_btn_rectangle->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_RECTANGLE_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_RECTANGLE_DESCRIPTION));
 	_btn_diamond->setTooltip(translation->get(TranslationKey::TOOLBAR_TOOLS_DIAMOND_NAME), translation->get(TranslationKey::TOOLBAR_TOOLS_DIAMOND_DESCRIPTION));

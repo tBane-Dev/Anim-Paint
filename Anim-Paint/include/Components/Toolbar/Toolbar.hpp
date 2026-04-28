@@ -10,7 +10,7 @@
 #include "Components/Toolbar/PaletteButton.hpp"
 
 
-enum class ToolType { Brush, Eraser, Selector, Lasso, Fill, Picker, Circle, Triangle, Rectangle, Diamond, Pentagon, HexagonFlatTop, HexagonPointTop, Octagon };
+enum class ToolType { Brush, Eraser, Selector, Lasso, Fill, Picker, Line, Curve, Circle, Triangle, Rectangle, Diamond, Pentagon, HexagonFlatTop, HexagonPointTop, Octagon };
 
 class Toolbar : public Element {
 public:
@@ -40,6 +40,8 @@ public:
 
 	std::vector<std::shared_ptr<ButtonWithSprite>> _shapes;
 	std::unique_ptr<sf::Text> _shapes_text;
+	std::shared_ptr<ButtonWithSprite> _btn_line;
+	std::shared_ptr<ButtonWithSprite> _btn_curve;
 	std::shared_ptr<ButtonWithSprite> _btn_circle;
 	std::shared_ptr<ButtonWithSprite> _btn_triangle;
 	std::shared_ptr<ButtonWithSprite> _btn_rectangle;

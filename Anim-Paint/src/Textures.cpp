@@ -213,6 +213,10 @@ void loadTextures() {
 	texturePaths.push_back(L"tex\\toolbar\\btn_palette_colors.png");
 	texturePaths.push_back(L"tex\\toolbar\\btn_palette_colors_hover.png");
 
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\line.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\line_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\line_press.png");
+
 	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\circle.png");
 	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\circle_hover.png");
 	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\circle_press.png");

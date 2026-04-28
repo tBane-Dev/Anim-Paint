@@ -336,6 +336,15 @@ void Translation::loadPhrases() {
 	_phrases.back().set(Language::PL, L"Wypełnij obszar płótna głównym kolorem poprzez LPM lub kolorem pomocniczym poprzez PPM");
 
 	// TOOLBAR SHAPES NAMES ///////////////////////////////////////////////////////////////////////////
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_LINE_NAME);
+	_phrases.back().set(Language::ENG, L"Line Shape Tool");
+	_phrases.back().set(Language::PL, L"Linia");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_CURVE_NAME);
+	_phrases.back().set(Language::ENG, L"Curve Shape Tool");
+	_phrases.back().set(Language::PL, L"Krzywa");
+
 	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_CIRCLE_NAME);
 	_phrases.back().set(Language::ENG, L"Circle Shape Tool");
 	_phrases.back().set(Language::PL, L"Koło");
@@ -369,6 +378,14 @@ void Translation::loadPhrases() {
 	_phrases.back().set(Language::PL, L"Ośmiokąt");
 
 	// TOOLBAR SHAPES DESCRIPTIONS ///////////////////////////////////////////////////////////////////////////
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_LINE_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Draw a line using the primary color");
+	_phrases.back().set(Language::PL, L"Rysuj linię używając koloru głównego");
+
+	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_CURVE_DESCRIPTION);
+	_phrases.back().set(Language::ENG, L"Draw a curve using the primary color");
+	_phrases.back().set(Language::PL, L"Rysuj krzywą używając koloru głównego");
 
 	_phrases.emplace_back(TranslationKey::TOOLBAR_TOOLS_CIRCLE_DESCRIPTION);
 	_phrases.back().set(Language::ENG, L"Draw a circle filled with the secondary color using the primary color");

@@ -636,4 +636,20 @@ void ResizableTool::pasteToCanvas() {
 	history->saveStep();
 }
 
+void ResizableTool::cursorHover() {
+
+}
+
+void ResizableTool::handleEvent(const sf::Event& event) {
+
+}
+
+void ResizableTool::update() {
+
+}
+
+void ResizableTool::draw() {
+
+}
+
 std::shared_ptr<ResizableTool> resizable_tool;

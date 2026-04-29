@@ -54,6 +54,11 @@ public:
 	virtual void cut();
 	virtual void copy();
 	virtual void pasteToCanvas();
+
+	virtual void cursorHover();
+	virtual void handleEvent(const sf::Event& event);
+	virtual void update();
+	virtual void draw();
 };
 
 extern std::shared_ptr<ResizableTool> resizable_tool;

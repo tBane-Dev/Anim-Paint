@@ -278,7 +278,7 @@ std::string sepia_shader_source = R"(
 )";
 
 std::string outline_shader_source = R"(
-   uniform sampler2D u_tex;
+    uniform sampler2D u_tex;
     uniform vec2 texelSize;
     uniform int outlineWidth;       // 0..8 px
     uniform vec4 backgroundColor;   // także alpha

@@ -72,10 +72,10 @@ void Cursor::handleEvent() {
 	if (_hoveredElement) {
 		std::string className = typeid(*_hoveredElement).name();		// get class name
 		std::wstring wClassName(className.begin(), className.end());	// convert to wide_string
-		std::wcout << wClassName + L"\n";
+		DebugLog(wClassName);
 	}
 	else {
-		//std::wcout << L"nullptr\n";
+		DebugLog(L"nullptr");
 	}
 	*/
 	

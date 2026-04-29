@@ -49,11 +49,18 @@ public:
 	sf::Vector2i getClampedTilePosition(sf::Vector2i newPos);
 	void setPosition(sf::Vector2i position);
 
-	void generatePreviewImage();
+	void generateRect();
+	virtual void generateImage();
+	virtual void generatePreviewImage();
 
 	virtual void cut();
 	virtual void copy();
 	virtual void pasteToCanvas();
+
+	void drawRect();
+	void drawImage();
+	void drawPreviewImage();
+	virtual void drawEdgePoints();
 
 	virtual void cursorHover();
 	virtual void handleEvent(const sf::Event& event);

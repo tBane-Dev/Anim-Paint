@@ -8,7 +8,7 @@
 #include "Components/MainMenu/MainMenu.hpp"
 #include "Cursor.hpp"
 #include "Tools/ResizableTool.hpp"
-#include "Tools/Selection.hpp"
+#include "Tools/Line.hpp"
 #include "Tools/Circle.hpp"
 #include "Tools/Triangle.hpp"
 #include "Tools/Rectangle.hpp"
@@ -271,18 +271,18 @@ Toolbar::Toolbar() : Element() {
 	
 	_btn_line = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\toolbar\\resizable_tools\\line.png"), getTexture(L"tex\\toolbar\\resizable_tools\\line_hover.png"), getTexture(L"tex\\toolbar\\resizable_tools\\line_press.png"));
 	_btn_line->_onclick_func = [this]() {
-		if (_toolType != ToolType::Circle) {
+		if (_toolType != ToolType::Line) {
 			if (resizable_tool != nullptr)
 				resizable_tool->pasteToCanvas();
 			_toolType = ToolType::Line;
-			//resizable_tool = std::make_shared<Line>();
+			resizable_tool = std::make_shared<Line>();
 		}
 		selectToolButton(_btn_line);
 		};
 
 	_btn_curve = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\toolbar\\resizable_tools\\line.png"), getTexture(L"tex\\toolbar\\resizable_tools\\line_hover.png"), getTexture(L"tex\\toolbar\\resizable_tools\\line_press.png"));
 	_btn_curve->_onclick_func = [this]() {
-		if (_toolType != ToolType::Circle) {
+		if (_toolType != ToolType::Curve) {
 			if (resizable_tool != nullptr)
 				resizable_tool->pasteToCanvas();
 			_toolType = ToolType::Curve;
@@ -417,7 +417,7 @@ Toolbar::Toolbar() : Element() {
 	_size_decrease->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color, 
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_size_decrease->_onclick_func = [this]() {
-		if (_toolType == ToolType::Brush || _toolType == ToolType::Eraser)
+		if (_toolType == ToolType::Brush || _toolType == ToolType::Eraser || _toolType == ToolType::Line || _toolType == ToolType::Curve)
 			brush->decrease();
 		};
 	_size_decrease->setTooltip(translation->get(TranslationKey::TOOLBAR_SIZES_DECREASE_NAME), translation->get(TranslationKey::TOOLBAR_SIZES_DECREASE_DESCRIPTION));
@@ -426,7 +426,7 @@ Toolbar::Toolbar() : Element() {
 	_size_increase->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color, 
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_size_increase->_onclick_func = [this]() {
-		if (_toolType == ToolType::Brush || _toolType == ToolType::Eraser)
+		if (_toolType == ToolType::Brush || _toolType == ToolType::Eraser || _toolType == ToolType::Line || _toolType == ToolType::Curve)
 			brush->increase();
 		};
 	_size_increase->setTooltip(translation->get(TranslationKey::TOOLBAR_SIZES_INCREASE_NAME), translation->get(TranslationKey::TOOLBAR_SIZES_INCREASE_DESCRIPTION));;

@@ -29,18 +29,11 @@ public:
 	virtual bool pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b);
 	virtual bool isPointInPolygon(sf::Vector2i p, std::vector<sf::Vector2i>& poly);
 	virtual void reset();
-	virtual void generateRect();
-	virtual void generateImage();
 	virtual void generateEdgePoints();
 	virtual void resizeRect();
 	bool clickOnSelection(sf::Vector2i point);
 	void scale(sf::IntRect newRect);
 	virtual void setPosition(sf::Vector2i position);
-
-	virtual void drawRect();
-	virtual void drawImage();
-	virtual void drawPreviewImage();
-	virtual void drawEdgePoints();
 
 	virtual void cursorHover();
 	virtual void handleEvent(const sf::Event& event);

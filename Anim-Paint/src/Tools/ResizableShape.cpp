@@ -133,37 +133,6 @@ void ResizableShape::reset() {
 	generatePreviewImage();
 }
 
-void ResizableShape::generateRect() {
-
-	if (_points.empty()) {
-		_rect = sf::IntRect({ 0,0 }, { 0,0 });
-		return;
-	}
-
-	int minX = std::numeric_limits<int>::max();
-	int minY = std::numeric_limits<int>::max();
-	int maxX = std::numeric_limits<int>::min();
-	int maxY = std::numeric_limits<int>::min();
-
-	for (auto& p : _points) {
-		minX = std::min(minX, p.x);
-		minY = std::min(minY, p.y);
-		maxX = std::max(maxX, p.x);
-		maxY = std::max(maxY, p.y);
-	}
-
-	_rect = sf::IntRect(
-		sf::Vector2i(minX, minY),
-		sf::Vector2i(maxX - minX, maxY - minY)
-	);
-}
-
-void ResizableShape::generateImage() {
-	if (_rect.size.x < 1 || _rect.size.y < 1)
-		return;
-
-	_image = std::make_shared<sf::Image>(sf::Vector2u(_rect.size), sf::Color::Transparent);
-}
 
 void ResizableShape::generateEdgePoints() {
 
@@ -354,108 +323,7 @@ void ResizableShape::setPosition(sf::Vector2i position) {
 }
 
 
-void ResizableShape::drawRect() {
-	if (!
-		(_points.size() >= 3 &&
-			(
-			_state == ResizableToolState::Selecting ||
-			_state == ResizableToolState::Selected ||
-			_state == ResizableToolState::Moving ||
-			_state == ResizableToolState::Resizing)))
-		return;
 
-	if(_rect.size.x < 1 || _rect.size.y < 1)
-		return;
-
-	float scale = canvas->_zoom * canvas->_zoom_delta;
-
-	sf::Vector2f rectSize;
-	rectSize.x = float(_rect.size.x) * scale;
-	rectSize.y = float(_rect.size.y) * scale;
-
-	sf::RectangleShape rect(rectSize);
-
-	sf::Vector2f rectPos;
-	rectPos.x = float(canvas->_position.x) + float(_rect.position.x) * scale;
-	rectPos.y = float(canvas->_position.y) + float(_rect.position.y) * scale;
-	rect.setPosition(rectPos);
-
-	rect.setFillColor(selection_color);
-	rect.setOutlineColor(selection_border_color);
-	rect.setOutlineThickness((float)(selection_border_width));
-
-	window->draw(rect);
-}
-
-void ResizableShape::drawImage() {
-
-	if (!_image)
-		return;
-
-	if (_image->getSize().x == 0 || _image->getSize().y == 0)
-		return;
-
-	if (!_previewImage)
-		return;
-
-	if (_previewImage->getSize().x == 0 || _previewImage->getSize().y == 0)
-		return;
-
-
-	sf::Texture texture(*_image);
-	sf::Sprite sprite(texture);
-	
-	float scale = canvas->_zoom * canvas->_zoom_delta;
-	float sx = float(_rect.size.x) / float(_image->getSize().x) * scale;
-	float sy = float(_rect.size.y) / float(_image->getSize().y) * scale;
-	sprite.setScale(sf::Vector2f(sx, sy));
-
-	sprite.setPosition(sf::Vector2f(_rect.position) * scale + sf::Vector2f(canvas->_position));
-
-	_shader.setUniform("alphaColor", sf::Glsl::Vec4(sf::Color::Transparent));
-	_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
-
-	window->draw(sprite, &_shader);
-}
-
-void ResizableShape::drawPreviewImage() {
-
-	if (!_previewImage)
-		return;
-
-	if (_previewImage->getSize().x < 1 || _previewImage->getSize().y < 1)
-		return;
-
-	sf::Texture texture(*_previewImage);
-	sf::Sprite sprite(texture);
-
-	for (auto& canvas : canvases) {
-
-		if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(canvas->_coords.x == 0 && canvas->_coords.y == 0))
-			continue;
-		if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(canvas->_coords.x == 0 || canvas->_coords.y == 0))
-			continue;
-
-		sprite.setScale(sf::Vector2f(canvas->_zoom * canvas->_zoom_delta, canvas->_zoom * canvas->_zoom_delta));
-		sprite.setPosition(sf::Vector2f(canvas->_position));
-
-		_shader.setUniform("alphaColor", sf::Glsl::Vec4(sf::Color::Transparent));
-		_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
-
-		window->draw(sprite, &_shader);
-	}
-	
-}
-
-void ResizableShape::drawEdgePoints() {
-
-	if (!(_points.size() >= 3 && (_state == ResizableToolState::Selected || _state == ResizableToolState::Resizing)))
-		return;
-
-	for (auto& point : _edgePoints) {
-		point->draw();
-	}
-}
 
 void ResizableShape::cursorHover() {
 
@@ -643,15 +511,5 @@ void ResizableShape::update() {
 }
 
 void ResizableShape::draw() {
-
-	if (!tooltypeIsShape())
-		return;
-
-	if (_state == ResizableToolState::None)
-		return;
-	
-	//drawImage(); // not needed because now we operate on previewImage
-	drawPreviewImage();
-	drawRect();
-	drawEdgePoints();
+	ResizableTool::draw();
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "Tools/ResizableTool.hpp"
 
 std::vector<sf::Vector2i> getPointsFromLine(sf::Vector2i start, sf::Vector2i end);
 bool lineOutOfBounds(sf::Vector2i start, sf::Vector2i end, sf::Vector2i size);
@@ -10,43 +11,57 @@ namespace sf {
     private:
         sf::Vector2i _start;
         sf::Vector2i _end;
-
-        int _thickness = 1;
-        int _outlineThickness = 0;
-
-        sf::Color _fillColor = sf::Color::White;
-        sf::Color _outlineColor = sf::Color::Black;
-
+        float _pixelSize = 1.f;
+        sf::Vector2i _position;
+        sf::Vector2i _globalPosition;
+        sf::Color _color = sf::Color::Black;
         sf::Image _image;
         sf::Texture _texture;
-        sf::Vector2i _position;
-        sf::Vector2i _globalPosition = sf::Vector2i(0,0);
-
-        float _pixelSize = 1.f;
 
     public:
-        Line(sf::Vector2i start, sf::Vector2i end, int thickness = 1, int outline = 0);
+        Line(sf::Vector2i start, sf::Vector2i end);
 
-        void set(sf::Vector2i start, sf::Vector2i end, int thickness, int outline = 0);
         void set(sf::Vector2i start, sf::Vector2i end);
-
-        void setThickness(int thickness);
-        void setOutlineThickness(int outlineThickness);
-
         void setFillColor(sf::Color color);
-        void setOutlineColor(sf::Color color);
-
         void setPixelSize(float pixelSize);
         void setGlobalPosition(sf::Vector2i pos);
+        sf::Vector2i getSize();
+        sf::Image& getImage();
+        void updateImage();
+        sf::Vector2i getLocalPosition();
 
     private:
-        void updateImage();
+        void drawPixels();
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-        void drawPixel(sf::Image& img, int x, int y, sf::Color color);
-        void drawCircle(sf::Image& img, int cx, int cy, int radius, sf::Color color);
-        void drawLinePixels(sf::Image& img, sf::Vector2i a, sf::Vector2i b, int radius, sf::Color color);
-
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     };
-
 }
+
+class Line : public ResizableTool {
+public:
+
+	std::shared_ptr<EdgePoint> _startPoint;
+	std::shared_ptr<EdgePoint> _endPoint;
+
+    Line();
+    ~Line();
+
+    virtual void generateEdgePoints();
+    void reset();
+    void setPosition(sf::Vector2i position);
+    void resize();
+
+    virtual void generateImage();
+
+    virtual void cut();
+    virtual void copy();
+    virtual void pasteToCanvas();
+
+	virtual void drawEdgePoints();
+    
+
+    virtual void cursorHover();
+    virtual void handleEvent(const sf::Event& event);
+    virtual void update();
+    virtual void draw();
+};

@@ -200,7 +200,7 @@ void ResizableTool::cut()
 	if (_state != ResizableToolState::Selected)
 		return;
 
-	if (_image == nullptr)
+	if (_previewImage == nullptr)
 		return;
 
 	sf::Image& canvas = getCurrentAnimation()->getCurrentLayer()->_image;
@@ -219,17 +219,17 @@ void ResizableTool::cut()
 	if (s.size.x <= 0 || s.size.y <= 0)
 		return;
 
-	sf::Texture tex(*_image);
+	sf::Texture tex(*_previewImage);
 	sf::Sprite spr(tex);
 	sf::RenderTexture rtex;
-	rtex.resize(_image->getSize());
+	rtex.resize(_previewImage->getSize());
 	rtex.clear(sf::Color::Transparent);
 	_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
 	rtex.draw(spr, &_shader);
 	rtex.display();
 	sf::Image coloredImage = rtex.getTexture().copyToImage();
 
-	pasteImageWithMask(canvas, coloredImage, r.position.x, r.position.y, *_image, alphaColor);
+	pasteImageWithMask(canvas, coloredImage, 0, 0, *_previewImage, alphaColor);
 	copyImageWithAlpha(coloredImage, canvas, r, alphaColor);
 
 	sf::Image copiedImage;
@@ -244,7 +244,7 @@ void ResizableTool::cut()
 	copyImageToClipboard(copiedImage, sf::IntRect(sf::Vector2i(0, 0), s.size));
 
 	sf::Image mask;
-	mask.resize(sf::Vector2u(_image->getSize()), sf::Color::Black);
+	mask.resize(sf::Vector2u(_previewImage->getSize()), sf::Color::Black);
 	removeImageWithMask(canvas, _rect, mask, sf::Color::Transparent);
 	getCurrentAnimation()->getCurrentLayer()->generateTexture();
 
@@ -260,6 +260,9 @@ void ResizableTool::copy()
 {
 	if (_state != ResizableToolState::Selected)
 		return;
+	
+	if (_previewImage == nullptr)
+		return;
 
 	sf::Image& canvas = getCurrentAnimation()->getCurrentLayer()->_image;
 	sf::Color alphaColor = (toolbar->_option_transparency->_checkbox->_value == 0)? sf::Color::Transparent : toolbar->_second_color->_color;
@@ -277,18 +280,19 @@ void ResizableTool::copy()
 	if (s.size.x <= 0 || s.size.y <= 0)
 		return;
 
-	sf::Texture tex(*_image);
+	sf::Texture tex(*_previewImage);
 	sf::Sprite spr(tex);
 	sf::RenderTexture rtex;
-	rtex.resize(_image->getSize());
+	rtex.resize(_previewImage->getSize());
 	rtex.clear(sf::Color::Transparent);
 	_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
 	rtex.draw(spr, &_shader);
 	rtex.display();
 	sf::Image coloredImage = rtex.getTexture().copyToImage();
 
-	pasteImageWithMask(canvas, coloredImage, r.position.x, r.position.y, *_image, alphaColor);
+	pasteImageWithMask(canvas, coloredImage, 0, 0, *_previewImage, alphaColor);
 	copyImageWithAlpha(coloredImage, canvas, r, alphaColor);
+
 
 	sf::Image copiedImage;
 	copiedImage.resize(sf::Vector2u(s.size), sf::Color::Transparent);
@@ -730,10 +734,11 @@ void ResizableTool::setPosition(sf::Vector2i position) {
 }
 
 void ResizableTool::pasteToCanvas() {
-	if(_image == nullptr)
-		return;
 
 	if(_state == ResizableToolState::None)
+		return;
+
+	if (_image == nullptr)
 		return;
 
 	if (_previewImage == nullptr)  
@@ -741,6 +746,7 @@ void ResizableTool::pasteToCanvas() {
 
 	pasteImageWithNewColorAndAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_previewImage, 0, 0, toolbar->_first_color->_color, sf::Color::Transparent);
 	getCurrentAnimation()->getCurrentLayer()->generateTexture();
+	history->saveStep();
 }
 
 void ResizableTool::drawRect() {

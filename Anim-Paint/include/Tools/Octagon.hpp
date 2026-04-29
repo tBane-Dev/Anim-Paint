@@ -1,15 +1,13 @@
 ﻿#pragma once
 #include "SFML/Graphics.hpp"
-#include "Tools/ResizableTool.hpp"
+#include "Tools/ResizableShape.hpp"
 
 
 
-class Octagon : public ResizableTool {
+class Octagon : public ResizableShape {
 public:
 	Octagon();
 	~Octagon();
 
 	virtual void generateImage();
 };
-
-extern std::shared_ptr<ResizableTool> resizableTool;

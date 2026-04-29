@@ -3,7 +3,7 @@
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 
-Pentagon::Pentagon() : ResizableTool() {
+Pentagon::Pentagon() : ResizableShape() {
 }
 
 Pentagon::~Pentagon() {

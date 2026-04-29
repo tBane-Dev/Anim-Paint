@@ -3,7 +3,7 @@
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 
-HexagonPointTop::HexagonPointTop() : ResizableTool() {
+HexagonPointTop::HexagonPointTop() : ResizableShape() {
 }
 
 HexagonPointTop::~HexagonPointTop() {

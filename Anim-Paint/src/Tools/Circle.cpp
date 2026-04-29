@@ -3,7 +3,7 @@
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 
-Circle::Circle() : ResizableTool() {
+Circle::Circle() : ResizableShape() {
 }
 
 Circle::~Circle() {

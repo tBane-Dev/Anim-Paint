@@ -103,14 +103,15 @@ void Cursor::handleEvent() {
 		return;
 	}
 
-	// resizable_tool edge points
-	if ((resizable_tool != nullptr &&
-		((resizable_tool->_hoveredEdgePoint != nullptr && _hoveredElement == resizable_tool->_hoveredEdgePoint) || 
-		(resizable_tool->_clickedEdgePoint != nullptr && Element_pressed == resizable_tool->_clickedEdgePoint))) &&
+	// resizable_shape edge points
+	ResizableShape* resizable_shape = dynamic_cast<ResizableShape*>(resizable_tool.get());
+	if ((resizable_shape != nullptr &&
+		((resizable_shape->_hoveredEdgePoint != nullptr && _hoveredElement == resizable_shape->_hoveredEdgePoint) || 
+		(resizable_shape->_clickedEdgePoint != nullptr && Element_pressed == resizable_shape->_clickedEdgePoint))) &&
 		!(palette != nullptr && palette->_rect.contains(_position)) &&
-		(resizable_tool->_state == ResizableToolState::Selected || resizable_tool->_state == ResizableToolState::Resizing)) {
+		(resizable_shape->_state == ResizableToolState::Selected || resizable_shape->_state == ResizableToolState::Resizing)) {
 
-		if (resizable_tool->_hoveredEdgePoint == resizable_tool->_point_left_top || resizable_tool->_clickedEdgePoint == resizable_tool->_point_left_top) {
+		if (resizable_shape->_hoveredEdgePoint == resizable_shape->_point_left_top || resizable_shape->_clickedEdgePoint == resizable_shape->_point_left_top) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopLeft);
 			window->setMouseCursor(*_cursor);
@@ -118,7 +119,7 @@ void Cursor::handleEvent() {
 			return;
 		}
 
-		if (resizable_tool->_hoveredEdgePoint == resizable_tool->_point_top || resizable_tool->_clickedEdgePoint == resizable_tool->_point_top) {
+		if (resizable_shape->_hoveredEdgePoint == resizable_shape->_point_top || resizable_shape->_clickedEdgePoint == resizable_shape->_point_top) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTop);
 			window->setMouseCursor(*_cursor);
@@ -126,7 +127,7 @@ void Cursor::handleEvent() {
 			return;
 		}
 
-		if (resizable_tool->_hoveredEdgePoint == resizable_tool->_point_right_top || resizable_tool->_clickedEdgePoint == resizable_tool->_point_right_top) {
+		if (resizable_shape->_hoveredEdgePoint == resizable_shape->_point_right_top || resizable_shape->_clickedEdgePoint == resizable_shape->_point_right_top) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopRight);
 			window->setMouseCursor(*_cursor);
@@ -134,7 +135,7 @@ void Cursor::handleEvent() {
 			return;
 		}
 
-		if (resizable_tool->_hoveredEdgePoint == resizable_tool->_point_left || resizable_tool->_clickedEdgePoint == resizable_tool->_point_left) {
+		if (resizable_shape->_hoveredEdgePoint == resizable_shape->_point_left || resizable_shape->_clickedEdgePoint == resizable_shape->_point_left) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeLeft);
 			window->setMouseCursor(*_cursor);
@@ -142,7 +143,7 @@ void Cursor::handleEvent() {
 			return;
 		}
 
-		if (resizable_tool->_hoveredEdgePoint == resizable_tool->_point_right || resizable_tool->_clickedEdgePoint == resizable_tool->_point_right) {
+		if (resizable_shape->_hoveredEdgePoint == resizable_shape->_point_right || resizable_shape->_clickedEdgePoint == resizable_shape->_point_right) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeRight);
 			window->setMouseCursor(*_cursor);
@@ -150,7 +151,7 @@ void Cursor::handleEvent() {
 			return;
 		}
 
-		if (resizable_tool->_hoveredEdgePoint == resizable_tool->_point_left_bottom || resizable_tool->_clickedEdgePoint == resizable_tool->_point_left_bottom) {
+		if (resizable_shape->_hoveredEdgePoint == resizable_shape->_point_left_bottom || resizable_shape->_clickedEdgePoint == resizable_shape->_point_left_bottom) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomLeft);
 			window->setMouseCursor(*_cursor);
@@ -158,7 +159,7 @@ void Cursor::handleEvent() {
 			return;
 		}
 
-		if (resizable_tool->_hoveredEdgePoint == resizable_tool->_point_bottom || resizable_tool->_clickedEdgePoint == resizable_tool->_point_bottom) {
+		if (resizable_shape->_hoveredEdgePoint == resizable_shape->_point_bottom || resizable_shape->_clickedEdgePoint == resizable_shape->_point_bottom) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottom);
 			window->setMouseCursor(*_cursor);
@@ -166,7 +167,7 @@ void Cursor::handleEvent() {
 			return;
 		}
 
-		if (resizable_tool->_hoveredEdgePoint == resizable_tool->_point_right_bottom || resizable_tool->_clickedEdgePoint == resizable_tool->_point_right_bottom) {
+		if (resizable_shape->_hoveredEdgePoint == resizable_shape->_point_right_bottom || resizable_shape->_clickedEdgePoint == resizable_shape->_point_right_bottom) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomRight);
 			window->setMouseCursor(*_cursor);

@@ -1,15 +1,13 @@
 ﻿#pragma once
 #include "SFML/Graphics.hpp"
-#include "Tools/ResizableTool.hpp"
+#include "Tools/ResizableShape.hpp"
 
 
 
-class Circle : public ResizableTool {
+class Circle : public ResizableShape {
 public:
 	Circle();
 	~Circle();
 
 	virtual void generateImage();
 };
-
-extern std::shared_ptr<ResizableTool> resizableTool;

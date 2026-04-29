@@ -3,7 +3,7 @@
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 
-Octagon::Octagon() : ResizableTool() {
+Octagon::Octagon() : ResizableShape() {
 }
 
 Octagon::~Octagon() {

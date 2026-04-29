@@ -3,7 +3,7 @@
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 
-Triangle::Triangle() : ResizableTool() {
+Triangle::Triangle() : ResizableShape() {
 }
 
 Triangle::~Triangle() {

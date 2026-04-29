@@ -1,16 +1,11 @@
 ﻿#include "Tools/ResizableTool.hpp"
-#include "Time.hpp"
-#include "Theme.hpp"
+#include "Element.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
-#include "Cursor.hpp"
-#include "WorldToTileConverter.hpp"
-#include "DebugLog.hpp"
-#include "Dialogs/Dialog.hpp"
-#include "Animation/Animation.hpp"
-#include "History.hpp"
-#include "Tools/Selection.hpp" // TO-DO - for the test using paste Image With Alpha
 #include "Components/MainMenu/MainMenu.hpp"
-#include "Dialogs/Palette.hpp"
+#include "WorldToTileConverter.hpp"
+#include "History.hpp"
+#include "DebugLog.hpp"
 #include "Tools/ClipBoard.hpp"
 
 std::string replace_black_shader_source = R"(
@@ -34,40 +29,6 @@ std::string replace_black_shader_source = R"(
 		}
     }
 )";
-
-void pasteImageWithAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color alphaColor)
-{
-	sf::IntRect s(sf::Vector2i(0, 0), sf::Vector2i(src.getSize()));
-
-	if (dstX < 0) { s.position.x -= dstX; s.size.x += dstX; dstX = 0; }
-	if (dstY < 0) { s.position.y -= dstY; s.size.y += dstY; dstY = 0; }
-
-	const int dw = int(dst.getSize().x), dh = int(dst.getSize().y);
-
-	if (dstX >= dw || dstY >= dh)
-		return;
-
-	if (dstX + s.size.x > dw) s.size.x = dw - dstX;
-	if (dstY + s.size.y > dh) s.size.y = dh - dstY;
-
-	if (s.size.x <= 0 || s.size.y <= 0)
-		return;
-
-	sf::Image tmp;
-	tmp.resize(sf::Vector2u(s.size), sf::Color::Transparent);
-	if (!tmp.copy(src, sf::Vector2u(0, 0), s, true)) {
-		DebugError(L"pasteImageWithAlpha: image copy failed");
-		exit(0);
-	}
-	tmp.createMaskFromColor(alphaColor);
-
-	const sf::IntRect all(sf::Vector2i(0, 0), sf::Vector2i(tmp.getSize()));
-	if (!dst.copy(tmp, sf::Vector2u(dstX, dstY), all, true)) {
-		DebugError(L"pasteImageWithAlpha: image copy to dst failed");
-		exit(0);
-	}
-}
-
 
 void pasteImageWithNewColorAndAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color newColor, sf::Color alphaColor)
 {
@@ -109,427 +70,162 @@ void pasteImageWithNewColorAndAlpha(sf::Image& dst, sf::Image& src, int dstX, in
 
 }
 
-ResizableTool::ResizableTool() : Element() {
-	_state = ResizableToolState::None;
+void pasteImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Image& mask, sf::Color alphaColor)
+{
 
+	int dw = dst.getSize().x;
+	int dh = dst.getSize().y;
+	int sw = src.getSize().x;
+	int sh = src.getSize().y;
+
+	if (dw <= 0 || dh <= 0 || sw <= 0 || sh <= 0)
+		return;
+
+	sf::IntRect place(sf::Vector2i(dstX, dstY), sf::Vector2i(sw, sh));
+	sf::IntRect canvas(sf::Vector2i(0, 0), sf::Vector2i(dw, dh));
+	sf::IntRect clip;
+
+
+	if (!place.findIntersection(canvas).has_value())
+		return;
+
+	clip = place.findIntersection(canvas).value();
+
+	for (int y = clip.position.y; y < clip.position.y + clip.size.y; ++y) {
+		for (int x = clip.position.x; x < clip.position.x + clip.size.x; ++x) {
+
+			int sx = x - dstX;
+			int sy = y - dstY;
+
+			if (mask.getPixel(sf::Vector2u(sx, sy)) != sf::Color::Black)
+				continue;
+
+			sf::Color c = src.getPixel(sf::Vector2u(sx, sy));
+			if (c == alphaColor || c.a == 0)
+				continue;
+
+			dst.setPixel(sf::Vector2u(x, y), c);
+		}
+	}
+}
+
+
+void copyImageWithAlpha(sf::Image& dst, sf::Image& src, sf::IntRect srcRect, sf::Color alphaColor)
+{
+
+	// (opcjonalnie, ale bezpiecznie) normalizacja, gdyby size był ujemny
+	sf::IntRect r = srcRect;
+	if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
+	if (r.size.y < 0) { r.position.y += r.size.y; r.size.y = -r.size.y; }
+
+	if (r.size.x <= 0 || r.size.y <= 0)
+		return;
+
+	sf::IntRect srcB(sf::Vector2i(0, 0), sf::Vector2i(src.getSize()));
+	auto inter = r.findIntersection(srcB);
+	if (!inter.has_value())
+		return;
+
+	sf::IntRect s = inter.value();
+	if (s.size.x <= 0 || s.size.y <= 0)
+		return;
+
+	if ((int)(dst.getSize().x) < s.size.x || (int)(dst.getSize().y) < s.size.y)
+		dst.resize(sf::Vector2u(s.size.x, s.size.y), sf::Color::Transparent);
+
+	sf::Image img;
+	img.resize(sf::Vector2u(s.size.x, s.size.y), sf::Color::Transparent);
+
+	for (int y = 0; y < s.size.y; ++y) {
+		for (int x = 0; x < s.size.x; ++x) {
+			int xx = s.position.x + x;
+			int yy = s.position.y + y;
+
+			sf::Color c = src.getPixel(sf::Vector2u(xx, yy));
+			if (c == sf::Color::Transparent || c == alphaColor)
+				continue;
+
+			img.setPixel(sf::Vector2u(x, y), c);
+		}
+	}
+
+	sf::IntRect local(sf::Vector2i(0, 0), sf::Vector2i(s.size));
+	if (!dst.copy(img, sf::Vector2u(0, 0), local, false)) {
+		DebugError(L"copyImageWithAlpha: image copy failed");
+		exit(0);
+	}
+}
+
+void removeImageWithMask(sf::Image& image, sf::IntRect rect, sf::Image& mask, sf::Color alphaColor)
+{
+
+	if (rect.size.x <= 0 || rect.size.y <= 0)
+		return;
+
+	if (mask.getSize().x <= 0 || mask.getSize().y <= 0)
+		return;
+
+	for (int y = 0; y < rect.size.y; ++y) {
+		for (int x = 0; x < rect.size.x; ++x) {
+
+			if (mask.getPixel(sf::Vector2u(x, y)) != sf::Color::Black)
+				continue;
+
+			int px = rect.position.x + x;
+			int py = rect.position.y + y;
+
+			if (px < 0 || py < 0 || px >= (int)(image.getSize().x) || py >= (int)(image.getSize().y))
+				continue;
+
+			image.setPixel(sf::Vector2u(px, py), alphaColor);
+		}
+	}
+}
+
+
+ResizableTool::ResizableTool() : Element(){
+
+	// rect and points
 	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(0, 0));
 	_points.clear();
 
-	_offset = sf::Vector2i(0, 0);
-	_moveTime = currentTime;
-
-	_shader = sf::Shader();
-	if (!_shader.loadFromMemory(replace_black_shader_source, sf::Shader::Type::Fragment)) {
-		DebugError(L"ResizableTool: failed to load shader from memory.");
-		exit(0);
-	}
+	// edge points
+	_edgePoints.clear();
+	_hoveredEdgePoint = nullptr;
+	_clickedEdgePoint = nullptr;
+	_orginalEdgePointPosition = sf::Vector2i(0, 0);
 }
 
 ResizableTool::~ResizableTool() {
 
 }
 
+void ResizableTool::generateEdgePoints() {
 
-void ResizableTool::addPoint(sf::Vector2i point) {
-
-	if (_points.empty()) {
-		_points.push_back(point);
-		return;
-	}
-
-	if (_points.back() == point) return;
-
-	_points.push_back(point);
 }
 
-bool ResizableTool::pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b)
-{
-	int cross = 1LL * (b.x - a.x) * (p.y - a.y) - 1LL * (b.y - a.y) * (p.x - a.x);
+bool ResizableTool::tooltypeIsShape() {
+	if (
+		toolbar->_toolType == ToolType::Circle ||
+		toolbar->_toolType == ToolType::Triangle ||
+		toolbar->_toolType == ToolType::Rectangle ||
+		toolbar->_toolType == ToolType::Diamond ||
+		toolbar->_toolType == ToolType::Pentagon ||
+		toolbar->_toolType == ToolType::HexagonFlatTop ||
+		toolbar->_toolType == ToolType::HexagonPointTop ||
+		toolbar->_toolType == ToolType::Octagon)
+	{
 
-	if (cross != 0)
-		return false;
-
-	int minx = std::min(a.x, b.x);
-	int maxx = std::max(a.x, b.x);
-	int miny = std::min(a.y, b.y);
-	int maxy = std::max(a.y, b.y);
-
-	return(p.x >= minx && p.x <= maxx && p.y >= miny && p.y <= maxy);
-}
-
-bool ResizableTool::isPointInPolygon(sf::Vector2i p, std::vector < sf::Vector2i >& poly)
-{
-	size_t n = poly.size();
-	if (n < 3)
-		return false;
-
-	bool inside = false;
-	for (size_t i = 0, j = n - 1; i < n; j = i++) {
-		sf::Vector2i& a = poly[j];
-		sf::Vector2i& b = poly[i];
-
-		if (pointOnSegment(p, a, b))
-			return true;
-
-		bool crossesY = ((a.y > p.y) != (b.y > p.y));
-		if (!crossesY)
-			continue;
-
-		int dy = b.y - a.y;
-		int lhs = (p.x - a.x) * dy;
-		int rhs = (b.x - a.x) * (p.y - a.y);
-
-		bool hit = (dy > 0) ? (lhs < rhs)
-			: (lhs > rhs);
-		if (hit) inside = !inside;
-
+		return true;
 	}
-	return inside;
+	else
+		return false;
+
 }
 
 void ResizableTool::reset() {
 	_state = ResizableToolState::None;
 	_points.clear();
-	generateRect();
-	generateImage();
-	generateEdgePoints();
-	generatePreviewImage();
-}
-void ResizableTool::cut()
-{
-	if (_state != ResizableToolState::Selected)
-		return;
-
-	if (_previewImage == nullptr)
-		return;
-
-	sf::Image& canvas = getCurrentAnimation()->getCurrentLayer()->_image;
-	sf::Color alphaColor = (toolbar->_option_transparency->_checkbox->_value == 0)? sf::Color::Transparent : toolbar->_second_color->_color;
-
-	sf::IntRect r = _rect;
-	if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
-	if (r.size.y < 0) { r.position.y += r.size.y; r.size.y = -r.size.y; }
-
-	sf::IntRect canvasRect(sf::Vector2i(0, 0), sf::Vector2i(canvas.getSize()));
-	auto intersection = r.findIntersection(canvasRect);
-	if (!intersection.has_value())
-		return;
-
-	sf::IntRect s = intersection.value();
-	if (s.size.x <= 0 || s.size.y <= 0)
-		return;
-
-	sf::Texture tex(*_previewImage);
-	sf::Sprite spr(tex);
-	sf::RenderTexture rtex;
-	rtex.resize(_previewImage->getSize());
-	rtex.clear(sf::Color::Transparent);
-	_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
-	rtex.draw(spr, &_shader);
-	rtex.display();
-	sf::Image coloredImage = rtex.getTexture().copyToImage();
-
-	pasteImageWithMask(canvas, coloredImage, 0, 0, *_previewImage, alphaColor);
-	copyImageWithAlpha(coloredImage, canvas, r, alphaColor);
-
-	sf::Image copiedImage;
-	copiedImage.resize(sf::Vector2u(s.size), sf::Color::Transparent);
-
-	for (int y = 0; y < s.size.y; ++y) {
-		for (int x = 0; x < s.size.x; ++x) {
-			copiedImage.setPixel(sf::Vector2u(x, y), canvas.getPixel(sf::Vector2u(s.position.x + x, s.position.y + y)));
-		}
-	}
-
-	copyImageToClipboard(copiedImage, sf::IntRect(sf::Vector2i(0, 0), s.size));
-
-	sf::Image mask;
-	mask.resize(sf::Vector2u(_previewImage->getSize()), sf::Color::Black);
-	removeImageWithMask(canvas, _rect, mask, sf::Color::Transparent);
-	getCurrentAnimation()->getCurrentLayer()->generateTexture();
-
-	_image = nullptr;
-	_previewImage = nullptr;
-	_state = ResizableToolState::None;
-	_rect = sf::IntRect(sf::Vector2i(-1, -1), sf::Vector2i(-1, -1));
-
-	history->saveStep();
-}
-
-void ResizableTool::copy()
-{
-	if (_state != ResizableToolState::Selected)
-		return;
-	
-	if (_previewImage == nullptr)
-		return;
-
-	sf::Image& canvas = getCurrentAnimation()->getCurrentLayer()->_image;
-	sf::Color alphaColor = (toolbar->_option_transparency->_checkbox->_value == 0)? sf::Color::Transparent : toolbar->_second_color->_color;
-
-	sf::IntRect r = _rect;
-	if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
-	if (r.size.y < 0) { r.position.y += r.size.y; r.size.y = -r.size.y; }
-
-	sf::IntRect canvasRect(sf::Vector2i(0, 0), sf::Vector2i(canvas.getSize()));
-	auto intersection = r.findIntersection(canvasRect);
-	if (!intersection.has_value())
-		return;
-
-	sf::IntRect s = intersection.value();
-	if (s.size.x <= 0 || s.size.y <= 0)
-		return;
-
-	sf::Texture tex(*_previewImage);
-	sf::Sprite spr(tex);
-	sf::RenderTexture rtex;
-	rtex.resize(_previewImage->getSize());
-	rtex.clear(sf::Color::Transparent);
-	_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
-	rtex.draw(spr, &_shader);
-	rtex.display();
-	sf::Image coloredImage = rtex.getTexture().copyToImage();
-
-	pasteImageWithMask(canvas, coloredImage, 0, 0, *_previewImage, alphaColor);
-	copyImageWithAlpha(coloredImage, canvas, r, alphaColor);
-
-
-	sf::Image copiedImage;
-	copiedImage.resize(sf::Vector2u(s.size), sf::Color::Transparent);
-
-	for (int y = 0; y < s.size.y; ++y) {
-		for (int x = 0; x < s.size.x; ++x) {
-			copiedImage.setPixel(sf::Vector2u(x, y), canvas.getPixel(sf::Vector2u(s.position.x + x, s.position.y + y)));
-		}
-	}
-
-	copyImageToClipboard(copiedImage, sf::IntRect(sf::Vector2i(0, 0), s.size));
-}
-
-void ResizableTool::generateRect() {
-
-	if (_points.empty()) {
-		_rect = sf::IntRect({ 0,0 }, { 0,0 });
-		return;
-	}
-
-	int minX = std::numeric_limits<int>::max();
-	int minY = std::numeric_limits<int>::max();
-	int maxX = std::numeric_limits<int>::min();
-	int maxY = std::numeric_limits<int>::min();
-
-	for (auto& p : _points) {
-		minX = std::min(minX, p.x);
-		minY = std::min(minY, p.y);
-		maxX = std::max(maxX, p.x);
-		maxY = std::max(maxY, p.y);
-	}
-
-	_rect = sf::IntRect(
-		sf::Vector2i(minX, minY),
-		sf::Vector2i(maxX - minX, maxY - minY)
-	);
-}
-
-void ResizableTool::generateImage() {
-	if (_rect.size.x < 1 || _rect.size.y < 1)
-		return;
-
-	_image = std::make_shared<sf::Image>(sf::Vector2u(_rect.size), sf::Color::Transparent);
-}
-
-void ResizableTool::generatePreviewImage() {
-
-	_previewImage = std::make_shared<sf::Image>();
-
-	if (_rect.size.x < 1 || _rect.size.y < 1)
-		return;
-
-	if (_image == nullptr)
-		return;
-
-	if (_image->getSize().x < 1 || _image->getSize().y < 1)
-		return;
-
-	_previewImage->resize(sf::Vector2u(canvas->_size), sf::Color::Transparent);
-
-	for (int y = 0; y < _image->getSize().y; y++) {
-		for (int x = 0; x < _image->getSize().x; x++) {
-
-			sf::Vector2i globalPos(_rect.position.x + x, _rect.position.y + y);
-			
-			bool insideAnyCanvas = false;
-
-			for (auto& canvas : canvases) {
-
-				if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(canvas->_coords.x == 0 && canvas->_coords.y == 0))
-					continue;
-
-				if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(canvas->_coords.x == 0 || canvas->_coords.y == 0))
-					continue;
-
-				sf::Vector2i canvasPos(canvas->_coords.x * canvas->_size.x, canvas->_coords.y * canvas->_size.y);
-				sf::IntRect canvasRect(canvasPos, canvas->_size);
-
-				if (canvasRect.contains(globalPos)) {
-					insideAnyCanvas = true;
-					break;
-				}
-			}
-
-			if (insideAnyCanvas) {
-
-				globalPos.x = (globalPos.x % Canvas::_size.x + Canvas::_size.x) % Canvas::_size.x;
-				globalPos.y = (globalPos.y % Canvas::_size.y + Canvas::_size.y) % Canvas::_size.y;
-
-				if (_image->getPixel(sf::Vector2u(x, y))!= sf::Color::Transparent)
-					_previewImage->setPixel(sf::Vector2u(globalPos.x, globalPos.y), _image->getPixel(sf::Vector2u(x, y)));
-			}
-		}
-	}
-}
-void ResizableTool::generateEdgePoints() {
-
-	float scale = canvas->_zoom * canvas->_zoom_delta;
-
-	sf::Vector2f rectSize;
-	rectSize.x = float(_rect.size.x) * scale;
-	rectSize.y = float(_rect.size.y) * scale;
-
-	sf::Vector2f rectPos;
-	rectPos.x = float(canvas->_position.x) + float(_rect.position.x) * scale;
-	rectPos.y = float(canvas->_position.y) + float(_rect.position.y) * scale;
-
-	float m = (float)(selection_border_width);
-
-	_edgePoints.clear();
-	_point_left_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(-m)));
-	_point_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x / 2), (int)(-m)));
-	_point_right_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(-m)));
-
-	_point_left = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(rectSize.y / 2)));
-	_point_right = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(rectSize.y / 2)));
-
-	_point_left_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(rectSize.y + m)));
-	_point_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x / 2), (int)(rectSize.y + m)));
-	_point_right_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(rectSize.y + m)));
-
-	_edgePoints.push_back(_point_left_top);
-	_edgePoints.push_back(_point_top);
-	_edgePoints.push_back(_point_right_top);
-	_edgePoints.push_back(_point_left);
-	_edgePoints.push_back(_point_right);
-	_edgePoints.push_back(_point_left_bottom);
-	_edgePoints.push_back(_point_bottom);
-	_edgePoints.push_back(_point_right_bottom);
-
-}
-
-void ResizableTool::resizeRect() {
-
-	float scale = (float)(canvas->_zoom * canvas->_zoom_delta);
-
-	sf::Vector2f p = (sf::Vector2f(cursor->_position) + sf::Vector2f(_edgePoints[0]->getSize()) / 2.0f - sf::Vector2f(_clickedEdgePoint->getPosition())) / scale;
-
-	float minX = (float)_point_left->getPosition().x;
-	float minY = (float)_point_top->getPosition().y;
-	float maxX = (float)_point_right->getPosition().x;
-	float maxY = (float)_point_bottom->getPosition().y;
-
-	float dx = (float)((int)p.x) * scale;
-	float dy = (float)((int)p.y) * scale;
-
-	if (_clickedEdgePoint == _point_left_top) {
-		minX = (float)_point_left->getPosition().x + dx;
-		minY = (float)_point_top->getPosition().y + dy;
-	}
-	else if (_clickedEdgePoint == _point_right_top) {
-		maxX = (float)_point_right->getPosition().x + dx;
-		minY = (float)_point_top->getPosition().y + dy;
-	}
-	else if (_clickedEdgePoint == _point_left_bottom) {
-		minX = (float)_point_left->getPosition().x + dx;
-		maxY = (float)_point_bottom->getPosition().y + dy;
-	}
-	else if (_clickedEdgePoint == _point_right_bottom) {
-		maxX = (float)_point_right->getPosition().x + dx;
-		maxY = (float)_point_bottom->getPosition().y + dy;
-	}
-	else if (_clickedEdgePoint == _point_left) {
-		minX = (float)_point_left->getPosition().x + dx;
-	}
-	else if (_clickedEdgePoint == _point_right) {
-		maxX = (float)_point_right->getPosition().x + dx;
-	}
-	else if (_clickedEdgePoint == _point_top) {
-		minY = (float)_point_top->getPosition().y + dy;
-	}
-	else if (_clickedEdgePoint == _point_bottom) {
-		maxY = (float)_point_bottom->getPosition().y + dy;
-	}
-
-	const float m = (float)(selection_border_width);
-	const float MIN_SIZE_WORLD = scale + 2.0f * m;
-
-	if (_clickedEdgePoint == _point_left_top || _clickedEdgePoint == _point_left || _clickedEdgePoint == _point_left_bottom)
-		minX = std::min(minX, maxX - MIN_SIZE_WORLD);
-
-	if (_clickedEdgePoint == _point_right_top || _clickedEdgePoint == _point_right || _clickedEdgePoint == _point_right_bottom)
-		maxX = std::max(maxX, minX + MIN_SIZE_WORLD);
-
-	if (_clickedEdgePoint == _point_left_top || _clickedEdgePoint == _point_top || _clickedEdgePoint == _point_right_top)
-		minY = std::min(minY, maxY - MIN_SIZE_WORLD);
-
-	if (_clickedEdgePoint == _point_left_bottom || _clickedEdgePoint == _point_bottom || _clickedEdgePoint == _point_right_bottom)
-		maxY = std::max(maxY, minY + MIN_SIZE_WORLD);
-
-	float iminX = std::min(minX, maxX);
-	float iminY = std::min(minY, maxY);
-	float imaxX = std::max(minX, maxX);
-	float imaxY = std::max(minY, maxY);
-
-	_point_left_top->setPosition(sf::Vector2i((int)iminX, (int)iminY));
-	_point_top->setPosition(sf::Vector2i((int)((iminX + imaxX) / 2.0f), (int)iminY));
-	_point_right_top->setPosition(sf::Vector2i((int)imaxX, (int)iminY));
-
-	_point_left->setPosition(sf::Vector2i((int)iminX, (int)((iminY + imaxY) / 2.0f)));
-	_point_right->setPosition(sf::Vector2i((int)imaxX, (int)((iminY + imaxY) / 2.0f)));
-
-	_point_left_bottom->setPosition(sf::Vector2i((int)iminX, (int)imaxY));
-	_point_bottom->setPosition(sf::Vector2i((int)((iminX + imaxX) / 2.0f), (int)imaxY));
-	_point_right_bottom->setPosition(sf::Vector2i((int)imaxX, (int)imaxY));
-
-	sf::Vector2i minT = worldToTile(sf::Vector2i((int)(iminX + m), (int)(iminY + m)), canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-
-	sf::Vector2i maxT = worldToTile(sf::Vector2i((int)(imaxX - m), (int)(imaxY - m)), canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-
-	sf::Vector2i size = maxT - minT;
-
-	_rect = sf::IntRect(minT, size);
-}
-
-
-bool ResizableTool::clickOnSelection(sf::Vector2i point) {
-
-	if (_rect.size.x < 1 || _rect.size.y < 1)
-		return false;
-
-	return _rect.contains(point);
-}
-
-void ResizableTool::scale(sf::IntRect newRect) {
-
-	float scaleX = float(newRect.size.x - 1) / float(_rect.size.x - 1);
-	float scaleY = float(newRect.size.y - 1) / float(_rect.size.y - 1);
-
-	for (auto& p : _points) {
-		p.x = int(p.x * scaleX);
-		p.y = int(p.y * scaleY);
-	}
-
-	_rect = newRect;
-	//generateRect();
-
 }
 
 sf::Vector2i ResizableTool::getClampedPosition(sf::Vector2i newGlobalPosition) {
@@ -643,7 +339,7 @@ sf::Vector2i ResizableTool::getClampedTilePosition(sf::Vector2i newPos)
 	int minDistanceSq = INT_MAX;
 	std::shared_ptr<Canvas> canvasToClamp = nullptr;
 
-	if(canvases.empty())
+	if (canvases.empty())
 		return newPos;
 
 	for (auto& canvas : canvases) {
@@ -708,366 +404,185 @@ void ResizableTool::setPosition(sf::Vector2i position) {
 	sf::Vector2f rectPos;
 	rectPos.x = float(canvas->_position.x) + float(_rect.position.x) * scale;
 	rectPos.y = float(canvas->_position.y) + float(_rect.position.y) * scale;
-
-	float m = (float)(selection_border_width);
-
-	_edgePoints.clear();
-	_point_left_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(-m)));
-	_point_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x / 2), (int)(-m)));
-	_point_right_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(-m)));
-
-	_point_left = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(rectSize.y / 2)));
-	_point_right = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(rectSize.y / 2)));
-
-	_point_left_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(rectSize.y + m)));
-	_point_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x / 2), (int)(rectSize.y + m)));
-	_point_right_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(rectSize.y + m)));
-
-	_edgePoints.push_back(_point_left_top);
-	_edgePoints.push_back(_point_top);
-	_edgePoints.push_back(_point_right_top);
-	_edgePoints.push_back(_point_left);
-	_edgePoints.push_back(_point_right);
-	_edgePoints.push_back(_point_left_bottom);
-	_edgePoints.push_back(_point_bottom);
-	_edgePoints.push_back(_point_right_bottom);
 }
 
-void ResizableTool::pasteToCanvas() {
+void ResizableTool::generatePreviewImage() {
 
-	if(_state == ResizableToolState::None)
+	_previewImage = std::make_shared<sf::Image>();
+
+	if (_rect.size.x < 1 || _rect.size.y < 1)
 		return;
 
 	if (_image == nullptr)
 		return;
 
-	if (_previewImage == nullptr)  
+	if (_image->getSize().x < 1 || _image->getSize().y < 1)
+		return;
+
+	_previewImage->resize(sf::Vector2u(canvas->_size), sf::Color::Transparent);
+
+	for (int y = 0; y < _image->getSize().y; y++) {
+		for (int x = 0; x < _image->getSize().x; x++) {
+
+			sf::Vector2i globalPos(_rect.position.x + x, _rect.position.y + y);
+
+			bool insideAnyCanvas = false;
+
+			for (auto& canvas : canvases) {
+
+				if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(canvas->_coords.x == 0 && canvas->_coords.y == 0))
+					continue;
+
+				if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(canvas->_coords.x == 0 || canvas->_coords.y == 0))
+					continue;
+
+				sf::Vector2i canvasPos(canvas->_coords.x * canvas->_size.x, canvas->_coords.y * canvas->_size.y);
+				sf::IntRect canvasRect(canvasPos, canvas->_size);
+
+				if (canvasRect.contains(globalPos)) {
+					insideAnyCanvas = true;
+					break;
+				}
+			}
+
+			if (insideAnyCanvas) {
+
+				globalPos.x = (globalPos.x % Canvas::_size.x + Canvas::_size.x) % Canvas::_size.x;
+				globalPos.y = (globalPos.y % Canvas::_size.y + Canvas::_size.y) % Canvas::_size.y;
+
+				if (_image->getPixel(sf::Vector2u(x, y)) != sf::Color::Transparent)
+					_previewImage->setPixel(sf::Vector2u(globalPos.x, globalPos.y), _image->getPixel(sf::Vector2u(x, y)));
+			}
+		}
+	}
+}
+
+void ResizableTool::cut()
+{
+	if (_state != ResizableToolState::Selected)
+		return;
+
+	if (_previewImage == nullptr)
+		return;
+
+	sf::Image& canvas = getCurrentAnimation()->getCurrentLayer()->_image;
+	sf::Color alphaColor = (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color;
+
+	sf::IntRect r = _rect;
+	if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
+	if (r.size.y < 0) { r.position.y += r.size.y; r.size.y = -r.size.y; }
+
+	sf::IntRect canvasRect(sf::Vector2i(0, 0), sf::Vector2i(canvas.getSize()));
+	auto intersection = r.findIntersection(canvasRect);
+	if (!intersection.has_value())
+		return;
+
+	sf::IntRect s = intersection.value();
+	if (s.size.x <= 0 || s.size.y <= 0)
+		return;
+
+	sf::Texture tex(*_previewImage);
+	sf::Sprite spr(tex);
+	sf::RenderTexture rtex;
+	rtex.resize(_previewImage->getSize());
+	rtex.clear(sf::Color::Transparent);
+	_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
+	rtex.draw(spr, &_shader);
+	rtex.display();
+	sf::Image coloredImage = rtex.getTexture().copyToImage();
+
+	pasteImageWithMask(canvas, coloredImage, 0, 0, *_previewImage, alphaColor);
+	copyImageWithAlpha(coloredImage, canvas, r, alphaColor);
+
+	sf::Image copiedImage;
+	copiedImage.resize(sf::Vector2u(s.size), sf::Color::Transparent);
+
+	for (int y = 0; y < s.size.y; ++y) {
+		for (int x = 0; x < s.size.x; ++x) {
+			copiedImage.setPixel(sf::Vector2u(x, y), canvas.getPixel(sf::Vector2u(s.position.x + x, s.position.y + y)));
+		}
+	}
+
+	copyImageToClipboard(copiedImage, sf::IntRect(sf::Vector2i(0, 0), s.size));
+
+	sf::Image mask;
+	mask.resize(sf::Vector2u(_previewImage->getSize()), sf::Color::Black);
+	removeImageWithMask(canvas, _rect, mask, sf::Color::Transparent);
+	getCurrentAnimation()->getCurrentLayer()->generateTexture();
+
+	_image = nullptr;
+	_previewImage = nullptr;
+	_state = ResizableToolState::None;
+	_rect = sf::IntRect(sf::Vector2i(-1, -1), sf::Vector2i(-1, -1));
+
+	history->saveStep();
+}
+
+void ResizableTool::copy()
+{
+	if (_state != ResizableToolState::Selected)
+		return;
+
+	if (_previewImage == nullptr)
+		return;
+
+	sf::Image& canvas = getCurrentAnimation()->getCurrentLayer()->_image;
+	sf::Color alphaColor = (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color;
+
+	sf::IntRect r = _rect;
+	if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
+	if (r.size.y < 0) { r.position.y += r.size.y; r.size.y = -r.size.y; }
+
+	sf::IntRect canvasRect(sf::Vector2i(0, 0), sf::Vector2i(canvas.getSize()));
+	auto intersection = r.findIntersection(canvasRect);
+	if (!intersection.has_value())
+		return;
+
+	sf::IntRect s = intersection.value();
+	if (s.size.x <= 0 || s.size.y <= 0)
+		return;
+
+	sf::Texture tex(*_previewImage);
+	sf::Sprite spr(tex);
+	sf::RenderTexture rtex;
+	rtex.resize(_previewImage->getSize());
+	rtex.clear(sf::Color::Transparent);
+	_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
+	rtex.draw(spr, &_shader);
+	rtex.display();
+	sf::Image coloredImage = rtex.getTexture().copyToImage();
+
+	pasteImageWithMask(canvas, coloredImage, 0, 0, *_previewImage, alphaColor);
+	copyImageWithAlpha(coloredImage, canvas, r, alphaColor);
+
+
+	sf::Image copiedImage;
+	copiedImage.resize(sf::Vector2u(s.size), sf::Color::Transparent);
+
+	for (int y = 0; y < s.size.y; ++y) {
+		for (int x = 0; x < s.size.x; ++x) {
+			copiedImage.setPixel(sf::Vector2u(x, y), canvas.getPixel(sf::Vector2u(s.position.x + x, s.position.y + y)));
+		}
+	}
+
+	copyImageToClipboard(copiedImage, sf::IntRect(sf::Vector2i(0, 0), s.size));
+}
+
+
+void ResizableTool::pasteToCanvas() {
+
+	if (_state == ResizableToolState::None)
+		return;
+
+	if (_image == nullptr)
+		return;
+
+	if (_previewImage == nullptr)
 		return;
 
 	pasteImageWithNewColorAndAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_previewImage, 0, 0, toolbar->_first_color->_color, sf::Color::Transparent);
 	getCurrentAnimation()->getCurrentLayer()->generateTexture();
 	history->saveStep();
-}
-
-void ResizableTool::drawRect() {
-	if (!
-		(_points.size() >= 3 &&
-			(
-			_state == ResizableToolState::Selecting ||
-			_state == ResizableToolState::Selected ||
-			_state == ResizableToolState::Moving ||
-			_state == ResizableToolState::Resizing)))
-		return;
-
-	if(_rect.size.x < 1 || _rect.size.y < 1)
-		return;
-
-	float scale = canvas->_zoom * canvas->_zoom_delta;
-
-	sf::Vector2f rectSize;
-	rectSize.x = float(_rect.size.x) * scale;
-	rectSize.y = float(_rect.size.y) * scale;
-
-	sf::RectangleShape rect(rectSize);
-
-	sf::Vector2f rectPos;
-	rectPos.x = float(canvas->_position.x) + float(_rect.position.x) * scale;
-	rectPos.y = float(canvas->_position.y) + float(_rect.position.y) * scale;
-	rect.setPosition(rectPos);
-
-	rect.setFillColor(selection_color);
-	rect.setOutlineColor(selection_border_color);
-	rect.setOutlineThickness((float)(selection_border_width));
-
-	window->draw(rect);
-}
-
-void ResizableTool::drawImage() {
-
-	if (!_image)
-		return;
-
-	if (_image->getSize().x == 0 || _image->getSize().y == 0)
-		return;
-
-	if (!_previewImage)
-		return;
-
-	if (_previewImage->getSize().x == 0 || _previewImage->getSize().y == 0)
-		return;
-
-
-	sf::Texture texture(*_image);
-	sf::Sprite sprite(texture);
-	
-	float scale = canvas->_zoom * canvas->_zoom_delta;
-	float sx = float(_rect.size.x) / float(_image->getSize().x) * scale;
-	float sy = float(_rect.size.y) / float(_image->getSize().y) * scale;
-	sprite.setScale(sf::Vector2f(sx, sy));
-
-	sprite.setPosition(sf::Vector2f(_rect.position) * scale + sf::Vector2f(canvas->_position));
-
-	_shader.setUniform("alphaColor", sf::Glsl::Vec4(sf::Color::Transparent));
-	_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
-
-	window->draw(sprite, &_shader);
-}
-
-void ResizableTool::drawPreviewImage() {
-
-	if (!_previewImage)
-		return;
-
-	if (_previewImage->getSize().x < 1 || _previewImage->getSize().y < 1)
-		return;
-
-	sf::Texture texture(*_previewImage);
-	sf::Sprite sprite(texture);
-
-	for (auto& canvas : canvases) {
-
-		if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(canvas->_coords.x == 0 && canvas->_coords.y == 0))
-			continue;
-		if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(canvas->_coords.x == 0 || canvas->_coords.y == 0))
-			continue;
-
-		sprite.setScale(sf::Vector2f(canvas->_zoom * canvas->_zoom_delta, canvas->_zoom * canvas->_zoom_delta));
-		sprite.setPosition(sf::Vector2f(canvas->_position));
-
-		_shader.setUniform("alphaColor", sf::Glsl::Vec4(sf::Color::Transparent));
-		_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
-
-		window->draw(sprite, &_shader);
-	}
-	
-}
-
-void ResizableTool::drawEdgePoints() {
-
-	if (!(_points.size() >= 3 && (_state == ResizableToolState::Selected || _state == ResizableToolState::Resizing)))
-		return;
-
-	for (auto& point : _edgePoints) {
-		point->draw();
-	}
-}
-
-bool ResizableTool::tooltypeIsShape() {
-	if (
-		toolbar->_toolType == ToolType::Circle ||
-		toolbar->_toolType == ToolType::Triangle ||
-		toolbar->_toolType == ToolType::Rectangle ||
-		toolbar->_toolType == ToolType::Diamond ||
-		toolbar->_toolType == ToolType::Pentagon ||
-		toolbar->_toolType == ToolType::HexagonFlatTop ||
-		toolbar->_toolType == ToolType::HexagonPointTop ||
-		toolbar->_toolType == ToolType::Octagon) 
-	{
-
-		return true;
-	}
-	else
-		return false;
-
-}
-
-void ResizableTool::cursorHover() {
-
-	if (!dialogs.empty()) {
-		return;
-	}
-
-	if(_state == ResizableToolState::None)
-		return;
-	
-	sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-
-	if (clickOnSelection(tile) || (Element_pressed.get() == this && _state == ResizableToolState::Selecting)) {
-		Element_hovered = this->shared_from_this();
-	}
-
-	if (_clickedEdgePoint != nullptr) {
-		Element_hovered = _clickedEdgePoint;
-		_hoveredEdgePoint = _clickedEdgePoint;
-		return;
-	}
-
-	for (auto& edgePoint : _edgePoints) {
-		edgePoint->cursorHover();
-		if (Element_hovered == edgePoint) {
-			_hoveredEdgePoint = edgePoint;
-			return;
-		}
-	}
-
-}
-
-void ResizableTool::handleEvent(const sf::Event& event) {
-
-	if (!dialogs.empty()) {
-		return;
-	}
-
-	if (main_menu->cursorOnAnyMenuButton()) {
-		return;
-	}
-
-	if (main_menu->_state != MainMenuStates::Closed) {
-		return;
-	}
-
-	if ( (_state == ResizableToolState::None || _state == ResizableToolState::Selected) && palette && palette->_rect.contains(cursor->_position)) {
-		return;
-	}
-
-	// shapes resizing
-	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (_state == ResizableToolState::Selected && _hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {
-			_clickedEdgePoint = _hoveredEdgePoint;
-			Element_pressed = _clickedEdgePoint;
-			_orginalEdgePointPosition = _point_left_top->getPosition();
-			_lastTilePosition = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-			_state = ResizableToolState::Resizing;
-			return;
-		}
-	}
-	else if (_state == ResizableToolState::Resizing) {
-		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			if(Element_pressed == _clickedEdgePoint)
-				Element_pressed = nullptr;
-			_clickedEdgePoint = nullptr;
-			_state = ResizableToolState::Selected;
-		}
-		return;
-	}
-
-	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (Element_hovered.get() == this) {
-			Element_pressed = this->shared_from_this();
-		}
-	}
-
-	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-		sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-		if (Element_pressed.get() == this && !clickOnSelection(tile)) {
-			Element_pressed = nullptr;
-		}
-	}
-
-	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		
-		if ((Element_hovered == nullptr || Element_pressed.get() == this || canvasIsHovered() || canvasIsPressed()) && (_state == ResizableToolState::None || _state == ResizableToolState::Selected)) {
-
-			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-
-			if (tooltypeIsShape() && clickOnSelection(tile)) {
-				_state = ResizableToolState::Moving;
-				_offset = tile - _rect.position;
-			}
-			else if (tooltypeIsShape()) {
-
-				if (canvasIsHovered()) {
-					if (_image != nullptr) {
-						pasteToCanvas();
-						_image = nullptr;
-					}
-
-					_state = ResizableToolState::Selecting;
-					_lastTilePosition = tile;
-					Element_pressed = this->shared_from_this();
-					_rect.size = sf::Vector2i(0, 0);
-					_points.clear();
-					_points.push_back(tile);
-					generateRect();
-					generatePreviewImage();
-					setPosition(tile);
-				}
-				else {
-					if (_image != nullptr) {
-						pasteToCanvas();
-						_image = nullptr;
-						_state = ResizableToolState::None;
-						_points.clear();
-						generateRect();
-						generatePreviewImage();
-						setPosition(tile);
-					}
-				}
-			}
-		}
-		
-			
-	}
-	else if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv) {
-		if (_state == ResizableToolState::Moving) {
-			sf::Vector2i pos = getClampedPosition(cursor->_position);
-			if (pos != _rect.position) {
-				setPosition(pos);
-				generatePreviewImage();
-			}
-		}
-		else if(_state == ResizableToolState::Selecting) {
-			_state = ResizableToolState::Selecting;
-			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-			if (tile != _lastTilePosition) {
-				_rect.size = tile - _rect.position;
-				sf::Vector2i oldPoint = (!_points.empty()) ? _points.front() : tile;
-				_points.clear();
-				_points.push_back(oldPoint);
-				_points.push_back(oldPoint + sf::Vector2i(tile.x - oldPoint.x, 0));
-				_points.push_back(oldPoint + sf::Vector2i(tile.x - oldPoint.x, tile.y - oldPoint.y));
-				_points.push_back(oldPoint + sf::Vector2i(0, tile.y - oldPoint.y));
-				generateRect();
-				generateImage();
-				generatePreviewImage();
-				_lastTilePosition = tile;
-			}
-		} 
-	}
-	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-		if(_rect.size.x < 1 || _rect.size.y < 1) {
-			_state = ResizableToolState::None;
-			_points.clear();
-			generateRect();
-			_image = nullptr;
-			generateEdgePoints();
-			return;
-		}
-		_state = ResizableToolState::Selected;
-		generateEdgePoints();
-	}
-
-}
-
-void ResizableTool::update() {
-	if (_state == ResizableToolState::Resizing) {
-		for (auto& point : _edgePoints) {
-			point->update();
-		}
-
-		sf::Vector2i currentTilePosition = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-		if (_lastTilePosition != currentTilePosition) {
-			_lastTilePosition = currentTilePosition;
-			resizeRect();
-			generateImage();
-			generatePreviewImage();
-			return;
-		}
-	}
-}
-
-void ResizableTool::draw() {
-
-	if (!tooltypeIsShape())
-		return;
-
-	if (_state == ResizableToolState::None)
-		return;
-	
-	//drawImage(); // not needed because now we operate on previewImage
-	drawPreviewImage();
-	drawRect();
-	drawEdgePoints();
 }
 
 std::shared_ptr<ResizableTool> resizable_tool;

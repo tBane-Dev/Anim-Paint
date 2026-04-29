@@ -75,31 +75,6 @@ void removeImageWithAlpha(sf::Image& image, sf::IntRect rect, sf::Color alphaCol
 	}
 }
 
-void removeImageWithMask(sf::Image& image, sf::IntRect rect, sf::Image& mask, sf::Color alphaColor)
-{
-
-	if (rect.size.x <= 0 || rect.size.y <= 0)
-		return;
-
-	if (mask.getSize().x <= 0 || mask.getSize().y <= 0)
-		return;
-
-	for (int y = 0; y < rect.size.y; ++y) {
-		for (int x = 0; x < rect.size.x; ++x) {
-
-			if (mask.getPixel(sf::Vector2u(x, y)) != sf::Color::Black)
-				continue;
-
-			int px = rect.position.x + x;
-			int py = rect.position.y + y;
-
-			if (px < 0 || py < 0 || px >= (int)(image.getSize().x) || py >= (int)(image.getSize().y))
-				continue;
-
-			image.setPixel(sf::Vector2u(px, py), alphaColor);
-		}
-	}
-}
 
 void copyImage(sf::Image& dst, sf::Image& src, sf::IntRect srcRect) {
 	
@@ -126,51 +101,6 @@ void copyImage(sf::Image& dst, sf::Image& src, sf::IntRect srcRect) {
 	}
 }
 
-void copyImageWithAlpha(sf::Image& dst, sf::Image& src, sf::IntRect srcRect, sf::Color alphaColor)
-{
-
-	// (opcjonalnie, ale bezpiecznie) normalizacja, gdyby size był ujemny
-	sf::IntRect r = srcRect;
-	if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
-	if (r.size.y < 0) { r.position.y += r.size.y; r.size.y = -r.size.y; }
-
-	if (r.size.x <= 0 || r.size.y <= 0)
-		return;
-
-	sf::IntRect srcB(sf::Vector2i(0, 0), sf::Vector2i(src.getSize()));
-	auto inter = r.findIntersection(srcB);
-	if (!inter.has_value())
-		return;
-
-	sf::IntRect s = inter.value();
-	if (s.size.x <= 0 || s.size.y <= 0)
-		return;
-
-	if ((int)(dst.getSize().x) < s.size.x || (int)(dst.getSize().y) < s.size.y)
-		dst.resize(sf::Vector2u(s.size.x, s.size.y), sf::Color::Transparent);
-
-	sf::Image img;
-	img.resize(sf::Vector2u(s.size.x, s.size.y), sf::Color::Transparent);
-
-	for (int y = 0; y < s.size.y; ++y) {
-		for (int x = 0; x < s.size.x; ++x) {
-			int xx = s.position.x + x;
-			int yy = s.position.y + y;
-
-			sf::Color c = src.getPixel(sf::Vector2u(xx, yy));
-			if (c == sf::Color::Transparent || c == alphaColor)
-				continue;
-
-			img.setPixel(sf::Vector2u(x, y), c);
-		}
-	}
-
-	sf::IntRect local(sf::Vector2i(0, 0), sf::Vector2i(s.size));
-	if (!dst.copy(img, sf::Vector2u(0, 0), local, false)) {
-		DebugError(L"copyImageWithAlpha: image copy failed");
-		exit(0);
-	}
-}
 
 void copyImageWithMask(sf::Image* dst, sf::Image* src, int dstX, int dstY, int srcX, int srcY, sf::Image& mask, sf::Color alphaColor)
 {
@@ -226,49 +156,11 @@ void copyImageWithMask(sf::Image* dst, sf::Image* src, int dstX, int dstY, int s
 	}
 } 
 
-void pasteImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Image& mask, sf::Color alphaColor)
-{
-
-	int dw = dst.getSize().x;
-	int dh = dst.getSize().y;
-	int sw = src.getSize().x;
-	int sh = src.getSize().y;
-
-	if (dw <= 0 || dh <= 0 || sw <= 0 || sh <= 0) 
-		return;
-
-	sf::IntRect place(sf::Vector2i(dstX, dstY), sf::Vector2i(sw, sh));
-	sf::IntRect canvas(sf::Vector2i(0,0), sf::Vector2i(dw, dh));
-	sf::IntRect clip;
-
-
-	if (!place.findIntersection(canvas).has_value())
-		return;
-
-	clip = place.findIntersection(canvas).value();
-
-	for (int y = clip.position.y; y < clip.position.y + clip.size.y; ++y) {
-		for (int x = clip.position.x; x < clip.position.x + clip.size.x; ++x) {
-
-			int sx = x - dstX;
-			int sy = y - dstY;
-
-			if (mask.getPixel(sf::Vector2u(sx, sy)) != sf::Color::Black)
-				continue;
-
-			sf::Color c = src.getPixel(sf::Vector2u(sx, sy));
-			if (c == alphaColor || c.a == 0) 
-				continue;
-
-			dst.setPixel(sf::Vector2u(x, y), c);
-		}
-	}
-}
 
 
 
 
-Selection::Selection() : ResizableTool() {
+Selection::Selection() : ResizableShape() {
 
 	_state = ResizableToolState::None;
 

@@ -7,6 +7,7 @@
 #include "Tools/Selection.hpp"
 #include "Dialogs/Dialog.hpp"
 #include "Components/MainMenu/MainMenu.hpp"
+#include "Tools/ResizableShape.hpp"	
 
 BottomBar::BottomBar() : Element() {
 	
@@ -68,7 +69,8 @@ void BottomBar::updateText() {
 	if (_hoveredElement == canvas || 
 		(resizable_tool != nullptr && _hoveredElement == resizable_tool && canvas->_rect.contains(cursor->_position)) ||
 		(resizable_tool != nullptr && Element_pressed == resizable_tool) ||
-		(resizable_tool != nullptr && resizable_tool->_state == ResizableToolState::Resizing && resizable_tool->_clickedEdgePoint != nullptr)
+		(resizable_tool != nullptr && resizable_tool->_state == ResizableToolState::Resizing && 
+		std::dynamic_pointer_cast<ResizableShape>(resizable_tool)!=nullptr && std::dynamic_pointer_cast<ResizableShape>(resizable_tool)->_clickedEdgePoint != nullptr)
 		) {
 		sf::Vector2i coords = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 		std::wstring text = std::to_wstring(coords.x) + L" x " + std::to_wstring(coords.y);

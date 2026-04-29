@@ -3,7 +3,7 @@
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 
-Diamond::Diamond() : ResizableTool() {
+Diamond::Diamond() : ResizableShape() {
 }
 
 Diamond::~Diamond() {

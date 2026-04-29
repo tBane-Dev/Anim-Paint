@@ -156,6 +156,57 @@ void copyImageWithAlpha(sf::Image& dst, sf::Image& src, sf::IntRect srcRect, sf:
 	}
 }
 
+
+void copyImageWithMask(sf::Image* dst, sf::Image* src, int dstX, int dstY, int srcX, int srcY, sf::Image& mask, sf::Color alphaColor)
+{
+	if (!src || !dst) return;
+
+	int dw = (int)dst->getSize().x;
+	int dh = (int)dst->getSize().y;
+	int sw = (int)src->getSize().x;
+	int sh = (int)src->getSize().y;
+
+	if (dw <= 0 || dh <= 0 || sw <= 0 || sh <= 0) return;
+
+	int mx0 = 0, my0 = 0, mw = 0, mh = 0;
+	mw = (int)mask.getSize().x;
+	mh = (int)mask.getSize().y;
+	if (mw <= 0 || mh <= 0) return;
+
+	if (dstX < 0) { srcX -= dstX;  mx0 -= dstX; dstX = 0; }
+	if (dstY < 0) { srcY -= dstY;  my0 -= dstY; dstY = 0; }
+
+	if (srcX < 0) { dstX -= srcX;  mx0 -= srcX; srcX = 0; }
+	if (srcY < 0) { dstY -= srcY;  my0 -= srcY; srcY = 0; }
+
+	int maxW = std::min(dw - dstX, sw - srcX);
+	int maxH = std::min(dh - dstY, sh - srcY);
+	maxW = std::min(maxW, mw - mx0);
+	maxH = std::min(maxH, mh - my0);
+
+	if (maxW <= 0 || maxH <= 0) return;
+
+	for (int y = 0; y < maxH; ++y) {
+		int sy = srcY + y;
+		int dy = dstY + y;
+		int my = my0 + y;
+
+		for (int x = 0; x < maxW; ++x) {
+			int sx = srcX + x;
+			int dx = dstX + x;
+			int mx = mx0 + x;
+
+			const sf::Color m = mask.getPixel(sf::Vector2u(mx, my));
+			if (m != sf::Color::Black) continue;
+
+			const sf::Color c = src->getPixel(sf::Vector2u(sx, sy));
+			if (c.a == 0 || c == alphaColor) continue;
+
+			dst->setPixel(sf::Vector2u(dx, dy), c);
+		}
+	}
+}
+
 void removeImageWithMask(sf::Image& image, sf::IntRect rect, sf::Image& mask, sf::Color alphaColor)
 {
 

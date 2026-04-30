@@ -302,8 +302,8 @@ std::string outline_shader_source = R"(
         float hasNonBgNeighbor = 0.0;
 
         if (r > 0) {
-            for (int dy = -8; dy <= 8; dy++) {
-                for (int dx = -8; dx <= 8; dx++) {
+            for (int dy = -outlineWidth; dy <= outlineWidth; dy++) {
+                for (int dx = -outlineWidth; dx <= outlineWidth; dx++) {
                     if (abs(dx) > r || abs(dy) > r) continue;
                     if (dx * dx + dy * dy > r * r)  continue;
                     if (dx == 0 && dy == 0)         continue;

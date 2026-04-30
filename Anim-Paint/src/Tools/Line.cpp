@@ -246,19 +246,6 @@ void Line::generateImage()
 }
 
 
-
-void Line::cut() {
-
-}
-
-void Line::copy() {
-
-}
-
-void Line::pasteToCanvas() {
-    ResizableTool::pasteToCanvas();
-}
-
 void Line::drawEdgePoints() {
 
     if (!(_points.size() >= 2 && (_state != ResizableToolState::None)))

@@ -51,14 +51,8 @@ public:
     void resize();
 
     virtual void generateImage();
-
-    virtual void cut();
-    virtual void copy();
-    virtual void pasteToCanvas();
-
 	virtual void drawEdgePoints();
     
-
     virtual void cursorHover();
     virtual void handleEvent(const sf::Event& event);
     virtual void update();

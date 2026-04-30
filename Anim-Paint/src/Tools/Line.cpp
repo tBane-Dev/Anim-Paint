@@ -8,6 +8,9 @@
 #include "Tools/Brush.hpp"
 #include "Tools/Filters.hpp"
 #include "Dialogs/Dialog.hpp"
+#include "Animation/Animation.hpp"
+#include "Tools/ClipBoard.hpp"
+#include "History.hpp"
 
 std::vector<sf::Vector2i> getPointsFromLine(sf::Vector2i start, sf::Vector2i end) {
     std::vector<sf::Vector2i> points;
@@ -226,6 +229,113 @@ void Line::resize() {
 
     _points[0] = worldToTile(_startPoint->getPosition(), canvas->_position, canvas->_zoom, canvas->_zoom_delta);
     _points[1] = worldToTile(_endPoint->getPosition(), canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+}
+
+void Line::cut()
+{
+    if (_state != ResizableToolState::Selected)
+        return;
+
+    if (_previewImage == nullptr)
+        return;
+
+    sf::Image& canvas = getCurrentAnimation()->getCurrentLayer()->_image;
+    sf::Color alphaColor = sf::Color::Transparent;
+
+    sf::IntRect r = _rect;
+    if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
+    if (r.size.y < 0) { r.position.y += r.size.y; r.size.y = -r.size.y; }
+
+    sf::IntRect canvasRect(sf::Vector2i(0, 0), sf::Vector2i(canvas.getSize()));
+    auto intersection = r.findIntersection(canvasRect);
+    if (!intersection.has_value())
+        return;
+
+    sf::IntRect s = intersection.value();
+    if (s.size.x <= 0 || s.size.y <= 0)
+        return;
+
+    sf::Texture tex(*_previewImage);
+    sf::Sprite spr(tex);
+    sf::RenderTexture rtex;
+    rtex.resize(_previewImage->getSize());
+    rtex.clear(sf::Color::Transparent);
+    _shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
+    rtex.draw(spr, &_shader);
+    rtex.display();
+    sf::Image coloredImage = rtex.getTexture().copyToImage();
+
+    sf::Image copiedImage;
+    copiedImage.resize(sf::Vector2u(s.size), sf::Color::Transparent);
+
+    for (int y = 0; y < s.size.y; ++y) {
+        for (int x = 0; x < s.size.x; ++x) {
+            sf::Vector2u srcPos(s.position.x + x, s.position.y + y);
+
+            if (_previewImage->getPixel(srcPos) != sf::Color::Transparent) {
+                copiedImage.setPixel(sf::Vector2u(x, y), coloredImage.getPixel(srcPos));
+            }
+        }
+    }
+
+    copyImageToClipboard(copiedImage, sf::IntRect(sf::Vector2i(0, 0), s.size));
+
+    _image = nullptr;
+    _previewImage = nullptr;
+    _state = ResizableToolState::None;
+    _rect = sf::IntRect(sf::Vector2i(-1, -1), sf::Vector2i(-1, -1));
+
+}
+
+void Line::copy()
+{
+    if (_state != ResizableToolState::Selected)
+        return;
+
+    if (_previewImage == nullptr)
+        return;
+
+    sf::Image& canvas = getCurrentAnimation()->getCurrentLayer()->_image;
+    sf::Color alphaColor = sf::Color::Transparent;
+
+    sf::IntRect r = _rect;
+    if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
+    if (r.size.y < 0) { r.position.y += r.size.y; r.size.y = -r.size.y; }
+
+    sf::IntRect canvasRect(sf::Vector2i(0, 0), sf::Vector2i(canvas.getSize()));
+    auto intersection = r.findIntersection(canvasRect);
+    if (!intersection.has_value())
+        return;
+
+    sf::IntRect s = intersection.value();
+    if (s.size.x <= 0 || s.size.y <= 0)
+        return;
+
+    sf::Texture tex(*_previewImage);
+    sf::Sprite spr(tex);
+    sf::RenderTexture rtex;
+    rtex.resize(_previewImage->getSize());
+    rtex.clear(sf::Color::Transparent);
+    _shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
+    rtex.draw(spr, &_shader);
+    rtex.display();
+
+    sf::Image coloredImage = rtex.getTexture().copyToImage();
+
+    sf::Image copiedImage;
+    copiedImage.resize(sf::Vector2u(s.size), sf::Color::Transparent);
+
+    for (int y = 0; y < s.size.y; ++y) {
+        for (int x = 0; x < s.size.x; ++x) {
+            sf::Vector2u srcPos(s.position.x + x, s.position.y + y);
+
+            if (_previewImage->getPixel(srcPos) != sf::Color::Transparent) {
+                copiedImage.setPixel(sf::Vector2u(x, y), coloredImage.getPixel(srcPos));
+            }
+        }
+    }
+
+    copyImageToClipboard(copiedImage, sf::IntRect(sf::Vector2i(0, 0), s.size));
 }
 
 void Line::generateImage()

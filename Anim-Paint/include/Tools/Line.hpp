@@ -50,6 +50,9 @@ public:
     void setPosition(sf::Vector2i position);
     void resize();
 
+    virtual void cut();
+	virtual void copy();
+
     virtual void generateImage();
 	virtual void drawEdgePoints();
     

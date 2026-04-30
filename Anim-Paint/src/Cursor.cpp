@@ -9,6 +9,7 @@
 #include "Components/MainMenu/MainMenu.hpp"
 #include "Time.hpp" // TO-DO - to remove
 #include <typeinfo> // for class name
+#include "Tools/Line.hpp"
 
 Cursor::Cursor() {
 
@@ -174,6 +175,19 @@ void Cursor::handleEvent() {
 			_brushIsVisible = false;
 			return;
 		}
+	}
+
+	// Line tool
+	Line* line = dynamic_cast<Line*>(resizable_tool.get());
+	if(line &&
+		(resizable_tool->_state == ResizableToolState::Selected || resizable_tool->_state == ResizableToolState::Resizing) &&
+		(Element_pressed == line->_startPoint || Element_pressed == line->_endPoint || _hoveredElement == line->_startPoint || _hoveredElement == line->_endPoint)
+		) {
+		window->setMouseCursorVisible(true);
+		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeVertical);
+		window->setMouseCursor(*_cursor);
+		_brushIsVisible = false;
+		return;
 	}
 
 	bool canvasIsMoving = false;

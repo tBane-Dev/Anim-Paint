@@ -52,6 +52,7 @@ void resize() {
 	main_menu->resize();
 	bottom_bar->resize();
 	canvas->setCenter();
+	canvas->setPositionAllCanvases(canvas->_position);
 
 	if (palette != nullptr) {
 		palette->clampPosition();

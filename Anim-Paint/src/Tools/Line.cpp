@@ -200,10 +200,6 @@ void Line::generateEdgePoints() {
 
 }
 
-void Line::reset() {
-
-}
-
 void Line::setPosition(sf::Vector2i position) {
 
 }
@@ -342,32 +338,36 @@ void Line::handleEvent(const sf::Event& event) {
             //generatePreviewImage();
             //_lastTilePosition = tile;
 
-            if (canvasIsHovered()) {
-                if (_image != nullptr) {
-                    pasteToCanvas();
-                    _image = nullptr;
-                }
+            if (toolbar->_toolType == ToolType::Line) {
+                if (canvasIsHovered()) {
+                    if (_image != nullptr) {
+                        pasteToCanvas();
+                        _image = nullptr;
+                        
+                    }
 
-                _state = ResizableToolState::Selecting;
-                sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-                _lastTilePosition = tile;
-                Element_pressed = this->shared_from_this();
-                _points.clear();
-                _points.push_back(tile);
-                _points.push_back(tile);
-                generateRect();
-                generateImage();
-                generateEdgePoints();
-                generatePreviewImage();
-            }
-            else {
-                if (_image != nullptr) {
-                    pasteToCanvas();
-                    _image = nullptr;
-                    _state = ResizableToolState::None;
+                    _state = ResizableToolState::Selecting;
+                    sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+                    _lastTilePosition = tile;
+                    Element_pressed = this->shared_from_this();
                     _points.clear();
+                    _points.push_back(tile);
+                    _points.push_back(tile);
                     generateRect();
+                    generateImage();
+                    generateEdgePoints();
                     generatePreviewImage();
+                }
+                else {
+                    if (_image != nullptr) {
+                        pasteToCanvas();
+                        _image = nullptr;
+                        _points.clear();
+                        generateRect();
+                        generateImage();
+                        generatePreviewImage();
+                        _state = ResizableToolState::None;
+                    }
                 }
             }
         }

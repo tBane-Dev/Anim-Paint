@@ -433,6 +433,7 @@ void ResizableShape::handleEvent(const sf::Event& event) {
 					_points.clear();
 					_points.push_back(tile);
 					generateRect();
+					generateImage();
 					generatePreviewImage();
 					setPosition(tile);
 				}

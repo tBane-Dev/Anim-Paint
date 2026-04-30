@@ -89,10 +89,10 @@ void History::undo()
 {
 
 	if (resizable_tool != nullptr && resizable_tool->_state != ResizableToolState::None) {
-		pasteImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *resizable_tool->_image, resizable_tool->_rect.position.x, resizable_tool->_rect.position.y, sf::Color::Transparent);
-		getCurrentAnimation()->getCurrentLayer()->generateTexture();
-		saveStep();
+		DebugLog(L"save resizable tool");
+		resizable_tool->pasteToCanvas();
 		resizable_tool->reset();
+		return;
 	}
 	else if (!canUndo()) return;
 
@@ -122,6 +122,8 @@ void History::undo()
 	animations_panel->updateText();
 	frames_panel->updateText();
 	layers_panel->loadLayersFromCurrentFrame();
+
+	getCurrentAnimation()->getCurrentLayer()->generateTexture();
 
 	if (step->_canvasResized) {
 		canvas->resize(step->_canvasSize);

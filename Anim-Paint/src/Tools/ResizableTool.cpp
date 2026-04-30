@@ -279,6 +279,10 @@ bool ResizableTool::tooltypeIsShape() {
 void ResizableTool::reset() {
 	_state = ResizableToolState::None;
 	_points.clear();
+	generateRect();
+	generateEdgePoints();
+	generateImage();
+	generatePreviewImage();
 }
 
 sf::Vector2i ResizableTool::getClampedPosition(sf::Vector2i newGlobalPosition) {
@@ -485,15 +489,20 @@ void ResizableTool::generateRect() {
 }
 
 void ResizableTool::generateImage() {
+	_image = std::make_shared<sf::Image>();
+
 	if (_rect.size.x < 1 || _rect.size.y < 1)
 		return;
 
-	_image = std::make_shared<sf::Image>(sf::Vector2u(_rect.size), sf::Color::Transparent);
+	_image->resize(sf::Vector2u(_rect.size), sf::Color::Transparent);
 }
 
 void ResizableTool::generatePreviewImage() {
 
 	_previewImage = std::make_shared<sf::Image>();
+
+	if(_state == ResizableToolState::None)
+		return;
 
 	if (_rect.size.x < 1 || _rect.size.y < 1)
 		return;

@@ -46,6 +46,8 @@ public:
     Line();
     ~Line();
 
+    void reset();
+    void setAlignCenter();
     virtual void generateEdgePoints();
     void setPosition(sf::Vector2i position);
     void resize();

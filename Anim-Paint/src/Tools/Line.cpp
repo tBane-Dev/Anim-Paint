@@ -173,6 +173,29 @@ Line::~Line() {
 
 }
 
+void Line::reset() {
+    _state = ResizableToolState::None;
+    _points.clear();
+    _rect = sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(0,0));
+    _image = nullptr;
+    _previewImage = nullptr;
+	_edgePoints.clear();
+}
+
+void Line::setAlignCenter() {
+    if (_state == ResizableToolState::None)
+        return;
+
+    sf::Vector2i oldPos = _rect.position;
+    _rect.position = (canvas->_size - _rect.size) / 2;
+
+	_points[0] -= oldPos - _rect.position;
+	_points[1] -= oldPos - _rect.position;
+
+    generatePreviewImage();
+    generateEdgePoints();
+}
+
 void Line::generateEdgePoints() {
 
     if (_points.size() < 2)

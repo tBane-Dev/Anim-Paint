@@ -27,6 +27,8 @@ public:
 
 	static std::shared_ptr<sf::Shader> _chessboardShader;
 
+	static CanvasState _state;
+
 	bool _isEdited;		// if brush/eraser/fill was used, then true
 	
 	std::vector<std::shared_ptr<EdgePoint>> _edgePoints;	// points use to resize of canvas
@@ -44,7 +46,7 @@ public:
 	sf::Vector2i _topLeftPointPosition;
 	std::vector<std::shared_ptr<Frame>> _backupFrames;
 
-	CanvasState _state;
+	
 	sf::Vector2i _offset;	// to movements of canvas
 
 	sf::Vector2i _coords;
@@ -89,5 +91,5 @@ public:
 extern std::shared_ptr<Canvas> canvas;
 extern std::vector<std::shared_ptr<Canvas>> canvases;
 
-bool canvasIsHovered();
-bool canvasIsPressed();
+std::shared_ptr<Canvas> canvasIsHovered();
+std::shared_ptr<Canvas> canvasIsPressed();

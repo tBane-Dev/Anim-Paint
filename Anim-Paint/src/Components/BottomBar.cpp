@@ -66,12 +66,7 @@ void BottomBar::resize() {
 void BottomBar::updateText() {
 	_hoveredElement = Element_hovered;
 
-	if (_hoveredElement == canvas || 
-		(resizable_tool != nullptr && _hoveredElement == resizable_tool && canvas->_rect.contains(cursor->_position)) ||
-		(resizable_tool != nullptr && Element_pressed == resizable_tool) ||
-		(resizable_tool != nullptr && resizable_tool->_state == ResizableToolState::Resizing && 
-		std::dynamic_pointer_cast<ResizableShape>(resizable_tool)!=nullptr && std::dynamic_pointer_cast<ResizableShape>(resizable_tool)->_clickedEdgePoint != nullptr)
-		) {
+	if (canvasIsHovered()!=nullptr && _hoveredElement == canvasIsHovered()){
 		sf::Vector2i coords = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 		std::wstring text = std::to_wstring(coords.x) + L" x " + std::to_wstring(coords.y);
 		_textCursorPosition->setString(text);
@@ -80,10 +75,12 @@ void BottomBar::updateText() {
 		_textCursorPosition->setString(L"");
 	}
 
-	if (canvas->_state == CanvasState::Resizing) {
+	
+	if (Canvas::_state == CanvasState::Resizing) {
 		_textCursorPosition->setString(L"");
-		_textCanvasSize->setString(std::to_wstring(canvas->_size.x) + L" x " + std::to_wstring(canvas->_size.y));
 	}
+	_textCanvasSize->setString(std::to_wstring(canvas->_size.x) + L" x " + std::to_wstring(canvas->_size.y));
+
 
 	if (resizable_tool != nullptr && resizable_tool == selection && selection->_state != ResizableToolState::None) {
 		std::wstring ssize = std::to_wstring(selection->_resizedRect.size.x) + L" x " + std::to_wstring(selection->_resizedRect.size.y);
@@ -107,12 +104,6 @@ void BottomBar::cursorHover() {
 	if (!static_dialogs.empty() && static_dialogs.front()->_is_moved)
 		return;
 
-	if (canvas->_state != CanvasState::Idle)
-		return;
-
-	if (resizable_tool != nullptr && (resizable_tool->_state == ResizableToolState::Moving || resizable_tool->_state == ResizableToolState::Selecting || resizable_tool->_state == ResizableToolState::Resizing))
-		return;
-
 	if (_rect.contains(cursor->_position)) {
 		Element_hovered = this->shared_from_this();
 	}
@@ -126,12 +117,7 @@ void BottomBar::handleEvent(const sf::Event& event) {
 	if (main_menu->_state != MainMenuStates::Closed)
 		return;
 
-	if (Element_hovered != canvas && 
-		Element_hovered != canvas->_hoveredEdgePoint && Element_pressed != canvas->_hoveredEdgePoint &&
-		resizable_tool != nullptr && 
-		Element_hovered != resizable_tool && 
-		Element_hovered != resizable_tool->_hoveredEdgePoint && Element_pressed != resizable_tool->_hoveredEdgePoint &&
-		_hoveredElement == Element_hovered)
+	if (!static_dialogs.empty() && static_dialogs.front()->_is_moved)
 		return;
 
 	updateText();

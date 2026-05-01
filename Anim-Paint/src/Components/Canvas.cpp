@@ -27,6 +27,7 @@ float Canvas::_min_zoom = 0.125f;
 float Canvas::_max_zoom = 1.0f;
 float Canvas::_zoom = 0.25f;
 std::shared_ptr<sf::Shader> Canvas::_chessboardShader = nullptr;
+CanvasState Canvas::_state = CanvasState::Idle;
 
 sf::Vector2i Canvas::_size = sf::Vector2i(32, 32);
 
@@ -65,7 +66,6 @@ void Canvas::reset() {
 
 	_size = sf::Vector2i(32, 32);
 
-	_state = CanvasState::Idle;
 	_offset = sf::Vector2i(0, 0);
 
 	_isEdited = false;
@@ -921,20 +921,20 @@ void Canvas::draw() {
 std::shared_ptr<Canvas> canvas;
 std::vector<std::shared_ptr<Canvas>> canvases;
 
-bool canvasIsHovered() {
+std::shared_ptr<Canvas> canvasIsHovered() {
 	for (auto& canvas : canvases) {
 		if (Element_hovered.get() == canvas.get()) {
-			return true;
+			return canvas;
 		}
 	}
-	return false;
+	return nullptr;
 }
 
-bool canvasIsPressed() {
+std::shared_ptr<Canvas> canvasIsPressed() {
 	for (auto& canvas : canvases) {
 		if (Element_pressed.get() == canvas.get()) {
-			return true;
+			return canvas;
 		}
 	}
-	return false;
+	return nullptr;
 }

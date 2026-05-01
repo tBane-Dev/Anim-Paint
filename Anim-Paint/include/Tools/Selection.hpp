@@ -29,6 +29,7 @@ public:
 	
 	void reset();
 	void selectAll();
+	void setAlignCenter();
 	bool clickOnSelection(sf::Vector2i point);
 	void pasteToCanvas();
 	void paste(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Image& mask, sf::Color alphaColor);

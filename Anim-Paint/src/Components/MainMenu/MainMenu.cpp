@@ -259,7 +259,8 @@ MainMenu::MainMenu() : Element() {
 
 	select_none = std::make_shared<Option>(translation->get(TranslationKey::MENU_SELECT_SELECT_NONE), L"Ctrl+D");
 	select_none->_onclick_func = [this]() {
-		if (resizable_tool->_state != ResizableToolState::None) {
+		if (resizable_tool != nullptr && resizable_tool->_state != ResizableToolState::None) {
+			resizable_tool->pasteToCanvas();
 			resizable_tool->reset();
 		}
 		closeMenu();
@@ -267,11 +268,9 @@ MainMenu::MainMenu() : Element() {
 
 	select_align_center = std::make_shared<Option>(translation->get(TranslationKey::MENU_SELECT_ALIGN_CENTER));
 	select_align_center->_onclick_func = [this]() {
-		sf::Vector2i oldPos = selection->_rect.position;
-		selection->_rect.position = (canvas->_size - selection->_resizedRect.size) / 2;
-		selection->_resizedRect.position = selection->_rect.position;
-		selection->_outlineOffset = selection->_rect.position - oldPos + selection->_outlineOffset;
-		selection->generateEdgePoints();
+		if(resizable_tool != nullptr && resizable_tool->_state != ResizableToolState::None) {
+			resizable_tool->setAlignCenter();
+		}
 		closeMenu();
 		};
 
@@ -892,8 +891,8 @@ void MainMenu::update() {
 
 	edit_redo->setActive(history->canRedo());
 	edit_undo->setActive(history->canUndo());
-	select_none->setActive((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && resizable_tool!= nullptr && resizable_tool->_state != ResizableToolState::None);
-	select_align_center->setActive((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && resizable_tool!= nullptr && resizable_tool->_state != ResizableToolState::None);
+	select_none->setActive(resizable_tool!= nullptr && resizable_tool->_state != ResizableToolState::None);
+	select_align_center->setActive(resizable_tool!= nullptr && resizable_tool->_state != ResizableToolState::None);
 	
 }
 

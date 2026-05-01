@@ -45,6 +45,7 @@ public:
 	virtual void generateEdgePoints();
 	bool tooltypeIsShape();
 	void reset();
+	virtual void setAlignCenter();
 	sf::Vector2i getClampedPosition(sf::Vector2i newGlobalPosition);
 	sf::Vector2i getClampedTilePosition(sf::Vector2i newPos);
 	void setPosition(sf::Vector2i position);

@@ -146,6 +146,18 @@ void Selection::selectAll() {
 	
 }
 
+void Selection::setAlignCenter() {
+
+	if (_state == ResizableToolState::None)
+		return;
+
+	sf::Vector2i oldPos = _rect.position;
+	_rect.position = (canvas->_size - _resizedRect.size) / 2;
+	_resizedRect.position = _rect.position;
+	_outlineOffset = _rect.position - oldPos + _outlineOffset;
+	generatePreviewImage();
+	generateEdgePoints();
+}
 
 
 bool Selection::clickOnSelection(sf::Vector2i point) {

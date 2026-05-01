@@ -285,6 +285,17 @@ void ResizableTool::reset() {
 	generatePreviewImage();
 }
 
+void ResizableTool::setAlignCenter() {
+	if (_state == ResizableToolState::None)
+		return;
+
+	sf::Vector2i oldPos = _rect.position;
+	_rect.position = (canvas->_size - _rect.size) / 2;
+
+	generatePreviewImage();
+	generateEdgePoints();
+}
+
 sf::Vector2i ResizableTool::getClampedPosition(sf::Vector2i newGlobalPosition) {
 	int snapThreshold = 8;
 

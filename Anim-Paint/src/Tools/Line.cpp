@@ -421,7 +421,7 @@ void Line::cursorHover() {
 }
 
 void Line::handleEvent(const sf::Event& event) {
-
+    
     // shapes resizing
     if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
         if (_state == ResizableToolState::Selected && _hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {
@@ -446,18 +446,7 @@ void Line::handleEvent(const sf::Event& event) {
     if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
         
         if ((Element_hovered == nullptr || Element_pressed.get() == this || canvasIsHovered() || canvasIsPressed()) && (_state == ResizableToolState::None || _state == ResizableToolState::Selected)) {
-            
-            //sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-            //_points.clear();
-            //_points.push_back(tile);
-            //_points.push_back(tile);
-            //_state = ResizableToolState::Selecting;
-            //generateRect();
-            //generateImage();
-            //generateEdgePoints();
-            //generatePreviewImage();
-            //_lastTilePosition = tile;
-
+          
             if (toolbar->_toolType == ToolType::Line) {
                 if (canvasIsHovered()) {
                     if (_image != nullptr) {
@@ -510,8 +499,10 @@ void Line::handleEvent(const sf::Event& event) {
 	}
     else if(const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
         if (_state == ResizableToolState::Selecting) {
-            _points[1] = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-            _state = ResizableToolState::Selected;
+            if (_rect.size.x < 1 || _rect.size.y < 1) {
+                _state = ResizableToolState::None;
+            }else
+                _state = ResizableToolState::Selected;
             generateRect();
             generateImage();
             generateEdgePoints();

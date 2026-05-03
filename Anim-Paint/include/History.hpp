@@ -10,6 +10,8 @@ public:
 
 	bool _canvasResized;
 	sf::Vector2i _canvasSize;
+	std::shared_ptr<EdgePoint> _edgePoint;
+	sf::Vector2i resize_delta;
 
 	std::vector<std::shared_ptr<Animation>> _animations;
 

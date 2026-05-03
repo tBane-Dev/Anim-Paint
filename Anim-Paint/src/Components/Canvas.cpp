@@ -149,10 +149,6 @@ void Canvas::setPosition(sf::Vector2i position) {
 	_point_bottom->setPosition(_position + sf::Vector2i(s.x / 2, s.y));
 	_point_right_bottom->setPosition(_position + sf::Vector2i(s.x, s.y));
 
-	if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state == ResizableToolState::Selected) {
-		selection->generateEdgePoints();
-	}
-
 	if(resizable_tool && resizable_tool->_state == ResizableToolState::Selected) {
 		resizable_tool->generateEdgePoints();
 	}
@@ -308,7 +304,6 @@ void Canvas::resize(std::shared_ptr<EdgePoint> edgePoint, sf::Vector2i cursorPos
 			orgLayer->_image = newImage;
 			orgLayer->generateTexture();
 		}
-
 	}
 
 	setResizeAllCanvases(_size);

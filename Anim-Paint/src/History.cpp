@@ -66,11 +66,12 @@ void History::saveStep() {
 	step->_currentFrame = getCurrentAnimation()->getCurrentFrameID();
 	step->_currentLayer = getCurrentAnimation()->getCurrentLayerID();
 
-	if (_currentStep == -1 || canvas->_clickedEdgePoint) {
-		step->_canvasResized = true;
-		step->_canvasSize = canvas->_size;
+
+	step->_edgePoint = canvas->_clickedEdgePoint;
+	if (step->_edgePoint != nullptr) {
+		step->resize_delta = canvas->_clickedEdgePoint->getPosition() - canvas->_orginalEdgePointPosition;
+		std::wcout << step->resize_delta.x << L"," <<  step->resize_delta.y;
 	}
-	
 
 	_steps.push_back(step);
 	_currentStep++;
@@ -125,12 +126,89 @@ void History::undo()
 
 	getCurrentAnimation()->getCurrentLayer()->generateTexture();
 
-	if (step->_canvasResized) {
-		canvas->resize(step->_canvasSize);
-		canvas->setCenter();
-		canvas->setPositionAllCanvases(canvas->_position);
+	if (_steps[_currentStep + 1]->_edgePoint) {
+
+		step = _steps[_currentStep + 1];
+
+		float scale = canvas->_zoom * canvas->_zoom_delta;
+
+		sf::Vector2i dst;
+		dst.x = std::min(step->resize_delta.x, 0) / scale;
+		dst.y = std::min(step->resize_delta.y, 0) / scale;
+
+		sf::Vector2i start = canvas->_point_left_top->_rect.position;
+		sf::Vector2i end = canvas->_point_right_bottom->_rect.position;
+
+		if (step->_edgePoint.get() == canvas->_point_left_top.get()) {
+			start.x -= step->resize_delta.x;
+			start.y -= step->resize_delta.y;
+		}
+		else if (step->_edgePoint.get() == canvas->_point_right_top.get()) {
+			end.x -= step->resize_delta.x;
+			start.y -= step->resize_delta.y;
+		}
+		else if (step->_edgePoint.get() == canvas->_point_left_bottom.get()) {
+			start.x -= step->resize_delta.x;
+			end.y -= step->resize_delta.y;
+		}
+		else if (step->_edgePoint.get() == canvas->_point_right_bottom.get()) {
+			end.x -= step->resize_delta.x;
+			end.y -= step->resize_delta.y;
+		}
+		else if (step->_edgePoint.get() == canvas->_point_top.get()) {
+			start.y -= step->resize_delta.y;
+		}
+		else if (step->_edgePoint.get() == canvas->_point_bottom.get()) {
+			end.y -= step->resize_delta.y;
+		}
+		else if (step->_edgePoint.get() == canvas->_point_left.get()) {
+			start.x -= step->resize_delta.x;
+		}
+		else if (step->_edgePoint.get() == canvas->_point_right.get()) {
+			end.x -= step->resize_delta.x;
+		}
+
+		canvas->_point_left_top->setPosition(start);
+		canvas->_point_top->setPosition({ (start.x + end.x) / 2, start.y });
+		canvas->_point_right_top->setPosition({ end.x, start.y });
+		canvas->_point_left->setPosition({ start.x, (start.y + end.y) / 2 });
+		canvas->_point_right->setPosition({ end.x, (start.y + end.y) / 2 });
+		canvas->_point_left_bottom->setPosition({ start.x, end.y });
+		canvas->_point_bottom->setPosition({ (start.x + end.x) / 2, end.y });
+		canvas->_point_right_bottom->setPosition(end);
+
+		canvas->_rect.position = canvas->_point_left_top->getPosition();
+		canvas->_size = sf::Vector2i(sf::Vector2f(end - start) / scale);
+		canvas->generateBackground(canvas->_size);
+
+		const size_t framesCount = getCurrentAnimation()->getFrames().size();
+
+		for (size_t f = 0; f < framesCount; ++f) {
+			std::shared_ptr<Frame> org = getCurrentAnimation()->getFrames()[f];
+
+			const size_t layersCount = org->getLayers().size();
+
+			for (size_t l = 0; l < layersCount; ++l) {
+				std::shared_ptr<Layer> orgLayer = org->getLayers()[l];
+
+				sf::Image newImage;
+				sf::Vector2u newSize = sf::Vector2u(canvas->_size);
+
+				newImage.resize(newSize, sf::Color::Transparent);
+
+				// dst jest ujemne przy przesunięciu lewo/góra,
+				// więc wklejamy stary obraz z przeciwnym znakiem.
+				pasteImageWithAlpha(newImage, orgLayer->_image, 0, 0);
+
+				orgLayer->_image = newImage;
+				orgLayer->generateTexture();
+			}
+		}
+
+		getCurrentAnimation()->getCurrentLayer()->generateTexture();
 	}
 	
+
 	main_menu->edit_undo->setActive(canUndo());
 	main_menu->edit_redo->setActive(canRedo());
 }
@@ -166,10 +244,86 @@ void History::redo()
 	frames_panel->updateText();
 	layers_panel->loadLayersFromCurrentFrame();
 
-	if (step->_canvasResized) {
-		canvas->resize(step->_canvasSize);
-		canvas->setCenter();
-		canvas->setPositionAllCanvases(canvas->_position);
+	if (_steps[_currentStep]->_edgePoint) {
+
+		step = _steps[_currentStep];
+
+		float scale = canvas->_zoom * canvas->_zoom_delta;
+
+		sf::Vector2i dst;
+		dst.x = std::min(step->resize_delta.x, 0) / scale;
+		dst.y = std::min(step->resize_delta.y, 0) / scale;
+
+		sf::Vector2i start = canvas->_point_left_top->_rect.position;
+		sf::Vector2i end = canvas->_point_right_bottom->_rect.position;
+
+		if (step->_edgePoint.get() == canvas->_point_left_top.get()) {
+			start.x += step->resize_delta.x;
+			start.y += step->resize_delta.y;
+		}
+		else if (step->_edgePoint.get() == canvas->_point_right_top.get()) {
+			end.x += step->resize_delta.x;
+			start.y += step->resize_delta.y;
+		}
+		else if (step->_edgePoint.get() == canvas->_point_left_bottom.get()) {
+			start.x += step->resize_delta.x;
+			end.y += step->resize_delta.y;
+		}
+		else if (step->_edgePoint.get() == canvas->_point_right_bottom.get()) {
+			end.x += step->resize_delta.x;
+			end.y += step->resize_delta.y;
+		}
+		else if (step->_edgePoint.get() == canvas->_point_top.get()) {
+			start.y += step->resize_delta.y;
+		}
+		else if (step->_edgePoint.get() == canvas->_point_bottom.get()) {
+			end.y += step->resize_delta.y;
+		}
+		else if (step->_edgePoint.get() == canvas->_point_left.get()) {
+			start.x += step->resize_delta.x;
+		}
+		else if (step->_edgePoint.get() == canvas->_point_right.get()) {
+			end.x += step->resize_delta.x;
+		}
+
+		canvas->_point_left_top->setPosition(start);
+		canvas->_point_top->setPosition({ (start.x + end.x) / 2, start.y });
+		canvas->_point_right_top->setPosition({ end.x, start.y });
+		canvas->_point_left->setPosition({ start.x, (start.y + end.y) / 2 });
+		canvas->_point_right->setPosition({ end.x, (start.y + end.y) / 2 });
+		canvas->_point_left_bottom->setPosition({ start.x, end.y });
+		canvas->_point_bottom->setPosition({ (start.x + end.x) / 2, end.y });
+		canvas->_point_right_bottom->setPosition(end);
+
+		canvas->_rect.position = canvas->_point_left_top->getPosition();
+		canvas->_size = sf::Vector2i(sf::Vector2f(end - start) / scale);
+		canvas->generateBackground(canvas->_size);
+
+		const size_t framesCount = getCurrentAnimation()->getFrames().size();
+
+		for (size_t f = 0; f < framesCount; ++f) {
+			std::shared_ptr<Frame> org = getCurrentAnimation()->getFrames()[f];
+
+			const size_t layersCount = org->getLayers().size();
+
+			for (size_t l = 0; l < layersCount; ++l) {
+				std::shared_ptr<Layer> orgLayer = org->getLayers()[l];
+
+				sf::Image newImage;
+				sf::Vector2u newSize = sf::Vector2u(canvas->_size);
+
+				newImage.resize(newSize, sf::Color::Transparent);
+
+				// dst jest ujemne przy przesunięciu lewo/góra,
+				// więc wklejamy stary obraz z przeciwnym znakiem.
+				pasteImageWithAlpha(newImage, orgLayer->_image, 0, 0);
+
+				orgLayer->_image = newImage;
+				orgLayer->generateTexture();
+			}
+		}
+
+		getCurrentAnimation()->getCurrentLayer()->generateTexture();
 	}
 
 	main_menu->edit_redo->setActive(canRedo());

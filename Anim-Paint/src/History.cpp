@@ -180,7 +180,8 @@ void History::undo()
 		canvas->_rect.position = canvas->_point_left_top->getPosition();
 		canvas->_size = sf::Vector2i(sf::Vector2f(end - start) / scale);
 		canvas->generateBackground(canvas->_size);
-
+		canvas->setGenerateBackgroundAllCanvases(canvas->_size);
+		canvas->setPositionAllCanvases(canvas->_rect.position);
 		const size_t framesCount = getCurrentAnimation()->getFrames().size();
 
 		for (size_t f = 0; f < framesCount; ++f) {
@@ -298,6 +299,8 @@ void History::redo()
 		canvas->_rect.position = canvas->_point_left_top->getPosition();
 		canvas->_size = sf::Vector2i(sf::Vector2f(end - start) / scale);
 		canvas->generateBackground(canvas->_size);
+		canvas->setGenerateBackgroundAllCanvases(canvas->_size);
+		canvas->setPositionAllCanvases(canvas->_rect.position);
 
 		const size_t framesCount = getCurrentAnimation()->getFrames().size();
 

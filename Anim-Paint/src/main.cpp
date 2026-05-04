@@ -43,9 +43,6 @@
 #include "Tools/Selection.hpp"
 #include "Tools/Brush.hpp"
 
-#include "Tools/Line.hpp"
-
-
 
 void resize() {
 
@@ -314,7 +311,6 @@ int main() {
 			static_dialogs.front()->draw();
 
 		
-
 		bottom_bar->draw();
 		main_menu->draw();
 
@@ -322,22 +318,6 @@ int main() {
 			dialog->draw();
 
 		tooltip->draw();
-
-		/*
-		// draw test line
-		sf::Vector2i start(8, 8);
-		sf::Vector2i end(24, 24);
-
-		sf::Line line(start, end, brush->_size*2+1);
-
-		line.setGlobalPosition(canvas->_position);
-		line.setPixelSize(canvas->_zoom_delta * canvas->_zoom);
-		line.setFillColor(sf::Color(127, 127, 127));
-		line.setOutlineThickness(3);
-		line.setOutlineColor(sf::Color(63,63,63));
-
-		window->draw(line);
-		*/
 
 		window->display();
 	}

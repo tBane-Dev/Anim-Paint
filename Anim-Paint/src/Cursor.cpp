@@ -291,7 +291,7 @@ void Cursor::handleEvent() {
 		return;
 	}
 
-	if (dynamic_cast<LocationAndFilesSeparator*>(_hoveredElement.get()) != nullptr) {
+	if (dynamic_cast<LocationAndFilesSeparator*>(_hoveredElement.get()) != nullptr || dynamic_cast<LocationAndFilesSeparator*>(Element_pressed.get()) != nullptr) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeHorizontal);
 		window->setMouseCursor(*_cursor);
@@ -299,7 +299,7 @@ void Cursor::handleEvent() {
 		return;
 	}
 
-	if (dynamic_cast<PaletteValues*>(_hoveredElement.get()) != nullptr) {
+	if (dynamic_cast<PaletteValues*>(_hoveredElement.get()) != nullptr || dynamic_cast<PaletteValues*>(Element_pressed.get()) != nullptr) {
 		window->setMouseCursorVisible(true);
 		_cursor = _crossCursor;
 		window->setMouseCursor(*_cursor);
@@ -307,22 +307,10 @@ void Cursor::handleEvent() {
 		return;
 	}
 
-	bool hoveredCanvas = false;
-	for (auto& canvas : canvases) {
+	std::shared_ptr<Canvas> hoveredCanvas = canvasIsHovered();
+	std::shared_ptr<Canvas> pressedCanvas = canvasIsPressed();
 
-		if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(canvas->_coords.x == 0 && canvas->_coords.y == 0))
-			continue;
-
-		if (main_menu->canvas_repeating->_checkbox->_value == 1 && (canvas->_coords.x != 0 && canvas->_coords.y != 0))
-			continue;
-
-		if(_hoveredElement == canvas) {
-			hoveredCanvas = true;
-			break;
-		}
-	}
-
-	if (hoveredCanvas) {
+	if (pressedCanvas || (hoveredCanvas && Element_pressed==nullptr)) {
 		if (toolbar->_toolType == ToolType::Brush) {
 			window->setMouseCursorVisible(true);
 			_cursor = _brushCursor;

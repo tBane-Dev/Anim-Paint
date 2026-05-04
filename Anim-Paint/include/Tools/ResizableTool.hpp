@@ -60,7 +60,7 @@ public:
 
 	void drawRect();
 	void drawImage();
-	void drawPreviewImage();
+	virtual void drawPreviewImage();
 	virtual void drawEdgePoints();
 
 	virtual void cursorHover();

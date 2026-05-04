@@ -494,6 +494,69 @@ void Selection::resizeImage() {
 
 }
 
+void Selection::generatePreviewImage() {
+
+	if (!_resizedImage) return;
+	if (_resizedImage->getSize().x < 1 || _resizedImage->getSize().y < 1) return;
+	if (_resizedRect.size.x < 1 || _resizedRect.size.y < 1) return;
+
+	_previewImage = std::make_shared<sf::Image>();
+	_previewImage->resize(sf::Vector2u(canvas->_size), sf::Color::Transparent);
+
+	std::shared_ptr<sf::Image> maskImage;
+
+	if (_resizedMaskImage) {
+		maskImage = _resizedMaskImage;
+	}
+	else {
+		maskImage = std::make_shared<sf::Image>();
+		maskImage->resize(sf::Vector2u(_resizedRect.size), sf::Color::Black);
+	}
+
+	sf::Color alphaColor =
+		(toolbar->_option_transparency->_checkbox->_value == 0)
+		? sf::Color::Transparent
+		: toolbar->_second_color->_color;
+
+	int canvasW = canvas->_size.x;
+	int canvasH = canvas->_size.y;
+
+	for (int sourceY = 0; sourceY < (int)_resizedImage->getSize().y; sourceY++) {
+		for (int sourceX = 0; sourceX < (int)_resizedImage->getSize().x; sourceX++) {
+
+			sf::Color maskColor = maskImage->getPixel(sf::Vector2u(sourceX, sourceY));
+
+			if (maskColor != sf::Color::Black)
+				continue;
+
+			// global of the pixel
+			int globalX = _resizedRect.position.x + sourceX;
+			int globalY = _resizedRect.position.y + sourceY;
+
+			// wrapped pixel on canvas
+			int pixelX = (globalX % canvasW + canvasW) % canvasW;
+			int pixelY = (globalY % canvasH + canvasH) % canvasH;
+
+			// canvas coords
+			int canvasCoordX = (globalX >= 0) ? (globalX / canvasW) : -((-globalX + canvasW - 1) / canvasW);
+			int canvasCoordY = (globalY >= 0) ? (globalY / canvasH) : -((-globalY + canvasH - 1) / canvasH);
+
+			if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(canvasCoordX == 0 && canvasCoordY == 0))
+				continue;
+
+			if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(canvasCoordX == 0 || canvasCoordY == 0))
+				continue;
+
+			sf::Color pixel = _resizedImage->getPixel(sf::Vector2u(sourceX, sourceY));
+
+			if (pixel == alphaColor)
+				pixel = sf::Color::Transparent;
+
+			_previewImage->setPixel(sf::Vector2u(pixelX, pixelY), pixel);
+		}
+	}
+}
+
 
 void Selection::drawImage(bool useMask) {
 	if (!_image) return;
@@ -644,6 +707,39 @@ void Selection::drawResizedImage(bool useMask) {
 	window->draw(sprite, rs);
 }
 
+void Selection::drawPreviewImage() {
+	if (!_previewImage)
+		return;
+
+	if (_previewImage->getSize().x < 1 || _previewImage->getSize().y < 1)
+		return;
+
+	sf::Texture texture;
+	if (!texture.loadFromImage(*_previewImage)) {
+		DebugError(L"Selection::drawPreviewImage: Failed to load texture from preview image.");
+		return;
+	}
+
+	texture.setSmooth(false);
+
+	sf::Sprite sprite(texture);
+
+	for (auto& canvas : canvases) {
+
+		if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(canvas->_coords.x == 0 && canvas->_coords.y == 0))
+			continue;
+
+		if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(canvas->_coords.x == 0 || canvas->_coords.y == 0))
+			continue;
+
+		float scale = canvas->_zoom * canvas->_zoom_delta;
+
+		sprite.setScale(sf::Vector2f(scale, scale));
+		sprite.setPosition(sf::Vector2f(canvas->_position));
+
+		window->draw(sprite);
+	}
+}
 
 void Selection::shiftOriginIfNeeded(sf::Vector2i& point)
 {
@@ -1077,6 +1173,7 @@ void Selection::handleEvent(const sf::Event& event) {
 							pasteToCanvas();
 							_image = nullptr;
 							_resizedImage = nullptr;
+							_previewImage = nullptr;
 							if(getCurrentAnimation()->getCurrentLayer() && canvas->_isEdited == false && _state == ResizableToolState::Selected)
 								history->saveStep();
 							
@@ -1095,6 +1192,7 @@ void Selection::handleEvent(const sf::Event& event) {
 							pasteToCanvas();
 							_image = nullptr;
 							_resizedImage = nullptr;
+							_previewImage = nullptr;
 							if (getCurrentAnimation()->getCurrentLayer() && canvas->_isEdited == false && _state == ResizableToolState::Selected)
 								history->saveStep();
 						}
@@ -1122,6 +1220,7 @@ void Selection::handleEvent(const sf::Event& event) {
 				_resizedRect = _rect;
 				_resizedMaskImage = _maskImage;
 				_resizedImage = _image;
+				generatePreviewImage();
 			}
 
 			if (_state == ResizableToolState::Selecting) {
@@ -1139,6 +1238,7 @@ void Selection::handleEvent(const sf::Event& event) {
 							getCurrentAnimation()->getCurrentLayer()->generateTexture();
 						}
 						*_resizedImage = *_image;
+						generatePreviewImage();
 					}
 					_state = ResizableToolState::Selected;
 					generateEdgePoints();
@@ -1147,6 +1247,7 @@ void Selection::handleEvent(const sf::Event& event) {
 			}
 			else if (_state == ResizableToolState::Moving) {
 				_state = ResizableToolState::Selected;
+				generatePreviewImage();
 				generateEdgePoints();
 			}
 
@@ -1172,6 +1273,7 @@ void Selection::handleEvent(const sf::Event& event) {
 			_outlineOffset = desiredRectPos - sf::Vector2i(minX, minY);
 			generateRect();
 			_resizedRect.position = _rect.position;
+			generatePreviewImage();
 		}
 
 		else if (toolbar->_toolType == ToolType::Selector) {
@@ -1182,6 +1284,7 @@ void Selection::handleEvent(const sf::Event& event) {
 				if (_image != nullptr) {
 					_image = nullptr;
 					_resizedImage = nullptr;
+					_previewImage = nullptr;
 				}
 
 
@@ -1207,6 +1310,7 @@ void Selection::handleEvent(const sf::Event& event) {
 				if (_rect.size.x > 1 && _rect.size.y > 1) {
 					_image->resize(sf::Vector2u(_rect.size), sf::Color::Transparent);
 				}
+				generatePreviewImage();
 
 			}
 		}
@@ -1218,6 +1322,7 @@ void Selection::handleEvent(const sf::Event& event) {
 				if (_image != nullptr) {
 					_image = nullptr;
 					_resizedImage = nullptr;
+					_previewImage = nullptr;
 				}
 
 				addPoint(tile);
@@ -1229,6 +1334,7 @@ void Selection::handleEvent(const sf::Event& event) {
 				if (_rect.size.x > 1 && _rect.size.y > 1) {
 					_image->resize(sf::Vector2u(_rect.size), sf::Color::Transparent);
 				}
+				generatePreviewImage();
 
 			}
 		}
@@ -1261,6 +1367,7 @@ void Selection::update() {
 		resizeRect();
 		generateResizedMask();
 		resizeImage();
+		generatePreviewImage();
 		return;
 	}
 
@@ -1275,6 +1382,7 @@ void Selection::update() {
 				_rect.position.y = std::clamp(_rect.position.y, -_resizedRect.size.y, canvas->_size.y);
 				_resizedRect.position = _rect.position;
 				generateEdgePoints();
+				generatePreviewImage();
 			}
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
@@ -1282,6 +1390,7 @@ void Selection::update() {
 				_rect.position.y = std::clamp(_rect.position.y, -_resizedRect.size.y, canvas->_size.y);
 				_resizedRect.position = _rect.position;
 				generateEdgePoints();
+				generatePreviewImage();
 			}
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) {
@@ -1289,6 +1398,7 @@ void Selection::update() {
 				_rect.position.y = std::clamp(_rect.position.y - 1, -_resizedRect.size.y, canvas->_size.y);
 				_resizedRect.position = _rect.position;
 				generateEdgePoints();
+				generatePreviewImage();
 			}
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) {
@@ -1296,6 +1406,7 @@ void Selection::update() {
 				_rect.position.y = std::clamp(_rect.position.y + 1, -_resizedRect.size.y, canvas->_size.y);
 				_resizedRect.position = _rect.position;
 				generateEdgePoints();
+				generatePreviewImage();
 			}
 		}
 	}

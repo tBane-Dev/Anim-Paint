@@ -41,8 +41,10 @@ public:
 	void generateResizedMask();
 	void resizeRect();
 	void resizeImage();
+	void generatePreviewImage();
 	void drawImage(bool useMask = false);
 	void drawResizedImage(bool useMask = false);
+	void drawPreviewImage();
 
 	void shiftOriginIfNeeded(sf::Vector2i& point);
 	void addPoint(sf::Vector2i point);

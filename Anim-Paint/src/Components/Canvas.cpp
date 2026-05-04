@@ -868,8 +868,8 @@ void Canvas::draw() {
 			spr.setScale(sf::Vector2f(_zoom * _zoom_delta, _zoom * _zoom_delta));
 			window->draw(spr);
 
-			if (getCurrentAnimation()->_currentLayer == i) {
-				selection->drawResizedImage();
+			if (resizable_tool != nullptr && getCurrentAnimation()->_currentLayer == i) {
+				resizable_tool->drawPreviewImage();
 			}
 		}
 	}

@@ -369,6 +369,15 @@ void Palette::handleEvent(const sf::Event& event) {
 
 	Dialog::handleEvent(event);
 
+	if (Element_pressed) {
+		std::string className = typeid(*Element_pressed).name();		// get class name
+		std::wstring wClassName(className.begin(), className.end());	// convert to wide_string
+		DebugLog(wClassName);
+	}
+	else {
+		DebugLog(L"nullptr");
+	}
+
 	// Handle Enter key for NumberInput elements
 	if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Enter) {
 		if (_currentOnTabElement >= 0 && _currentOnTabElement < (int)_onTabElements.size()) {

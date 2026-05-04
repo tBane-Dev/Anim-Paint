@@ -755,7 +755,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 	}
 
 	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-		if (Element_pressed.get() == this && !_rect.contains(cursor->_position)) {
+		if (Element_pressed.get() == this) {
 			Element_pressed = nullptr;
 		}
 	}
@@ -797,7 +797,6 @@ void Canvas::handleEvent(const sf::Event& event) {
 
 
 	if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv!=nullptr && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-		Element_pressed = this->shared_from_this();
 		mouseMovedWithLeftButtonPressedEvent();
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {

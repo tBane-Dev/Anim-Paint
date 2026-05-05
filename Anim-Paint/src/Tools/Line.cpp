@@ -323,7 +323,6 @@ void Line::cut()
     sf::RenderTexture rtex;
     rtex.resize(_previewImage->getSize());
     rtex.clear(sf::Color::Transparent);
-    _shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
     rtex.draw(spr, &_shader);
     rtex.display();
     sf::Image coloredImage = rtex.getTexture().copyToImage();
@@ -334,10 +333,7 @@ void Line::cut()
     for (int y = 0; y < s.size.y; ++y) {
         for (int x = 0; x < s.size.x; ++x) {
             sf::Vector2u srcPos(s.position.x + x, s.position.y + y);
-
-            if (_previewImage->getPixel(srcPos) != sf::Color::Transparent) {
-                copiedImage.setPixel(sf::Vector2u(x, y), coloredImage.getPixel(srcPos));
-            }
+            copiedImage.setPixel(sf::Vector2u(x, y), coloredImage.getPixel(srcPos));
         }
     }
 
@@ -379,7 +375,6 @@ void Line::copy()
     sf::RenderTexture rtex;
     rtex.resize(_previewImage->getSize());
     rtex.clear(sf::Color::Transparent);
-    _shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
     rtex.draw(spr, &_shader);
     rtex.display();
 
@@ -391,10 +386,7 @@ void Line::copy()
     for (int y = 0; y < s.size.y; ++y) {
         for (int x = 0; x < s.size.x; ++x) {
             sf::Vector2u srcPos(s.position.x + x, s.position.y + y);
-
-            if (_previewImage->getPixel(srcPos) != sf::Color::Transparent) {
-                copiedImage.setPixel(sf::Vector2u(x, y), coloredImage.getPixel(srcPos));
-            }
+            copiedImage.setPixel(sf::Vector2u(x, y), coloredImage.getPixel(srcPos));
         }
     }
 

@@ -259,6 +259,7 @@ bool Selection::paste(sf::Image& canvas, sf::Color emptyColor, sf::Image image)
 	generateMask();
 	generateResizedMask();
 	_resizedImage = _image;
+	generatePreviewImage();
 
 	return true;
 }
@@ -286,6 +287,7 @@ void Selection::cut() {
 	}
 
 	_image = nullptr;
+	_previewImage = nullptr;
 	_state = ResizableToolState::None;
 	_rect = sf::IntRect(sf::Vector2i(-1, -1), sf::Vector2i(-1, -1));
 	_resizedRect = _rect;

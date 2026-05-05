@@ -28,7 +28,7 @@
 ## Installation
 1. Download and install Visual Studio 2022
 2. Download and install CMake
-3. Download Library SFML-3.0.2 (https://www.sfml-dev.org/) i umieść ją w katalogu `C:\SFML-3.0.2`.
+3. Download Library SFML-3.0.2 (https://www.sfml-dev.org/) and place it in `C:\SFML-3.0.2`.
 4. Open The **Command Prompt (cmd)**.
 5. Go to project directory:
 `

@@ -586,7 +586,6 @@ void ResizableTool::cut()
 	sf::RenderTexture rtex;
 	rtex.resize(_previewImage->getSize());
 	rtex.clear(sf::Color::Transparent);
-	_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
 	rtex.draw(spr, &_shader);
 	rtex.display();
 	sf::Image coloredImage = rtex.getTexture().copyToImage();

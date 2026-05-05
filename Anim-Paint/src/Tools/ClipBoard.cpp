@@ -13,7 +13,7 @@ bool copyImageToClipboard(sf::Image& image, sf::IntRect rect)
     const sf::IntRect imgRect({ 0, 0 }, { imgW, imgH });
     std::optional<sf::IntRect> interOpt = rect.findIntersection(imgRect);
     if (!interOpt.has_value()) {
-        std::cout << "Brak przeciecia z obrazem.\n";
+        std::cout << "copyImageToClipboard: No Intersect with Canvas\n";
         return false;
     }
     const sf::IntRect inter = *interOpt;
@@ -29,9 +29,9 @@ bool copyImageToClipboard(sf::Image& image, sf::IntRect rect)
         return false;
     }
 
-    std::wcout << x0 << L"\n" << y0 << L"\n"
-        << (x0 + static_cast<int>(w)) << L"\n"
-        << (y0 + static_cast<int>(h)) << L"\n";
+    //std::wcout << x0 << L"\n" << y0 << L"\n"
+    //    << (x0 + static_cast<int>(w)) << L"\n"
+    //    << (y0 + static_cast<int>(h)) << L"\n";
 
     const uint8_t* src = image.getPixelsPtr(); // RGBA (R,G, B, A)
 

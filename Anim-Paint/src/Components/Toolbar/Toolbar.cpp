@@ -287,11 +287,12 @@ Toolbar::Toolbar() : Element() {
 
 	_btn_curve = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\toolbar\\resizable_tools\\line.png"), getTexture(L"tex\\toolbar\\resizable_tools\\line_hover.png"), getTexture(L"tex\\toolbar\\resizable_tools\\line_press.png"));
 	_btn_curve->_onclick_func = [this]() {
+		// TO-DO
 		if (_toolType != ToolType::Curve) {
 			if (resizable_tool != nullptr)
 				resizable_tool->pasteToCanvas();
 			_toolType = ToolType::Curve;
-			//resizable_tool = std::make_shared<Line>();
+			resizable_tool = std::make_shared<Line>();
 		}
 		selectToolButton(_btn_curve);
 		};

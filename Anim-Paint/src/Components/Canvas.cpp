@@ -652,7 +652,7 @@ void Canvas::cursorHover() {
 	_hoveredEdgePoint = nullptr;
 	
 	if (_state == CanvasState::Idle) {
-		if (toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso && !(resizable_tool != nullptr && resizable_tool->tooltypeIsShape())) {
+		if (!(resizable_tool != nullptr)) {
 			for (auto& point : _edgePoints) {
 				point->cursorHover();
 				if (Element_hovered == point) {
@@ -662,7 +662,7 @@ void Canvas::cursorHover() {
 		}
 	}
 	
-	if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso || (resizable_tool!= nullptr && resizable_tool->tooltypeIsShape())) && resizable_tool->_state == ResizableToolState::Selected) {
+	if (resizable_tool != nullptr && resizable_tool->_state == ResizableToolState::Selected) {
 
 		resizable_tool->_hoveredEdgePoint = nullptr;
 
@@ -699,7 +699,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 
 	// canvas resizing
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (dialogs.empty() && toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {
+		if (dialogs.empty() && resizable_tool == nullptr) {
 			if (_hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {
 				_clickedEdgePoint = _hoveredEdgePoint;
 				Element_pressed = _clickedEdgePoint;

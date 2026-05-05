@@ -206,7 +206,7 @@ void Cursor::handleEvent() {
 	}
 
 	// canvas edge points
-	if (!(palette != nullptr && palette->_rect.contains(_position))) {
+	if (resizable_tool == nullptr && !(palette != nullptr && palette->_rect.contains(_position))) {
 		if (_hoveredElement == canvas->_point_left_top || Element_pressed == canvas->_point_left_top) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopLeft);

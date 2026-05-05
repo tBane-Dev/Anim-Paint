@@ -4,7 +4,7 @@
 
 extern std::string replace_black_shader_source;
 
-void pasteImageWithNewColorAndAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color newColor, sf::Color alphaColor = sf::Color::Transparent);
+void pasteImageWithShader(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Shader& shader);
 void pasteImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Image& mask, sf::Color alphaColor = sf::Color::Transparent);
 void copyImageWithAlpha(sf::Image& dst, sf::Image& src, sf::IntRect srcRect, sf::Color alphaColor = sf::Color::Transparent);
 void copyImageWithMask(sf::Image* dst, sf::Image* src, int dstX, int dstY, int srcX, int srcY, sf::Image& mask, sf::Color alphaColor);

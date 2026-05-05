@@ -57,6 +57,7 @@ public:
 
     virtual void generateImage();
 	virtual void drawEdgePoints();
+	void drawPreviewImage();
     
     virtual void cursorHover();
     virtual void handleEvent(const sf::Event& event);

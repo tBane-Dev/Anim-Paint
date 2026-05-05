@@ -1,4 +1,4 @@
-#include "Tools/Line.hpp"
+﻿#include "Tools/Line.hpp"
 #include "Window.hpp"
 #include "WorldToTileConverter.hpp"
 #include "Components/Canvas.hpp"
@@ -11,6 +11,45 @@
 #include "Animation/Animation.hpp"
 #include "Tools/ClipBoard.hpp"
 #include "History.hpp"
+#include "Components/MainMenu/MainMenu.hpp"
+
+std::string line_shader_source = R"(
+    uniform sampler2D texture;
+    uniform vec4 newColor;
+    uniform vec2 texelSize;
+    uniform int outlineWidth;
+
+    void main() {
+
+        vec2 uv = gl_TexCoord[0].xy;
+        vec4 c = texture2D(texture, uv);
+
+        int r = int(clamp(float(outlineWidth), 0.0, 8.0));
+
+        float hasLineNeighbor = 0.0;
+
+        for (int dy = -r; dy <= r; dy++) {
+            for (int dx = -r; dx <= r; dx++) {
+
+                if (dx * dx + dy * dy > r * r) continue;
+
+                vec2 o = vec2(float(dx), float(dy)) * texelSize;
+                vec4 sample = texture2D(texture, uv + o);
+
+                if (sample.a > 0.01) {
+                    hasLineNeighbor = 1.0;
+                }
+            }
+        }
+
+        if (hasLineNeighbor > 0.5) {
+            gl_FragColor = newColor;
+            return;
+        }
+
+        gl_FragColor = vec4(0.0);
+    }
+)";
 
 std::vector<sf::Vector2i> getPointsFromLine(sf::Vector2i start, sf::Vector2i end) {
     std::vector<sf::Vector2i> points;
@@ -143,8 +182,6 @@ namespace sf {
 
         drawPixels();
 
-		set_outline(_image, brush->_size, sf::Color::Transparent, _color);
-
         _texture.loadFromImage(_image);
         _texture.setSmooth(false);
 
@@ -167,6 +204,9 @@ namespace sf {
 Line::Line() : ResizableTool() {
     _state = ResizableToolState::None;
     _points.clear();
+
+    _shader = sf::Shader();
+	_shader.loadFromMemory(line_shader_source, sf::Shader::Type::Fragment);
 }
 
 Line::~Line() {
@@ -389,6 +429,38 @@ void Line::drawEdgePoints() {
     }
 }
 
+
+void Line::drawPreviewImage() {
+
+    if (!_previewImage)
+        return;
+
+    if (_previewImage->getSize().x < 1 || _previewImage->getSize().y < 1)
+        return;
+
+    sf::Texture texture(*_previewImage);
+    sf::Sprite sprite(texture);
+
+    for (auto& canvas : canvases) {
+
+        if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(canvas->_coords.x == 0 && canvas->_coords.y == 0))
+            continue;
+        if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(canvas->_coords.x == 0 || canvas->_coords.y == 0))
+            continue;
+
+        sprite.setScale(sf::Vector2f(canvas->_zoom * canvas->_zoom_delta, canvas->_zoom * canvas->_zoom_delta));
+        sprite.setPosition(sf::Vector2f(canvas->_position));
+
+		sf::Color outlineColor = toolbar->_first_color->_color;
+
+        _shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
+        _shader.setUniform("outlineWidth", brush->_size);
+        _shader.setUniform("texelSize", sf::Vector2f(1.0f / float(_previewImage->getSize().x), 1.0f / float(_previewImage->getSize().y)));
+ 
+        window->draw(sprite, &_shader);
+    }
+
+}
 
 void Line::cursorHover() {
 

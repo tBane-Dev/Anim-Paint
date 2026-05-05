@@ -32,7 +32,7 @@ std::string replace_black_shader_source = R"(
     }
 )";
 
-void pasteImageWithNewColorAndAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color newColor, sf::Color alphaColor)
+void pasteImageWithShader(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Shader& shader)
 {
 
 	sf::Texture tex;
@@ -41,16 +41,11 @@ void pasteImageWithNewColorAndAlpha(sf::Image& dst, sf::Image& src, int dstX, in
 	sf::RenderTexture rtex;
 	rtex.resize(src.getSize());
 
-	sf::Shader sh;
-	sh.loadFromMemory(replace_black_shader_source, sf::Shader::Type::Fragment);
-
-	sh.setUniform("alphaColor", sf::Glsl::Vec4(alphaColor));
-	sh.setUniform("newColor", sf::Glsl::Vec4(newColor));
 
 	sf::Sprite spr(tex);
 
 	rtex.clear(sf::Color::Transparent);
-	rtex.draw(spr, &sh);
+	rtex.draw(spr, &shader);
 	rtex.display();
 
 	sf::Image result = rtex.getTexture().copyToImage();
@@ -685,7 +680,7 @@ void ResizableTool::pasteToCanvas() {
 	if (_previewImage == nullptr)
 		return;
 
-	pasteImageWithNewColorAndAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_previewImage, 0, 0, toolbar->_first_color->_color, sf::Color::Transparent);
+	pasteImageWithShader(getCurrentAnimation()->getCurrentLayer()->_image, *_previewImage, 0, 0, _shader);
 	getCurrentAnimation()->getCurrentLayer()->generateTexture();
 	history->saveStep();
 }

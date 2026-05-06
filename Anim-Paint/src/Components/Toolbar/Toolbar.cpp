@@ -130,9 +130,7 @@ Toolbar::Toolbar() : Element() {
 	_option_transparency = std::make_shared<OptionWithCheckbox>(translation->get(TranslationKey::TOOLBAR_CLIPBOARD_TRANSPARENCY), getTexture(L"tex\\unchecked.png"), getTexture(L"tex\\unchecked_hover.png"), L"Ctrl+T");
 	_option_transparency->addValue(getTexture(L"tex\\checked.png"), getTexture(L"tex\\checked_hover.png"));
 	_option_transparency->_checkbox->_onclick_func = [this]() {
-		if (resizable_tool != nullptr) {
-			resizable_tool->generatePreviewImage();
-		}
+		
 		};
 	_btn_paste_menu = std::make_shared<ButtonWithTopTextAndList>(translation->get(TranslationKey::TOOLBAR_CLIPBOARD_PASTE), tools_text_color, tools_text_hover_color);
 	_btn_paste_menu->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,

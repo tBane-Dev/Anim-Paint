@@ -724,6 +724,14 @@ void Selection::drawPreviewImage() {
 
 	texture.setSmooth(false);
 
+	sf::Texture mask;
+	if (!mask.loadFromImage(*_resizedMaskImage)) {
+		DebugError(L"Selection::drawPreviewImage: Failed to load texture from preview image.");
+		return;
+	}
+
+	mask.setSmooth(false);
+
 	sf::Sprite sprite(texture);
 
 	for (auto& canvas : canvases) {
@@ -739,7 +747,13 @@ void Selection::drawPreviewImage() {
 		sprite.setScale(sf::Vector2f(scale, scale));
 		sprite.setPosition(sf::Vector2f(canvas->_position));
 
-		window->draw(sprite);
+		sf::Color alphaColor = (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color;
+
+		_shader.setUniform("texture", texture);
+		_shader.setUniform("mask", mask);
+		_shader.setUniform("alphaColor", sf::Glsl::Vec4(alphaColor.r / 255.0f, alphaColor.g / 255.0f, alphaColor.b / 255.0f, alphaColor.a / 255.0f));
+
+		window->draw(sprite, &_shader);
 	}
 }
 

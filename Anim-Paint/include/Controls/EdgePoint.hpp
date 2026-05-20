@@ -1,12 +1,23 @@
 ﻿#pragma once
 #include "Element.hpp"
 
+enum class EdgePointType {
+	LeftTop,
+	Top,
+	RightTop,
+	Left,
+	Right,
+	LeftBottom,
+	Bottom,
+	RightBottom
+};
 
 class EdgePoint : public Element {
 public:
 	sf::IntRect _rect;
+	EdgePointType _type;
 
-	EdgePoint(sf::Vector2i position);
+	EdgePoint(EdgePointType type, sf::Vector2i position);
 	~EdgePoint();
 
 	void setPosition(sf::Vector2i position);

@@ -1,7 +1,8 @@
 ﻿#include "Controls/EdgePoint.hpp"
 #include "Cursor.hpp"
 
-EdgePoint::EdgePoint(sf::Vector2i position) : Element() {
+EdgePoint::EdgePoint(EdgePointType type, sf::Vector2i position) : Element() {
+	_type = type;
 	_rect = sf::IntRect(position, sf::Vector2i(8, 8));
 }
 

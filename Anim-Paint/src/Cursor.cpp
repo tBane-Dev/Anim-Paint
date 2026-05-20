@@ -104,92 +104,48 @@ void Cursor::handleEvent() {
 		return;
 	}
 
-	// resizable_shape edge points
-	ResizableShape* resizable_shape = dynamic_cast<ResizableShape*>(resizable_tool.get());
-	if ((resizable_shape != nullptr &&
-		((resizable_shape->_hoveredEdgePoint != nullptr && _hoveredElement == resizable_shape->_hoveredEdgePoint) || 
-		(resizable_shape->_clickedEdgePoint != nullptr && Element_pressed == resizable_shape->_clickedEdgePoint))) &&
-		!(palette != nullptr && palette->_rect.contains(_position)) &&
-		(resizable_shape->_state == ResizableToolState::Selected || resizable_shape->_state == ResizableToolState::Resizing)) {
+	std::shared_ptr<EdgePoint> edgePoint = std::dynamic_pointer_cast<EdgePoint>(Element_hovered);
+	if(edgePoint == nullptr)
+		edgePoint = std::dynamic_pointer_cast<EdgePoint>(Element_pressed);
 
-		if (resizable_shape->_hoveredEdgePoint == resizable_shape->_point_left_top || resizable_shape->_clickedEdgePoint == resizable_shape->_point_left_top) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopLeft);
-			window->setMouseCursor(*_cursor);
-			_brushIsVisible = false;
-			return;
+	if (edgePoint) {
+		sf::Cursor::Type cursorType = sf::Cursor::Type::Arrow;
+
+		switch (edgePoint->_type) {
+		case EdgePointType::LeftTop:
+			cursorType = sf::Cursor::Type::SizeTopLeft;
+			break;
+		case EdgePointType::Top:
+			cursorType = sf::Cursor::Type::SizeTop;
+			break;
+		case EdgePointType::RightTop:
+			cursorType = sf::Cursor::Type::SizeTopRight;
+			break;
+		case EdgePointType::Left:
+			cursorType = sf::Cursor::Type::SizeLeft;
+			break;
+		case EdgePointType::Right:
+			cursorType = sf::Cursor::Type::SizeRight;
+			break;
+		case EdgePointType::LeftBottom:
+			cursorType = sf::Cursor::Type::SizeBottomLeft;
+			break;
+		case EdgePointType::Bottom:
+			cursorType = sf::Cursor::Type::SizeBottom;
+			break;
+		case EdgePointType::RightBottom:
+			cursorType = sf::Cursor::Type::SizeBottomRight;
+			break;
 		}
 
-		if (resizable_shape->_hoveredEdgePoint == resizable_shape->_point_top || resizable_shape->_clickedEdgePoint == resizable_shape->_point_top) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTop);
-			window->setMouseCursor(*_cursor);
-			_brushIsVisible = false;
-			return;
-		}
-
-		if (resizable_shape->_hoveredEdgePoint == resizable_shape->_point_right_top || resizable_shape->_clickedEdgePoint == resizable_shape->_point_right_top) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopRight);
-			window->setMouseCursor(*_cursor);
-			_brushIsVisible = false;
-			return;
-		}
-
-		if (resizable_shape->_hoveredEdgePoint == resizable_shape->_point_left || resizable_shape->_clickedEdgePoint == resizable_shape->_point_left) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeLeft);
-			window->setMouseCursor(*_cursor);
-			_brushIsVisible = false;
-			return;
-		}
-
-		if (resizable_shape->_hoveredEdgePoint == resizable_shape->_point_right || resizable_shape->_clickedEdgePoint == resizable_shape->_point_right) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeRight);
-			window->setMouseCursor(*_cursor);
-			_brushIsVisible = false;
-			return;
-		}
-
-		if (resizable_shape->_hoveredEdgePoint == resizable_shape->_point_left_bottom || resizable_shape->_clickedEdgePoint == resizable_shape->_point_left_bottom) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomLeft);
-			window->setMouseCursor(*_cursor);
-			_brushIsVisible = false;
-			return;
-		}
-
-		if (resizable_shape->_hoveredEdgePoint == resizable_shape->_point_bottom || resizable_shape->_clickedEdgePoint == resizable_shape->_point_bottom) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottom);
-			window->setMouseCursor(*_cursor);
-			_brushIsVisible = false;
-			return;
-		}
-
-		if (resizable_shape->_hoveredEdgePoint == resizable_shape->_point_right_bottom || resizable_shape->_clickedEdgePoint == resizable_shape->_point_right_bottom) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomRight);
-			window->setMouseCursor(*_cursor);
-			_brushIsVisible = false;
-			return;
-		}
-	}
-
-	// Line tool
-	Line* line = dynamic_cast<Line*>(resizable_tool.get());
-	if(line &&
-		(resizable_tool->_state == ResizableToolState::Selected || resizable_tool->_state == ResizableToolState::Resizing) &&
-		(Element_pressed == line->_startPoint || Element_pressed == line->_endPoint || _hoveredElement == line->_startPoint || _hoveredElement == line->_endPoint)
-		) {
 		window->setMouseCursorVisible(true);
-		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeVertical);
+		_cursor = std::make_shared<sf::Cursor>(cursorType);
 		window->setMouseCursor(*_cursor);
 		_brushIsVisible = false;
 		return;
 	}
 
+	
 	bool canvasIsMoving = false;
 	for(auto& canvas : canvases) {
 		if (canvas->_state == CanvasState::Moving) {
@@ -205,72 +161,6 @@ void Cursor::handleEvent() {
 		return;
 	}
 
-	// canvas edge points
-	if (resizable_tool == nullptr && !(palette != nullptr && palette->_rect.contains(_position))) {
-		if (_hoveredElement == canvas->_point_left_top || Element_pressed == canvas->_point_left_top) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopLeft);
-			window->setMouseCursor(*_cursor);
-			_brushIsVisible = false;
-			return;
-		}
-
-		if (_hoveredElement == canvas->_point_top || Element_pressed == canvas->_point_top) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTop);
-			window->setMouseCursor(*_cursor);
-			_brushIsVisible = false;
-			return;
-		}
-
-		if (_hoveredElement == canvas->_point_right_top || Element_pressed == canvas->_point_right_top) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopRight);
-			window->setMouseCursor(*_cursor);
-			_brushIsVisible = false;
-			return;
-		}
-
-		if (_hoveredElement == canvas->_point_left || Element_pressed == canvas->_point_left) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeLeft);
-			window->setMouseCursor(*_cursor);
-			_brushIsVisible = false;
-			return;
-		}
-
-		if (_hoveredElement == canvas->_point_right || Element_pressed == canvas->_point_right) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeRight);
-			window->setMouseCursor(*_cursor);
-			_brushIsVisible = false;
-			return;
-		}
-
-		if (_hoveredElement == canvas->_point_left_bottom || Element_pressed == canvas->_point_left_bottom) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomLeft);
-			window->setMouseCursor(*_cursor);
-			_brushIsVisible = false;
-			return;
-		}
-
-		if (_hoveredElement == canvas->_point_bottom || Element_pressed == canvas->_point_bottom) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottom);
-			window->setMouseCursor(*_cursor);
-			_brushIsVisible = false;
-			return;
-		}
-
-		if (_hoveredElement == canvas->_point_right_bottom || Element_pressed == canvas->_point_right_bottom) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomRight);
-			window->setMouseCursor(*_cursor);
-			_brushIsVisible = false;
-			return;
-		}
-	}
 
 	if (resizable_tool != nullptr && (Element_pressed == nullptr || canvasIsPressed() || Element_pressed == resizable_tool) && resizable_tool->_state == ResizableToolState::Selecting) {
 		window->setMouseCursorVisible(true);

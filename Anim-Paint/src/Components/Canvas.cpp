@@ -110,14 +110,14 @@ void Canvas::generateEdgePoints() {
 
 	sf::Vector2i s = getZoomedSize(_size);
 	_edgePoints.clear();
-	_point_left_top = std::make_shared<EdgePoint>(_position);
-	_point_top = std::make_shared<EdgePoint>(_position + sf::Vector2i(s.x / 2, 0));
-	_point_right_top = std::make_shared<EdgePoint>(_position + sf::Vector2i(s.x, 0));
-	_point_left = std::make_shared<EdgePoint>(_position + sf::Vector2i(0, s.y / 2));
-	_point_right = std::make_shared<EdgePoint>(_position + sf::Vector2i(s.x, s.y / 2));
-	_point_left_bottom = std::make_shared<EdgePoint>(_position + sf::Vector2i(0, s.y));
-	_point_bottom = std::make_shared<EdgePoint>(_position + sf::Vector2i(s.x / 2, s.y));
-	_point_right_bottom = std::make_shared<EdgePoint>(_position + sf::Vector2i(s.x, s.y));
+	_point_left_top = std::make_shared<EdgePoint>(EdgePointType::LeftTop, _position);
+	_point_top = std::make_shared<EdgePoint>(EdgePointType::Top, _position + sf::Vector2i(s.x / 2, 0));
+	_point_right_top = std::make_shared<EdgePoint>(EdgePointType::RightTop, _position + sf::Vector2i(s.x, 0));
+	_point_left = std::make_shared<EdgePoint>(EdgePointType::Left, _position + sf::Vector2i(0, s.y / 2));
+	_point_right = std::make_shared<EdgePoint>(EdgePointType::Right, _position + sf::Vector2i(s.x, s.y / 2));
+	_point_left_bottom = std::make_shared<EdgePoint>(EdgePointType::LeftBottom, _position + sf::Vector2i(0, s.y));
+	_point_bottom = std::make_shared<EdgePoint>(EdgePointType::Bottom, _position + sf::Vector2i(s.x / 2, s.y));
+	_point_right_bottom = std::make_shared<EdgePoint>(EdgePointType::RightBottom, _position + sf::Vector2i(s.x, s.y));
 
 	_edgePoints.push_back(_point_left_top);
 	_edgePoints.push_back(_point_top);

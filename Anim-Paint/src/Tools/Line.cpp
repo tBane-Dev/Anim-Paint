@@ -254,8 +254,8 @@ void Line::generateEdgePoints() {
 	sf::Vector2f startPos = sf::Vector2f(canvas->_position) + sp;
 	sf::Vector2f endPos = sf::Vector2f(canvas->_position) + ep;
 
-	_startPoint = std::make_shared<EdgePoint>(sf::Vector2i(startPos));
-	_endPoint = std::make_shared<EdgePoint>(sf::Vector2i(endPos));
+	_startPoint = std::make_shared<EdgePoint>(EdgePointType::Top, sf::Vector2i(startPos));
+	_endPoint = std::make_shared<EdgePoint>(EdgePointType::Bottom, sf::Vector2i(endPos));
 
 	
 	_edgePoints.push_back(_startPoint);

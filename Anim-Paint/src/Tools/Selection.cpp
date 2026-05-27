@@ -140,6 +140,7 @@ void Selection::selectAll() {
 	_resizedMaskImage = std::make_shared<sf::Image>(*_maskImage);
 
 	generateEdgePoints();
+	generatePreviewImage();
 
 	removeImageWithMask(anim->getCurrentLayer()->_image, _resizedRect, *_resizedMaskImage, sf::Color::Transparent);
 	anim->getCurrentLayer()->generateTexture();

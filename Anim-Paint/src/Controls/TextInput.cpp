@@ -49,7 +49,7 @@ void TextInput::setPosition(sf::Vector2i position) {
 
 void TextInput::setText(std::wstring text) {
 	_textStr = text.substr(0, _limitCharacters);
-	_text->setString(_textStr.substr(0, _limitCharacters));
+	_text->setString(_textStr);
 }
 
 void TextInput::setCursorOnEndText() {
@@ -369,9 +369,11 @@ void TextInput::handleEvent(const sf::Event& event) {
 					c += character;
 					
 					if (_editState == TextInputEditState::TextEntered) {
-						_textStr.insert(_cursorPosition, c);
-						_text->setString(_textStr.substr(0, _limitCharacters));
-						_cursorPosition += 1;
+						if ((int)_textStr.length() < _limitCharacters) {
+							_textStr.insert(_cursorPosition, c);
+							_cursorPosition += 1;
+							setText(_textStr);
+						}
 					}
 					else {
 						int min = std::min(_selectionStart, _selectionEnd);

@@ -370,9 +370,8 @@ void FileDialog::drawRightPanel() {
 
 	for (int i = 0; i < _files.size(); i++) {
 		sf::Vector2i pos;
-		pos.x = _separator->getPosition().x + _separator->getSize().x + dialog_padding;
 		pos.x = _rightRect->position.x;
-		pos.y = getContentPosition().y + (i * basic_text_rect_height) - _rightScrollbar->getValue() % basic_text_rect_height;
+		pos.y = _rightRect->position.y + (i * basic_text_rect_height) - _rightScrollbar->getValue() % basic_text_rect_height;
 		//std::wcout << rightScrollbar->getValue() << " : " << pos.y << L"\n";
 		_files[i]->setPosition(pos);
 	}

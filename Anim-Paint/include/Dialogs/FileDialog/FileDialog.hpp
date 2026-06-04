@@ -15,6 +15,7 @@ public:
 	std::shared_ptr<sf::IntRect> _rightRect;
 
 	std::vector <std::shared_ptr<LocationRect>> _locations;
+	std::vector<std::shared_ptr<LocationRect>> _visibleLocations;
 	std::shared_ptr<Scrollbar> _leftScrollbar;
 
 	std::shared_ptr<LocationAndFilesSeparator> _separator;
@@ -38,7 +39,9 @@ public:
 	FileDialog(std::wstring dialogName, std::wstring selectButtonText, std::wstring acceptableExtension = L"");
 	~FileDialog();
 
-	float calculateLeftScrollbarHeight();
+	void buildVisibleLocations();
+	void addVisibleLocation(std::shared_ptr<LocationRect> location);
+	void updateLeftScrollbar();
 
 	void createLeftPanel(int linesCount);
 	void createSeparator(int linesCount);
@@ -51,10 +54,6 @@ public:
 	void drawLeftPanel();
 	void drawRightPanel();
 	void drawBottomPanel();
-
-	void cursorHoverLocations(std::shared_ptr<LocationRect> location);
-	void handleEventLocations(std::shared_ptr<LocationRect> location, const sf::Event& event);
-	void updateLocations(std::shared_ptr<LocationRect> location);
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

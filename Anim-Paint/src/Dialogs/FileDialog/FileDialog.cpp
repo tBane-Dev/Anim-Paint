@@ -63,12 +63,43 @@ FileDialog::~FileDialog() {
 	
 }
 
-float FileDialog::calculateLeftScrollbarHeight() {
-	float hgh = 0;
-	for (auto& fav : _locations)
-		hgh += fav->getTotalHeight();
-	hgh -= _leftRect->size.y;
-	return hgh;
+void FileDialog::buildVisibleLocations() {
+
+	_visibleLocations.clear();
+
+	for (auto& location : _locations) {
+		addVisibleLocation(location);
+	}
+
+	updateLeftScrollbar();
+}
+
+void FileDialog::addVisibleLocation(std::shared_ptr<LocationRect> location) {
+
+	if (!location)
+		return;
+
+	_visibleLocations.push_back(location);
+
+	if (location->_isOpen) {
+		for (auto& child : location->_children) {
+			addVisibleLocation(child);
+		}
+	}
+}
+
+void FileDialog::updateLeftScrollbar() {
+
+	int maxValue = (int)_visibleLocations.size() * basic_text_rect_height - _leftRect->size.y;
+
+	if (maxValue < 0)
+		maxValue = 0;
+
+	_leftScrollbar->setMax(maxValue);
+
+	if (_leftScrollbar->getValue() > maxValue) {
+		_leftScrollbar->setValue(maxValue);
+	}
 }
 
 void FileDialog::createLeftPanel(int dictionariesCount) {
@@ -98,6 +129,11 @@ void FileDialog::createLeftPanel(int dictionariesCount) {
 
 	for (int i = 0; i < _locations.size(); i++) {
 		_locations[i]->setSize(sf::Vector2i(_leftRect->size.x, basic_text_rect_height));
+		
+		_locations[i]->_onTreeChanged = [this]() {
+			buildVisibleLocations();
+			setPosition(_position);
+			};
 
 		// KLIK W NAZWĘ -> otwórz po PRAWEJ
 		_locations[i]->_onclick_location_func = [this, i]() {
@@ -129,10 +165,9 @@ void FileDialog::createLeftPanel(int dictionariesCount) {
 					});
 			}
 
-			// odśwież lewy panel (wysokość + pozycje)
-			_leftScrollbar->setMax((int)calculateLeftScrollbarHeight());
-			_leftScrollbar->setValue(_leftScrollbar->_value); // clamp
+			buildVisibleLocations();
 			setPosition(_position);
+
 			};
 	}
 
@@ -143,7 +178,7 @@ void FileDialog::createLeftPanel(int dictionariesCount) {
 
 	sf::Vector2i scrollbarSize = sf::Vector2i(16, _leftRect->size.y);
 
-	int scrollbarMax = (int)calculateLeftScrollbarHeight();
+	int scrollbarMax = 0;
 	int scrollbarSliderSize = (dictionariesCount - 1) * basic_text_rect_height;
 
 	_leftScrollbar = std::make_shared<Scrollbar>(scrollbarPos.x, scrollbarPos.y, scrollbarSize.x, scrollbarSize.y, 0, scrollbarMax, scrollbarSliderSize, 0);
@@ -152,6 +187,8 @@ void FileDialog::createLeftPanel(int dictionariesCount) {
 		setPosition(_position);
 		};
 	_leftScrollbar->setScrollArea(_leftRect, basic_text_rect_height * 0.5f);
+
+	buildVisibleLocations();
 }
 
 void FileDialog::createSeparator(int linesCount) {
@@ -325,25 +362,27 @@ void FileDialog::drawLeftPanel() {
 	view.setViewport(vp);
 	window->setView(view);
 
-	/*
-	sf::RectangleShape leftRect(sf::Vector2f(_leftRect.size));
-	leftRect.setPosition(sf::Vector2f(_leftRect.position));
-	leftRect.setFillColor(sf::Color(255, 47, 47, 127));
-	window->draw(leftRect);
-	*/
+	int scrollbarValue = _leftScrollbar->getValue();
 
-	sf::Vector2i pos;
-	pos.x = getContentPosition().x + dialog_padding;
-	pos.y = getContentPosition().y - _leftScrollbar->getValue();
-	for (int i = 0; i < _locations.size(); i++) {
-		_locations[i]->setPosition(pos);
-		pos.y += (int)_locations[i]->getTotalHeight();
+	int firstIndex = scrollbarValue / basic_text_rect_height;
+	int offset = scrollbarValue % basic_text_rect_height;
+
+	int visibleCount = _leftRect->size.y / basic_text_rect_height + 1;
+
+	for (int i = 0; i < visibleCount; i++) {
+
+		int index = firstIndex + i;
+
+		if (index >= _visibleLocations.size())
+			break;
+
+		sf::Vector2i pos;
+		pos.x = getContentPosition().x + dialog_padding;
+		pos.y = getContentPosition().y + i * basic_text_rect_height - offset;
+
+		_visibleLocations[index]->setPosition(pos);
+		_visibleLocations[index]->draw();
 	}
-
-	for (auto& fav : _locations)
-		fav->draw();
-
-	
 }
 
 void FileDialog::drawRightPanel() {
@@ -434,42 +473,6 @@ void FileDialog::drawBottomPanel() {
 	window->setView(mainView);
 }
 
-void FileDialog::cursorHoverLocations(std::shared_ptr<LocationRect> location)
-{
-	location->cursorHover();
-
-	if (location->_isOpen) {
-		for (auto& child : location->_children) {
-			cursorHoverLocations(child);
-		}
-	}
-}
-
-void FileDialog::handleEventLocations(std::shared_ptr<LocationRect> location, const sf::Event& event)
-{
-	location->handleEvent(event);
-
-	if (location->_isOpen) {
-		for (auto& child : location->_children) {
-			handleEventLocations(child, event);
-		}
-	}
-
-}
-
-void FileDialog::updateLocations(std::shared_ptr<LocationRect> location)
-{
-	location->update();
-
-	if (location->_isOpen) {
-		for (auto& child : location->_children) {
-			updateLocations(child);
-		}
-	}
-
-	//_filenameInput->update();
-}
-
 void FileDialog::cursorHover() {
 	Dialog::cursorHover();
 
@@ -480,8 +483,8 @@ void FileDialog::cursorHover() {
 		}
 		
 		if (_leftRect->contains(cursor->_position)) {
-			for (auto& fav : _locations) {
-				cursorHoverLocations(fav);
+			for (auto& location : _visibleLocations) {
+				location->cursorHover();
 			}
 		}
 	}
@@ -509,8 +512,8 @@ void FileDialog::handleEvent(const sf::Event& event) {
 	}
 
 	if (_leftRect->contains(cursor->_position)) {
-		for (auto& fav : _locations) {
-			handleEventLocations(fav, event);
+		for (auto& location : _visibleLocations) {
+			location->handleEvent(event);
 		}
 	}
 
@@ -528,13 +531,11 @@ void FileDialog::update() {
 	for (auto& file : _files)
 		file->update();
 
-	for (auto& fav : _locations) {
-		updateLocations(fav);
-	}
+	auto visibleLocations = _visibleLocations;
 
-	// DODAJ TO (odśwież max i clamp wartości po ewentualnym expand/collapse):
-	_leftScrollbar->setMax((int)calculateLeftScrollbarHeight());
-	_leftScrollbar->setValue(_leftScrollbar->_value); // clamp
+	for (auto& location : visibleLocations) {
+		location->update();
+	}
 
 	_leftScrollbar->update();
 	_rightScrollbar->update();

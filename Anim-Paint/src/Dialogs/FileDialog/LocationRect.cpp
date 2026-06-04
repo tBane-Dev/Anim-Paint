@@ -51,32 +51,8 @@ void LocationRect::setSize(sf::Vector2i size) {
 	}
 }
 
-float LocationRect::getTotalHeight() {
-	float h = (float)_rect.size.y;
-
-	if (_isOpen) {
-		for (auto& child : _children) {
-			h += child->getTotalHeight();
-		}
-	}
-	return h;
-}
-
 void LocationRect::setPosition(sf::Vector2i position) {
-
-
 	_rect.position = sf::Vector2i(position);
-
-	if (_isOpen && !_children.empty()) {
-
-		float cursorY = (float)(position.y + _rect.size.y);
-
-		for(auto& child : _children) {
-			sf::Vector2i childPosition = sf::Vector2i(position.x, (int)(cursorY));
-			child->setPosition(childPosition);
-			cursorY += child->getTotalHeight();
-		}
-	}
 }
 
 void LocationRect::setText(std::wstring text) {
@@ -109,6 +85,7 @@ void LocationRect::open(const std::function<void(const std::wstring&)>& onPick)
 
 			auto child = std::make_shared<LocationRect>(p.wstring(), _depth + 1);
 			child->setSize(_rect.size);
+			child->_onTreeChanged = _onTreeChanged;
 
 			child->_onclick_arrow_func = [child, onPick]() {
 				if (!child->_hasChildren) return;
@@ -117,6 +94,10 @@ void LocationRect::open(const std::function<void(const std::wstring&)>& onPick)
 				}
 				else {
 					child->open(onPick);
+				}
+
+				if (child->_onTreeChanged) {
+					child->_onTreeChanged();
 				}
 				};
 
@@ -180,12 +161,6 @@ void LocationRect::cursorHover() {
 		Element_hovered = this->shared_from_this();
 	}
 
-	if (_isOpen && !_children.empty()) {
-		for (auto& child : _children) {
-			child->cursorHover();
-		}
-	}
-
 }
 
 void LocationRect::handleEvent(const sf::Event& event) {
@@ -221,12 +196,6 @@ void LocationRect::handleEvent(const sf::Event& event) {
 
 	}
 
-	if (_isOpen && !_children.empty()) {
-		for (auto& child : _children) {
-			child->handleEvent(event);
-		}
-	}
-
 }
 
 void LocationRect::update() {
@@ -255,11 +224,6 @@ void LocationRect::update() {
 	else
 		unclick();
 
-	if (_isOpen && !_children.empty()) {
-		for (auto& child : _children) {
-			child->update();
-		}
-	}
 }
 
 void LocationRect::draw() {
@@ -299,11 +263,5 @@ void LocationRect::draw() {
 	}
 	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(indent + 20 + 4 + 8 + _arrowMargin, (20 - basicFont.getLineSpacing(dialog_content_font_size)) / 2.0f));
 	window->draw(*_text);
-
-	if (_isOpen) {
-		for (auto& children : _children) {
-			children->draw();
-		}
-	}
 
 }

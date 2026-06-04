@@ -27,13 +27,14 @@ public:
 	LocationRectClickType _clickType;
 	std::function<void()> _onclick_arrow_func;
 	std::function<void()> _onclick_location_func;
+	std::function<void()> _onTreeChanged;
+
 	sf::Time _clickTime;
 
 	LocationRect(std::wstring path, int depth = 0);
 	~LocationRect();
 
 	void setSize(sf::Vector2i size);
-	float getTotalHeight();
 	void setPosition(sf::Vector2i position);
 	void setText(std::wstring text);
 	

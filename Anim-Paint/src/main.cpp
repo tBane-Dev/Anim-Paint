@@ -267,7 +267,7 @@ int main() {
 				auto& dialog = *it;
 
 				dialog->handleEvent(*event);
-				if (dialog->_clickArea == DialogClickArea::Inside) {
+				if (dialog->_rect.contains(cursor->_position)) {
 					if (const auto* mp = event->getIf<sf::Event::MouseButtonPressed>(); mp && mp->button == sf::Mouse::Button::Left) {
 						auto selected = dialog;
 						it = static_dialogs.erase(it);

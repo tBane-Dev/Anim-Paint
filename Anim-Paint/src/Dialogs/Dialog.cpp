@@ -8,6 +8,9 @@
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Components/BottomBar.hpp"
 #include "Time.hpp"
+#include "DebugLog.hpp"
+
+sf::Music Dialog::errorSound; 
 
 Dialog::Dialog() : Dialog(L"Dialog", sf::Vector2i(128, 128)) {
 	
@@ -49,6 +52,14 @@ Dialog::Dialog(std::wstring title, sf::Vector2i size, sf::Vector2i position, boo
 	_offset = sf::Vector2i(0, 0);
 
 	_currentOnTabElement = -1;
+
+	// animation when clicking outside the window
+	_animationClickedOutside = false;
+	_animationStartTime = currentTime;
+
+	if (!errorSound.openFromFile("C:\\Windows\\Media\\Windows Background.wav")) {
+		DebugError(L"Failed to load error sound");
+	}
 }
 
 Dialog::~Dialog() {
@@ -209,12 +220,12 @@ void Dialog::cursorHover() {
 
 void Dialog::handleEvent(const sf::Event& event) {
 
-	if (_rect.contains(cursor->_position)) {
-		_clickArea = DialogClickArea::Inside;
-		_startFlashTime = currentTime;
-	} else {
-		_clickArea = DialogClickArea::OutSide;
-	 }
+	if (_absolutePositioning && (event.getIf<sf::Event::MouseButtonReleased>() || event.getIf<sf::Event::MouseButtonPressed>()) && !_rect.contains(cursor->_position)) {
+		_animationClickedOutside = true;
+		_animationStartTime = currentTime;
+		errorSound.play();
+		return;
+	}
 
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (Element_hovered.get() == this && _titleRect.contains(cursor->_position)) {
@@ -253,36 +264,58 @@ void Dialog::update() {
 		clampPosition();
 	}
 
+	if (_animationClickedOutside) {
+		if ((currentTime - _animationStartTime).asSeconds() > 0.4f) {
+			_animationClickedOutside = false;
+		}
+	}
+
 	_closeBtn->update();
 }
 
 void Dialog::draw() {
 
+	int shadow_margin = 8;
+	int shadow_border = 8;
+	int cycles = 2;
+	int animation = (_animationClickedOutside) ? (int)((std::sin((currentTime - _animationStartTime).asSeconds() * (float)cycles * 3.14159265f * 2.0f) * 0.5f + 0.5f) * 32.0f) : 0;
+
+
+	if (_absolutePositioning) {
+		// shadow rect
+		
+		sf::RectangleShape shadow_rect(sf::Vector2f(_rect.size) + sf::Vector2f(2 * shadow_margin, 2 * shadow_margin));
+		shadow_rect.setPosition(sf::Vector2f(_rect.position) - sf::Vector2f(shadow_margin, shadow_margin));
+		shadow_rect.setFillColor(sf::Color(0, 0, 0, 16 + animation));
+		shadow_rect.setOutlineThickness(shadow_border);
+		shadow_rect.setOutlineColor(sf::Color(0, 0, 0, 12 + animation));
+		window->draw(shadow_rect);
+	}
+
+	// main rect
 	sf::RectangleShape dialogRect(sf::Vector2f(_rect.size));
 	dialogRect.setFillColor(dialog_border_color);
 	dialogRect.setPosition(sf::Vector2f(_position));
 	window->draw(dialogRect);
 
+	// title rect
 	sf::RectangleShape titleRect(sf::Vector2f(_titleRect.size));
-	sf::Color titleRectColor;
-	if (_absolutePositioning == true && _clickArea == DialogClickArea::OutSide) {
-		int time = int(((currentTime- _startFlashTime).asSeconds()) * 2.5f) % 2;
-		int c = 15 * time;
-		titleRectColor = dialog_title_rect_color + sf::Color(47 * time, c, c);
-	}
-	else {
-		titleRectColor = dialog_title_rect_color;
-	}
-	titleRect.setFillColor(titleRectColor);
-
+	titleRect.setFillColor(dialog_title_rect_color);
 	sf::Vector2f titleRectPosition;
 	titleRectPosition.x = float(_position.x + dialog_border_width);
 	titleRectPosition.y = float(_position.y + dialog_border_width);
 	titleRect.setPosition(titleRectPosition);
-
 	window->draw(titleRect);
 
+	// title text
+	sf::Color title_text_color = dialog_title_text_color;
+	if(_absolutePositioning && _animationClickedOutside) {
+		title_text_color -= sf::Color(0, 0, 0, animation * 3);
+	}
+	_titleText->setFillColor(title_text_color);
 	window->draw(*_titleText);
+
+	// close button
 	_closeBtn->draw();
 
 	sf::Vector2f contentRectSize;

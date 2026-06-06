@@ -1,12 +1,15 @@
 #pragma once
 #include "Element.hpp"
 #include "Controls/ButtonWithSprite.hpp"
+#include <SFML/Audio.hpp>
 
 enum class DialogState { Idle, ToClose };
-enum class DialogClickArea { Inside, OutSide };
 
 class Dialog : public Element {
 public:
+
+	static sf::Music errorSound;
+
 	sf::Vector2i _position;
 	std::wstring _title;
 
@@ -19,14 +22,11 @@ public:
 	DialogState _state;
 	bool _absolutePositioning;
 
-	// if cursor is inside dialog or outside
-	DialogClickArea _clickArea;
-	sf::Time _startFlashTime;
-
-	
-
 	bool _is_moved;
 	sf::Vector2i _offset;
+
+	bool _animationClickedOutside = false;
+	sf::Time _animationStartTime;
 
 	std::vector<std::shared_ptr<Element>> _onTabElements;
 	int _currentOnTabElement;

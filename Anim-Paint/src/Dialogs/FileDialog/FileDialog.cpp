@@ -7,8 +7,6 @@
 #include "Dialogs/FileDialog/FileFunctions.hpp"
 
 
-//////////////////////////////////////////////////////////////////////////////
-
 FileDialog::FileDialog(std::wstring dialogName, std::wstring selectButtonText, std::wstring acceptableExtention) : Dialog(dialogName, sf::Vector2i(400, 284), sf::Vector2i(8, 120), true) {
 
 	_acceptableExtension = acceptableExtention;
@@ -30,9 +28,6 @@ FileDialog::FileDialog(std::wstring dialogName, std::wstring selectButtonText, s
 	createLeftPanel(9);
 	createSeparator(9);
 	createRightPanel(9);
-	loadDirectory();
-	
-	setTheFiles();
 
 	_bottomRect = sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(getContentSize().x, 70));
 	_filenameTextWidth = 56;
@@ -57,6 +52,10 @@ FileDialog::FileDialog(std::wstring dialogName, std::wstring selectButtonText, s
 		};
 
 	setPosition(_position);
+
+	loadDirectory();
+	setTheFiles();
+	setTheLocations(); // 
 }
 
 FileDialog::~FileDialog() {
@@ -72,9 +71,10 @@ void FileDialog::buildVisibleLocations() {
 	}
 
 	updateLeftScrollbar();
+	setTheLocations();
 }
 
-void FileDialog::addVisibleLocation(std::shared_ptr<LocationRect> location) {
+void FileDialog::addVisibleLocation(std::shared_ptr<Location> location) {
 
 	if (!location)
 		return;
@@ -105,73 +105,73 @@ void FileDialog::updateLeftScrollbar() {
 void FileDialog::createLeftPanel(int dictionariesCount) {
 
 	sf::Vector2i rectSize = sf::Vector2i(100, dictionariesCount * basic_text_rect_height);
-	_leftRect = std::make_shared<sf::IntRect>(sf::Vector2i(0,0), rectSize);
+	_leftRect = std::make_shared<sf::IntRect>(sf::Vector2i(0, 0), rectSize);
 
 	const wchar_t* userProfile = _wgetenv(L"USERPROFILE");
 	std::wstring up(userProfile);
 
-	// dictionaries
-	_locations.push_back(std::make_shared<LocationRect>(up + L"\\AppData\\Roaming\\Microsoft\\Windows\\Recent"));
-	_locations.push_back(std::make_shared<LocationRect>(up + L"\\Documents"));
-	_locations.push_back(std::make_shared<LocationRect>(up + L"\\Music"));
-	_locations.push_back(std::make_shared<LocationRect>(up + L"\\Pictures"));
-	_locations.push_back(std::make_shared<LocationRect>(up + L"\\Downloads"));
-	_locations.push_back(std::make_shared<LocationRect>(up + L"\\Desktop"));
-	_locations.push_back(std::make_shared<LocationRect>(up + L"\\Videos"));
+	_locations.push_back(std::make_shared<Location>(up + L"\\AppData\\Roaming\\Microsoft\\Windows\\Recent"));
+	_locations.push_back(std::make_shared<Location>(up + L"\\Documents"));
+	_locations.push_back(std::make_shared<Location>(up + L"\\Music"));
+	_locations.push_back(std::make_shared<Location>(up + L"\\Pictures"));
+	_locations.push_back(std::make_shared<Location>(up + L"\\Downloads"));
+	_locations.push_back(std::make_shared<Location>(up + L"\\Desktop"));
+	_locations.push_back(std::make_shared<Location>(up + L"\\Videos"));
 
-	// load the harddrivers
 	DWORD drives = GetLogicalDrives();
-	for (int i = 0; i < 32; i++)
+
+	for (int i = 0; i < 32; i++) {
 		if ((drives >> i) & 1) {
-			//printf("%c:\\\n", 'A' + i);
-			_locations.push_back(std::make_shared<LocationRect>(std::wstring(1, L'A' + i) + L":\\"));
+			_locations.push_back(std::make_shared<Location>(std::wstring(1, L'A' + i) + L":\\"));
 		}
+	}
 
-	for (int i = 0; i < _locations.size(); i++) {
-		_locations[i]->setSize(sf::Vector2i(_leftRect->size.x, basic_text_rect_height));
-		
-		_locations[i]->_onTreeChanged = [this]() {
-			buildVisibleLocations();
-			setPosition(_position);
-			};
+	// stała liczba LocationRect
+	for (int i = 0; i < dictionariesCount + 1; i++) {
 
-		// KLIK W NAZWĘ -> otwórz po PRAWEJ
-		_locations[i]->_onclick_location_func = [this, i]() {
-			currentPath = _locations[i]->_path.wstring();
+		auto rect = std::make_shared<LocationRect>();
+		rect->setSize(sf::Vector2i(_leftRect->size.x, basic_text_rect_height));
+
+		rect->_onclick_location_func = [this, rect]() {
+
+			if (!rect->_location)
+				return;
+
+			currentPath = rect->_location->_path.wstring();
+
 			loadDirectory();
+
 			_rightScrollbar->setMax((int)(_filesPaths.size() - _files.size() + 1) * basic_text_rect_height);
 			_rightScrollbar->setValue(0);
+
 			setTheFiles();
 			setPosition(_position);
 			};
 
-		// KLIK W STRZAŁKĘ -> tylko rozwiń/zwiń po LEWEJ
-		_locations[i]->_onclick_arrow_func = [this, i]() {
-			auto& node = _locations[i];
-			if (!node->_hasChildren) return;
+		rect->_onclick_arrow_func = [this, rect]() {
 
-			if (node->_isOpen) {
-				node->close();
+			if (!rect->_location)
+				return;
+
+			std::shared_ptr<Location> location = rect->_location;
+
+			if (!location->_hasChildren)
+				return;
+
+			if (location->_isOpen) {
+				location->close();
 			}
 			else {
-				// UWAGA: przekazujemy onPick, żeby POTOMKOWIE mieli poprawny "open po prawej"
-				node->open([this](const std::wstring& newPath) {
-					currentPath = newPath;
-					loadDirectory();
-					_rightScrollbar->setMax((int)(_filesPaths.size() - _files.size() + 1) * basic_text_rect_height);
-					_rightScrollbar->setValue(0);
-					setTheFiles();
-					setPosition(_position);
-					});
+				location->open();
 			}
 
 			buildVisibleLocations();
 			setPosition(_position);
-
 			};
+
+		_locationRects.push_back(rect);
 	}
 
-	// scrollbar
 	sf::Vector2i scrollbarPos;
 	scrollbarPos.x = _leftRect->position.x + _leftRect->size.x + dialog_padding;
 	scrollbarPos.y = getContentPosition().y;
@@ -181,16 +181,55 @@ void FileDialog::createLeftPanel(int dictionariesCount) {
 	int scrollbarMax = 0;
 	int scrollbarSliderSize = (dictionariesCount - 1) * basic_text_rect_height;
 
-	_leftScrollbar = std::make_shared<Scrollbar>(scrollbarPos.x, scrollbarPos.y, scrollbarSize.x, scrollbarSize.y, 0, scrollbarMax, scrollbarSliderSize, 0);
-	_leftScrollbar->_func = [this]() { 
-		setTheFiles();
+	_leftScrollbar = std::make_shared<Scrollbar>(
+		scrollbarPos.x,
+		scrollbarPos.y,
+		scrollbarSize.x,
+		scrollbarSize.y,
+		0,
+		scrollbarMax,
+		scrollbarSliderSize,
+		0
+	);
+
+	_leftScrollbar->_func = [this]() {
+		setTheLocations();
 		setPosition(_position);
 		};
+
 	_leftScrollbar->setScrollArea(_leftRect, basic_text_rect_height * 0.5f);
 
 	buildVisibleLocations();
 }
 
+void FileDialog::setTheLocations() {
+
+	int scrollbarValue = _leftScrollbar->getValue();
+
+	int firstIndex = scrollbarValue / basic_text_rect_height;
+	int offset = scrollbarValue % basic_text_rect_height;
+
+	for (int i = 0; i < _locationRects.size(); i++) {
+
+		int index = firstIndex + i;
+
+		if (index < _visibleLocations.size()) {
+
+			auto location = _visibleLocations[index];
+
+			_locationRects[i]->setLocation(location);
+
+			sf::Vector2i pos;
+			pos.x = _leftRect->position.x;
+			pos.y = _leftRect->position.y + i * basic_text_rect_height - offset;
+
+			_locationRects[i]->setPosition(pos);
+		}
+		else {
+			_locationRects[i]->setLocation(nullptr);
+		}
+	}
+}
 void FileDialog::createSeparator(int linesCount) {
 	_separator = std::make_shared<LocationAndFilesSeparator>(linesCount);
 	_separator->_rect.position = sf::Vector2i(getContentPosition().x + _leftRect->size.x + 16 + dialog_padding, getContentPosition().y);
@@ -198,8 +237,9 @@ void FileDialog::createSeparator(int linesCount) {
 	_separator->_func = [this]() {
 		_leftRect->size = sf::Vector2i(_separator->getPosition().x - _leftRect->position.x - 16, _leftRect->size.y);
 
-		for(int i=0;i<_locations.size(); i++)
-			_locations[i]->setSize(sf::Vector2i(_leftRect->size.x, basic_text_rect_height));
+		for (auto& rect : _locationRects) {
+			rect->setSize(sf::Vector2i(_leftRect->size.x, basic_text_rect_height));
+		}
 
 		_rightRect->size = sf::Vector2i(getContentSize().x - _leftRect->size.x - _separator->getSize().x - 2 * 16 - dialog_padding * 3, _rightRect->size.y);
 		for (int i = 0; i < _files.size(); i++)
@@ -362,29 +402,10 @@ void FileDialog::drawLeftPanel() {
 	view.setViewport(vp);
 	window->setView(view);
 
-	int scrollbarValue = _leftScrollbar->getValue();
-
-	int firstIndex = scrollbarValue / basic_text_rect_height;
-	int offset = scrollbarValue % basic_text_rect_height;
-
-	int visibleCount = _leftRect->size.y / basic_text_rect_height + 1;
-
-	for (int i = 0; i < visibleCount; i++) {
-
-		int index = firstIndex + i;
-
-		if (index >= _visibleLocations.size())
-			break;
-
-		sf::Vector2i pos;
-		pos.x = getContentPosition().x + dialog_padding;
-		pos.y = getContentPosition().y + i * basic_text_rect_height - offset;
-
-		_visibleLocations[index]->setPosition(pos);
-		_visibleLocations[index]->draw();
+	for (auto& rect : _locationRects) {
+		rect->draw();
 	}
 }
-
 void FileDialog::drawRightPanel() {
 
 	sf::View view(sf::FloatRect(
@@ -483,8 +504,8 @@ void FileDialog::cursorHover() {
 		}
 		
 		if (_leftRect->contains(cursor->_position)) {
-			for (auto& location : _visibleLocations) {
-				location->cursorHover();
+			for (auto& rect : _locationRects) {
+				rect->cursorHover();
 			}
 		}
 	}
@@ -512,8 +533,8 @@ void FileDialog::handleEvent(const sf::Event& event) {
 	}
 
 	if (_leftRect->contains(cursor->_position)) {
-		for (auto& location : _visibleLocations) {
-			location->handleEvent(event);
+		for (auto& rect : _locationRects) {
+			rect->handleEvent(event);
 		}
 	}
 
@@ -531,10 +552,8 @@ void FileDialog::update() {
 	for (auto& file : _files)
 		file->update();
 
-	auto visibleLocations = _visibleLocations;
-
-	for (auto& location : visibleLocations) {
-		location->update();
+	for (auto& rect : _locationRects) {
+		rect->update();
 	}
 
 	_leftScrollbar->update();

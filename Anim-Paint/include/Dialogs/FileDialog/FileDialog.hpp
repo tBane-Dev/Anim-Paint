@@ -1,5 +1,6 @@
 #pragma once
 #include "Dialogs/Dialog.hpp"
+#include "Dialogs/FileDialog/Location.hpp"
 #include "Dialogs/FileDialog/LocationRect.hpp"
 #include "Dialogs/FileDialog/LocationAndFilesSeparator.hpp"
 #include "Dialogs/FileDialog/FileRect.hpp"
@@ -14,8 +15,9 @@ public:
 	std::shared_ptr<sf::IntRect> _leftRect;
 	std::shared_ptr<sf::IntRect> _rightRect;
 
-	std::vector <std::shared_ptr<LocationRect>> _locations;
-	std::vector<std::shared_ptr<LocationRect>> _visibleLocations;
+	std::vector<std::shared_ptr<Location>> _locations;
+	std::vector<std::shared_ptr<Location>> _visibleLocations;
+	std::vector<std::shared_ptr<LocationRect>> _locationRects;
 	std::shared_ptr<Scrollbar> _leftScrollbar;
 
 	std::shared_ptr<LocationAndFilesSeparator> _separator;
@@ -40,7 +42,8 @@ public:
 	~FileDialog();
 
 	void buildVisibleLocations();
-	void addVisibleLocation(std::shared_ptr<LocationRect> location);
+	void addVisibleLocation(std::shared_ptr<Location> location);
+	void setTheLocations();
 	void updateLeftScrollbar();
 
 	void createLeftPanel(int linesCount);

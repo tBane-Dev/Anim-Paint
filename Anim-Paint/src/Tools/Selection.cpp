@@ -524,8 +524,8 @@ void Selection::generatePreviewImage() {
 	int canvasW = canvas->_size.x;
 	int canvasH = canvas->_size.y;
 
-	for (int sourceY = 0; sourceY < (int)_resizedImage->getSize().y; sourceY++) {
-		for (int sourceX = 0; sourceX < (int)_resizedImage->getSize().x; sourceX++) {
+	for (int sourceY = 0; sourceY < (int)_maskImage->getSize().y; sourceY++) {
+		for (int sourceX = 0; sourceX < (int)_maskImage->getSize().x; sourceX++) {
 
 			sf::Color maskColor = maskImage->getPixel(sf::Vector2u(sourceX, sourceY));
 
@@ -716,6 +716,19 @@ void Selection::drawPreviewImage() {
 
 	if (_previewImage->getSize().x < 1 || _previewImage->getSize().y < 1)
 		return;
+
+	if(_maskImage == nullptr)
+		return;
+
+	if (_maskImage->getSize().x < 1 || _maskImage->getSize().y < 1)
+		return;
+
+	if(_maskImage == nullptr || _resizedMaskImage == nullptr)
+		return;
+
+	if (_resizedMaskImage->getSize().x < 1 || _resizedMaskImage->getSize().y < 1)
+		return;
+
 
 	sf::Texture texture;
 	if (!texture.loadFromImage(*_previewImage)) {
